@@ -102,10 +102,8 @@ MST_TESTDEP_STATUS
 AC_CONFIG_FILES(
 	[Makefile
 	 tests/atlocal
+	 misfits.pc
 	],
 	)
-
-#---------------------------------------------------------
-#AC_CONFIG_FILES(tests/tst, [chmod +x tests/tst])
 
 AC_OUTPUT

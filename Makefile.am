@@ -3,6 +3,12 @@ include create_am_macros.mk
 ACLOCAL_AMFLAGS		= -I m4
 AM_DEFAULT_SOURCE_EXT	= .cc
 
+EXTRA_DIST              += $(PACKAGE_NAME).pc.in
+CLEANFILES              += $(PACKAGE_NAME).pc
+
+pkgconfigdatadir        = $(libdir)/pkgconfig
+pkgconfigdata_DATA      = $(PACKAGE_NAME).pc
+
 # Any files make built
 CLEANFILES		+=
 
