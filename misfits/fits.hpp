@@ -72,18 +72,13 @@ do {						\
     class Row;
 
 
-    // declare some classes so can be used as template arguments
+    // declare some enums so can be used as template arguments
     namespace Entity {
-	struct File {};
-	struct Memory {};
-	struct DiskFile {};
-	struct Data {};
-	struct Table{};
-	struct Image{};
+	enum Type { File, Memory, DiskFile, Data, Table, Image };
     }
 
 
-    // ditto, but some should have actual values.
+    // ditto, but some should have actual values, so make 'em a struct.
     namespace Mode {
 	struct ReadOnly  { static int mode() { return READONLY ; } };
 	struct ReadWrite { static int mode() { return READWRITE ; } };
@@ -108,8 +103,8 @@ do {						\
 
 	// no generic template
 
-	template<class Entity> int open( fitsfile** fptr, const std::string& file, int mode, int* status );
-	template<class Entity> int create( fitsfile** fptr, const std::string& file, int* status );
+	template<Entity::Type Entity> int open( fitsfile** fptr, const std::string& file, int mode, int* status );
+	template<Entity::Type Entity> int create( fitsfile** fptr, const std::string& file, int* status );
 
     }
 
@@ -117,7 +112,7 @@ do {						\
     // map open<Entity,Mode> to call to MapCFITSIO<Entity::open( ... M::mode() )
     namespace Open {
 
-	template< class Entity, class Mode >
+	template< Entity::Type Entity, class Mode >
 	fitsfile* open( const std::string& file );
 
     }
@@ -135,8 +130,8 @@ do {						\
 
 
     // predeclare "factory" open function
-    template<class Entity> FilePtr open( );
-    template<class Entity, class Mode> FilePtr open( const std::string& file );
+    template<Entity::Type Entity> FilePtr open( );
+    template<Entity::Type Entity, class Mode> FilePtr open( const std::string& file );
 
     class File : public std::enable_shared_from_this<File> {
 
@@ -258,8 +253,8 @@ do {						\
     //////////////////////////
     // open command //
     //////////////////////////
-    template <class Entity, class Mode> FilePtr open( const std::string&file );
-    template <class Entity>  FilePtr open( );
+    template <Entity::Type Entity, class Mode> FilePtr open( const std::string&file );
+    template <Entity::Type Entity>  FilePtr open( );
 
 }
 

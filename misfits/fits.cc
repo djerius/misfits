@@ -135,7 +135,7 @@ namespace misFITS {
     // map open<Entity,Mode> to call to MapCFITSIO<Entity::open( ... M::mode() )
     namespace Open {
 
-	template< class Entity, class Mode >
+	template< Entity::Type Entity, class Mode >
 	fitsfile* open( const std::string& file ) {
 	    fitsfile* fptr;
 	    misFITS_CHECK_CFITSIO_EXPR( MapCFITSIO::open<Entity>( &fptr, file, Mode::mode(), &status ) );
@@ -174,7 +174,7 @@ namespace misFITS {
     // Instantiate the factories which return File or File* //
     //////////////////////////////////////////////////////////
 
-    template <class Entity, class Mode>
+    template <Entity::Type Entity, class Mode>
 	FilePtr open( const std::string&file )  {
 
 	return FilePtr( new File(file, Open::open<Entity,Mode>( file ) ) );
