@@ -182,7 +182,7 @@ namespace misFITS {
 
     template <>  FilePtr open<Entity::Memory>( ) {
 	return open<Entity::File,Mode::Create>( "mem://" );
-    };
+    }
 
 
     template FilePtr open<Entity::File, Mode::ReadOnly>( const std::string& file );
