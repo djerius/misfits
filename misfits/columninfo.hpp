@@ -45,16 +45,16 @@ namespace misFITS {
 	// this may be the only unique id for the column
 	int colnum;
 
-	ColumnInfo( const std::string& name,
-		    ColumnType column_type,
-		    const std::string& unit,
-		    const Extent& extent,
-		    int colnum = 0
-		    ) :
-			tunit( unit ),
-			column_type(column_type),
-			colnum( colnum )
-	{ }
+	// ColumnInfo( const std::string& name,
+	// 	    ColumnType column_type,
+	// 	    const std::string& unit,
+	// 	    const Extent& extent,
+	// 	    int colnum = 0
+	// 	    ) :
+	// 		tunit( unit ),
+	// 		column_type(column_type),
+	// 		colnum( colnum )
+	// { }
 
 	// initialize from the CHDU in a fits file
 	ColumnInfo( const misFITS::File& file, const std::string& name );
