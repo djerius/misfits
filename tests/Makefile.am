@@ -11,8 +11,10 @@ CPPFLAGS_%C%		=			\
 			-I %D%			\
 			-I $(srcdir)/%D%	\
 			$(AM_CPPFLAGS)		\
-			$(CPPFLAGS_GTEST)
+			$(CPPFLAGS)
 
+CXXFLAGS_%C%		=			\
+			$(GTEST_CXXFLAGS)
 
 check_PROGRAMS		+=			\
 			%D%/read_row		\
@@ -32,6 +34,8 @@ CPPFLAGS_%C%_TESTS	=						\
 			-I$(top_srcdir)					\
 			-I$(top_builddir)
 
+CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
+
 ##############################
 
 %C%_read_row_SOURCES	=			\
@@ -41,6 +45,7 @@ CPPFLAGS_%C%_TESTS	=						\
 
 %C%_read_row_LDADD	= $(LDADD_%C%_TESTS)
 %C%_read_row_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_read_row_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
 
 ##############################
 
@@ -51,6 +56,7 @@ CPPFLAGS_%C%_TESTS	=						\
 
 %C%_writeable_LDADD	= $(LDADD_%C%_TESTS)
 %C%_writeable_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_writeable_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
 
 
 ##############################
@@ -62,6 +68,7 @@ CPPFLAGS_%C%_TESTS	=						\
 
 %C%_temptable_LDADD	= $(LDADD_%C%_TESTS)
 %C%_temptable_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_temptable_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
 
 ##############################
 
@@ -72,3 +79,4 @@ CPPFLAGS_%C%_TESTS	=						\
 
 %C%_reopen_LDADD	= $(LDADD_%C%_TESTS)
 %C%_reopen_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_reopen_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
