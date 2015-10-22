@@ -75,7 +75,7 @@ namespace misFITS {
 	class Column {
 
 	protected:
-	    Column( int colnum, int nelem, misFITS::StorageType storage_type ) :
+	    Column( int colnum, LONGLONG nelem, misFITS::StorageType storage_type ) :
 		colnum_( colnum ), nelem_( nelem ), storage_type_( storage_type ) {}
 	    virtual ~Column() { };
 
@@ -84,8 +84,8 @@ namespace misFITS {
 
 	private:
 	    int colnum_;
+	    LONGLONG nelem_;
 	    misFITS::StorageType storage_type_;
-	    int nelem_;
 	};
 
 
@@ -95,7 +95,7 @@ namespace misFITS {
 
 	private:
 
-	    AbsoluteColumn( int colnum, int nelem, misFITS::StorageType storage_type, void* base )
+	    AbsoluteColumn( int colnum, LONGLONG nelem, misFITS::StorageType storage_type, void* base )
 		: Column( colnum, nelem, storage_type ),
 		  Absolute( base )
 	    {}
@@ -108,7 +108,7 @@ namespace misFITS {
 
 	public:
 
-	    OffsetColumn( int colnum, int nelem, misFITS::StorageType storage_type, size_t offset )
+	    OffsetColumn( int colnum, LONGLONG nelem, misFITS::StorageType storage_type, size_t offset )
 		: Column( colnum, nelem, storage_type ),
 		  Offset( offset )
 	    {}
