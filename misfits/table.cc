@@ -40,15 +40,15 @@ namespace misFITS {
     // Constructors //
     ///////////
 
-    Table::Table( WeakFilePtr file ) : HDU( file ), row_idx_(1), auto_advance( true ) {
+    Table::Table( WeakFilePtr file ) : HDU( file ), auto_advance( true ), row_idx_(1) {
 	refresh();
-    };
+    }
 
-    Table::Table( File& file ) : HDU( file ), row_idx_(1), auto_advance( true ) {
+    Table::Table( File& file ) : HDU( file ), auto_advance( true ), row_idx_(1) {
 	refresh();
-    };
+    }
 
-    Table::Table( const std::string& extname ) : HDU( extname ), row_idx_(1), auto_advance( true ) {
+    Table::Table( const std::string& extname ) : HDU( extname ), auto_advance( true ), row_idx_(1) {
 	refresh();
     }
 

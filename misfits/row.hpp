@@ -96,8 +96,8 @@ namespace misFITS {
 	private:
 
 	    AbsoluteColumn( int colnum, int nelem, misFITS::StorageType storage_type, void* base )
-		: Absolute( base ),
-		  Column( colnum, nelem, storage_type )
+		: Column( colnum, nelem, storage_type ),
+		  Absolute( base )
 	    {}
 
 	    void read( const File& file, LONGLONG firstrow );
@@ -109,8 +109,8 @@ namespace misFITS {
 	public:
 
 	    OffsetColumn( int colnum, int nelem, misFITS::StorageType storage_type, size_t offset )
-		: Offset( offset ),
-		  Column( colnum, nelem, storage_type )
+		: Column( colnum, nelem, storage_type ),
+		  Offset( offset )
 	    {}
 
 	    void read( const File& file, LONGLONG firstrow, void *base );

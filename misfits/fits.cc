@@ -50,14 +50,14 @@ namespace misFITS {
     }
 
     // default: open at first data HDU in read only mode
-    File::File( const std::string& file ) : file( file ), fitsptr( FitsPtr_( NULL ) ) {
+    File::File( const std::string& file ) : fitsptr( FitsPtr_( NULL ) ), file( file ) {
 	fitsfile* fptr = Open::open<Entity::Data,Mode::ReadOnly>( file.c_str() );
 	fitsptr = FitsPtr_( fptr  );
     }
 
 
     File::File( const std::string& file_, fitsfile* fitsfile_ ) :
-	file(file_), fitsptr( FitsPtr_( fitsfile_ ) ) {};
+	fitsptr( FitsPtr_( fitsfile_ ) ), file(file_) {}
 
 
     void
@@ -72,7 +72,7 @@ namespace misFITS {
 	movabs_hdu( ofile.hdu_num() );
     }
 
-    File::File( const File& ofile ) : fitsptr( FitsPtr_(NULL) ) {
+    File::File( const File& ofile ) : enable_shared_from_this<File>(), fitsptr( FitsPtr_(NULL) ) {
 
 	reopen( ofile );
     }
