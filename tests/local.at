@@ -1,0 +1,3 @@
+AT_INIT([deltatime_flag])
+AT_COLOR_TESTS
+
