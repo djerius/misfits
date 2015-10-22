@@ -48,7 +48,7 @@ namespace misFITS {
 	Extent& resize( int size);
 
 	LONGLONG nelem() const;
-	int size() const;
+	int naxes() const;
 	const ExtentT& operator () () const { return extent; }
 
     private:

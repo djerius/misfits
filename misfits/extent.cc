@@ -83,7 +83,7 @@ namespace misFITS {
 
 
     int
-    Extent::size() const {
+    Extent::naxes() const {
 	return extent.size();
     }
 

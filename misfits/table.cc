@@ -153,7 +153,7 @@ namespace misFITS {
 	misFITS_CHECK_CFITSIO_EXPR(
 	fits_write_tdimll( file()->fptr(),
 			   colnum,
-			   extent.nelem(),
+			   extent.naxes(),
 			   extentp,
 			   &status )
 	    );
