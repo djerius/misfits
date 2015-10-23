@@ -196,11 +196,6 @@ namespace misFITS {
 		return *this;
 	    }
 
-	    template< class T >
-	    GroupDSL& column( const char* column_name, size_t offset ) {
-		return column<T>( std::string(column_name), offset );
-	    }
-
 	    ReturnClass& endgroup() { return *caller_; }
 
 	    GroupDSL<GroupDSL> group( size_t offset ) {
@@ -242,12 +237,6 @@ namespace misFITS {
 							  misFITS::StorageCode<T>::type,
 							  base ) );
 	    return *this;
-	}
-
-	template< class T >
-	Row& column( const char* column_name, T* base ) {
-
-	    return column( std::string(column_name), base );
 	}
 
 	Entry::GroupDSL<Row> group( void* base );
