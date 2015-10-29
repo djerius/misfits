@@ -31,42 +31,96 @@ using namespace std;
 #include <misfits/table.hpp>
 #include <misfits/row.hpp>
 
-class FITSFileTest : public ::testing::Test {
 
-protected :
+class ReadTest : public ::testing::Test {
 
+public:
     void SetUp() {
 	gen_fits();
-	file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
     }
-
-    misFITS::FilePtr file;
 };
 
 
-TEST_F( FITSFileTest, MetaData ) {
 
-    EXPECT_STREQ( TEST_FITS_QFILENAME, file->file.c_str());
+struct read_row {
 
-    misFITS::Table table( file );
+    misFITS::FilePtr file_;
+    std::string file_name_;
+    bool init;
 
-    ASSERT_EQ( 4, table.num_columns() );
+    read_row( std::string file_name ) : file_name_( file_name ), init( false ) {}
 
-    ASSERT_TRUE( table.exists_column( "Icol" ) );
-    ASSERT_TRUE( table.exists_column( "Jcol" ) );
-    ASSERT_TRUE( table.exists_column( "Ecol" ) );
-    ASSERT_TRUE( table.exists_column( "Dcol" ) );
+    misFITS::FilePtr file() {
 
-    ASSERT_EQ( 1, table.column("Icol" ).colnum );
-    ASSERT_EQ( 2, table.column( "Jcol" ).colnum );
-    ASSERT_EQ( 3, table.column( "Ecol" ).colnum );
-    ASSERT_EQ( 4, table.column( "Dcol" ).colnum );
-}
+    	if ( ! init ) {
+    	    file_ = misFITS::FilePtr( new misFITS::File( file_name_ ) );
+    	    init = true;
+    	}
+
+    	return file_;
+    }
+
+    virtual ~read_row() { }
+    virtual misFITS::Row row() = 0;
+
+};
+
+struct from_table_row : public read_row {
+
+    misFITS::TablePtr table_;
+    bool init;
+
+    from_table_row( std::string file_name ) :
+	read_row( file_name ),
+	init( false )
+    {}
+
+    misFITS::Row
+    row () {
+	if ( ! init ) {
+	    table_ =  file()->table();
+	    init = true;
+	}
+	return table_->row();
+    }
+};
+
+struct from_row_table : public read_row {
+
+    misFITS::TablePtr table_;
+    bool init;
+
+    from_row_table( std::string file_name ) :
+	read_row( file_name )
+    {}
 
 
-TEST_F( FITSFileTest, ReadRow ) {
+    misFITS::Row
+    row () {
+	if ( ! init ) {
+	    table_ =  file()->table();
+	    init = true;
+	}
+	return misFITS::Row( table_ );
+    }
+};
 
-    misFITS::Table table( file );
+struct from_row_file : public read_row {
+
+    from_row_file( std::string file_name ) :
+	read_row( file_name )
+    {}
+
+    misFITS::Row
+    row () {
+    	return misFITS::Row( *file() );
+    }
+};
+
+class ReadRowTest : public ReadTest, public ::testing::WithParamInterface< shared_ptr<read_row> > {};
+
+
+TEST_P( ReadRowTest, ReadRow ) {
 
     struct A {
 	int Icol;
@@ -88,46 +142,56 @@ TEST_F( FITSFileTest, ReadRow ) {
     float Ecol;
     double Dcol;
 
-    misFITS::Row row( table.row() );
 
-    row
-	.column( "Icol", &Icol )
-	.column( "Jcol", &Jcol )
+    misFITS::Row row ( GetParam()->row() );
+
+    	row
+    	.column( "Icol", &Icol )
+    	.column( "Jcol", &Jcol )
         .column( "Ecol", &Ecol )
         .column( "Dcol", &Dcol )
-	.group( &storage)
-	.group( offsetof( Row, a ) )
-	.column<int>( "Icol", offsetof( A, Icol ) )
-	.column<short>( "Jcol", offsetof( A, Jcol ) )
-	.endgroup()
-	.group( offsetof( Row, b ) )
+    	.group( &storage)
+    	.group( offsetof( Row, a ) )
+    	.column<int>( "Icol", offsetof( A, Icol ) )
+    	.column<short>( "Jcol", offsetof( A, Jcol ) )
+    	.endgroup()
+    	.group( offsetof( Row, b ) )
         .column<float>( "Ecol", offsetof( B, Ecol ) )
         .column<double>( "Dcol", offsetof( B, Dcol ) )
-	.endgroup()
-	;
+    	.endgroup()
+    	;
 
 
     while( row.read() ) {
 
-	int i = table.row_idx() - 1;
+    	int i = row.idx() - 1;
 
-	double D = 1.0 / i;
-	float  E = 2.0 / i;
-	short  I = i + 1;
-	int    J = i + 2;
+    	double D = 1.0 / i;
+    	float  E = 2.0 / i;
+    	short  I = i + 1;
+    	int    J = i + 2;
 
-	ASSERT_EQ( I, storage.a.Icol );
-	ASSERT_EQ( J, storage.a.Jcol );
-	ASSERT_FLOAT_EQ( D, storage.b.Dcol );
-	ASSERT_DOUBLE_EQ( E, storage.b.Ecol );
+    	ASSERT_EQ( I, storage.a.Icol );
+    	ASSERT_EQ( J, storage.a.Jcol );
+    	ASSERT_FLOAT_EQ( D, storage.b.Dcol );
+    	ASSERT_DOUBLE_EQ( E, storage.b.Ecol );
 
-	ASSERT_EQ( I, Icol );
-	ASSERT_EQ( J, Jcol );
+    	ASSERT_EQ( I, Icol );
+    	ASSERT_EQ( J, Jcol );
 
-	ASSERT_FLOAT_EQ( D, Dcol );
-	ASSERT_DOUBLE_EQ( E, Ecol );
+    	ASSERT_FLOAT_EQ( D, Dcol );
+    	ASSERT_DOUBLE_EQ( E, Ecol );
 
     }
 
-    ASSERT_EQ( 21, table.row_idx() );
+    ASSERT_EQ( 21, row.idx() );
 }
+
+INSTANTIATE_TEST_CASE_P( ReadRow,
+			 ReadRowTest,
+			 ::testing::Values(
+					   std::shared_ptr<read_row>( new from_table_row( TEST_FITS_QFILENAME ) ),
+					   std::shared_ptr<read_row>( new from_row_table( TEST_FITS_QFILENAME ) ),
+					   std::shared_ptr<read_row>( new from_row_file(  TEST_FITS_QFILENAME ) )
+					   )
+			 );

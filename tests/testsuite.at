@@ -1,22 +1,21 @@
 AT_BANNER([FITS])
 
-AT_SETUP([read])
+AT_SETUP([tables])
 
-AT_CHECK(read_row,,[ignore])
+AT_CHECK(table,,[ignore])
+
+AT_CHECK(temptable,,[ignore])
 
 AT_CLEANUP
 
-AT_SETUP([write])
+AT_SETUP([row])
+
+AT_CHECK(read_row,,[ignore])
 
 AT_CHECK(writeable,,[ignore])
 
 AT_CLEANUP
 
-AT_SETUP([tables])
-
-AT_CHECK(temptable,,[ignore])
-
-AT_CLEANUP
 
 AT_SETUP([reopen])
 

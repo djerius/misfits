@@ -5,7 +5,7 @@ TESTSUITE_DEPS		+= %D%/testsuite.at
 
 AUTOTEST_PATH           += :$(abs_builddir)/%D%
 
-LDADD_%C% 		= $(LDADD) $(LDADD_GTEST)
+LDADD_%C% 		= $(MISFITS_LIBS) $(LDADD) $(LDADD_GTEST)
 
 CPPFLAGS_%C%		=			\
 			-I %D%			\
@@ -16,16 +16,11 @@ CPPFLAGS_%C%		=			\
 CXXFLAGS_%C%		=			\
 			$(GTEST_CXXFLAGS)
 
-check_PROGRAMS		+=			\
-			%D%/read_row		\
-			%D%/reopen		\
-			%D%/temptable		\
-			%D%/writeable
 
 TEST_FITS_FILENAME      = file.fits
 
-LDADD_%C%_TESTS		=				\
-			$(LDADD_%C%)			\
+LDADD_%C%_TESTS		=					\
+			$(LDADD_%C%)				\
 			$(top_builddir)/misfits/libmisfits.la
 
 CPPFLAGS_%C%_TESTS	=						\
@@ -38,6 +33,8 @@ CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
 
 ##############################
 
+check_PROGRAMS		+= %D%/read_row
+
 %C%_read_row_SOURCES	=			\
 			%D%/read_row.cc		\
 			%D%/util.hpp		\
@@ -48,6 +45,8 @@ CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
 %C%_read_row_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
 
 ##############################
+
+check_PROGRAMS		+= %D%/writeable
 
 %C%_writeable_SOURCES	=			\
 			%D%/writeable.cc	\
@@ -61,6 +60,21 @@ CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
 
 ##############################
 
+check_PROGRAMS		+= %D%/table
+
+%C%_table_SOURCES	=			\
+			%D%/table.cc		\
+			%D%/util.hpp		\
+			%D%/util.cc
+
+%C%_table_LDADD		= $(LDADD_%C%_TESTS)
+%C%_table_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_table_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
+check_PROGRAMS		+= %D%/temptable
+
 %C%_temptable_SOURCES	=			\
 			%D%/temptable.cc	\
 			%D%/util.hpp		\
@@ -72,8 +86,10 @@ CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
 
 ##############################
 
+check_PROGRAMS		+= %D%/reopen
+
 %C%_reopen_SOURCES	=			\
-			%D%/reopen.cc	\
+			%D%/reopen.cc		\
 			%D%/util.hpp		\
 			%D%/util.cc
 
