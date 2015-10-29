@@ -73,15 +73,12 @@ namespace misFITS {
     }
 
     File::File( const File& ofile ) : enable_shared_from_this<File>(), fitsptr( FitsPtr_(NULL) ) {
-
 	reopen( ofile );
     }
 
     File&
     File::operator = ( const File& ofile ) {
-
 	reopen( ofile );
-
 	return *this;
     }
 
@@ -213,22 +210,22 @@ namespace misFITS {
 
     TablePtr File::add( const Table& in ) {
 
-	int in_chdu = in.file()->hdu_num();
+	int in_chdu = in.file->hdu_num();
 
 	try {
-	    in.file()->movabs_hdu( in.hdu_num );
+	    in.file->movabs_hdu( in.hdu_num );
 
 	    SharedFilePtr fptr( in.file() );
 	    copy_hdu( fptr );
 	} catch ( ... ) {
 
-	    in.file()->movabs_hdu( in_chdu );
+	    in.file->movabs_hdu( in_chdu );
 
 	    throw;
 
 	}
 
-	in.file()->movabs_hdu( in_chdu );
+	in.file->movabs_hdu( in_chdu );
 
 	return table();
     }

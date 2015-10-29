@@ -25,9 +25,9 @@
 #define misFITS_HDU_H
 
 #include <string>
+#include <own_or_observe_ptr.hpp>
 
 #include <misfits/fits.hpp>
-#include <misfits/refmanager.hpp>
 
 namespace misFITS {
 
@@ -41,6 +41,8 @@ namespace misFITS {
 	std::string extname;
 	int hdu_num;
 
+	own_or_observe::ptr<File> file;
+
     protected:
 
 
@@ -49,10 +51,6 @@ namespace misFITS {
 	HDU( SharedFilePtr& file);
 	HDU( const std::string& extname);
 	void refresh();
-
-	std::unique_ptr< RefManager::Base<File> > rm_;
-
-	SharedFilePtr file() const { return (*rm_)(); }
 
     };
 

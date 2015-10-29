@@ -12,7 +12,6 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/fits.hpp		\
 			%D%/hdu.cc		\
 			%D%/hdu.hpp		\
-			%D%/refmanager.hpp	\
 			%D%/row.cc		\
 			%D%/row.hpp		\
 			%D%/table.cc		\

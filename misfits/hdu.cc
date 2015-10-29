@@ -19,50 +19,43 @@
 //
 // -->8-->8-->8-->8--
 
+#include <iostream>
 #include <string>
 
 #include <misfits/hdu.hpp>
 
 namespace misFITS {
 
-    HDU::HDU( WeakFilePtr& file) {
+    HDU::HDU( WeakFilePtr& file_) {
 
-	RefManager::Base<File>* rm = new RefManager::Type<File,RefManager::Observer>( file );
-	rm_.reset( rm );
-	hdu_num = (*rm_)()->hdu_num();
-
+	file.set<own_or_observe::observed>( file_ );
+	hdu_num = file->hdu_num();
 	refresh();
     }
 
-    HDU::HDU( File& file ) {
+    HDU::HDU( File& file_ ) {
 
-	RefManager::Base<File>* rm = new RefManager::Type<File,RefManager::Bare>( &file );
-	rm_.reset( rm );
-	hdu_num = (*rm_)()->hdu_num();
-
+	file.set<own_or_observe::observed>( &file_ );
+	hdu_num = file->hdu_num();
 	refresh();
     }
 
     HDU::HDU( const std::string& extname) {
 
-	RefManager::Base<File>* rm = new RefManager::Type<File,RefManager::Owner>
-	    ( open<Entity::File,
-			     Mode::Create>( "mem://" )
-	      );
+	FilePtr fp( open<Entity::File,  Mode::Create>( "mem://" ) );
+	file.set<own_or_observe::owned>( fp );
 
-	rm_.reset( rm );
-	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file()->fptr(),
+	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file->fptr(),
 						     BINARY_TBL,
 						     0, 0, NULL, NULL, NULL,
 						     extname.c_str(), &status  ) );
-	hdu_num = (*rm)()->hdu_num();
-
+	hdu_num = file->hdu_num();
 	refresh();
     }
 
     void HDU::refresh() {
 
-	extname = file()->read_key<std::string>( "EXTNAME").value;
+	extname = file->read_key<std::string>( "EXTNAME").value;
 
     }
 
