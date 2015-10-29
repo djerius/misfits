@@ -19,4 +19,12 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/types.cc		\
 			%D%/types.hpp
 
-EXTRA_DIST += %D%/config.hpp.in
+include_HEADERS		+= 			\
+			%D%/config.hpp		\
+			%D%/columninfo.hpp	\
+			%D%/extent.hpp		\
+			%D%/fits.hpp		\
+			%D%/hdu.hpp		\
+			%D%/row.hpp		\
+			%D%/table.hpp		\
+			%D%/types.hpp

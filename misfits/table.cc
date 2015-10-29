@@ -110,7 +110,7 @@ namespace misFITS {
 		int colnum ) {
 
 	LONGLONG repeat;
-	LONGLONG width;
+	LONGLONG width = 1;
 
 	LONGLONG nelem = extent.nelem();
 
