@@ -19,7 +19,6 @@
 //
 // -->8-->8-->8-->8--
 
-#include <iostream>
 #include <string>
 
 #include <misfits/hdu.hpp>
