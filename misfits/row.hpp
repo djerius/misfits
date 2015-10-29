@@ -249,6 +249,8 @@ namespace misFITS {
 
 	}
 
+	LONGLONG idx () { return idx_ ; }
+
     private :
 	Table* table;
 
@@ -259,6 +261,7 @@ namespace misFITS {
 
 	}
 
+	LONGLONG idx_;
 	std::vector<Entry::Absolute*> entries;
 
     };

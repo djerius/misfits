@@ -170,6 +170,7 @@ namespace misFITS {
 	if (table->auto_advance)
 	    table->advance_row();
 
+	idx_ = table->row_idx();
 	return true;
     }
 
