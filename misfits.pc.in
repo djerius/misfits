@@ -6,6 +6,6 @@ includedir=${prefix}/include
 Name: misfits
 Description: FITS C++ interface
 Version: @VERSION@
-Requires: cfitsio, boost_core, boost_filesystem
+Requires: @PKGCONFIG_REQUIRES@
 Libs: -L${libdir} -lmisfits
-Cflags: -I${includedir}
+Cflags: -I${includedir} @PKGCONFIG_CPPFLAGS@

@@ -9,8 +9,7 @@ AC_CONFIG_SRCDIR([misfits/fits.cc])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_TESTDIR([tests])
-AC_CONFIG_HEADERS([config.h misfits/config.hpp])
-AM_INIT_AUTOMAKE([ check-news subdir-objects ])
+AM_INIT_AUTOMAKE([ check-news  silent-rules color-tests parallel-tests subdir-objects ])
 
 AC_LANG([C++])
 
@@ -31,37 +30,40 @@ m4_include(prog_help.ac)
 #---------------------------------------------------------
 # Checks for libraries.
 
-# Use pkg-config to check for libraries.
-#e.g. PKG_CHECK_MODULES([raygen],[Exception >= 1.0.2])
-PKG_CHECK_MODULES([MISFITS],[
-				cfitsio
-				boost_base
-				boost_filesystem
-			     ])
-
 #---------------------------------------------------------
 # Checks for header files.
 
 #---------------------------------------------------------
 # Checks for typedefs, structures, and compiler characteristics.
 
+
+USE_BOOST=0
+STDCXX_CPPFLAGS=
 AC_CHECK_HEADERS([memory],
-	[AC_CHECK_TYPES( [std__shared_ptr], [],[],
+	[AC_CHECK_TYPES( [std__shared_ptr],
+			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__SHARED_PTR"],
+			 [USE_BOOST=1],
 			 [[#include <memory>
 			   typedef std::shared_ptr<int> std__shared_ptr;
 			   ]],
 	 )
-	 AC_CHECK_TYPES( [std__unique_ptr], [],[],
+	 AC_CHECK_TYPES( [std__unique_ptr],
+			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__UNIQUE_PTR"],
+			 [USE_BOOST=1],
 			 [[#include <memory>
 			   typedef std::unique_ptr<int> std__unique_ptr;
 			   ]],
          )
-	 AC_CHECK_TYPES( [std__weak_ptr], [],[],
+	 AC_CHECK_TYPES( [std__weak_ptr],
+			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__WEAK_PTR"],
+			 [USE_BOOST=1],
 			 [[#include <memory>
 			   typedef std::weak_ptr<int> std__weak_ptr;
 			   ]],
          )
-	 AC_CHECK_TYPES( [std__enable_shared_from_this], [],[],
+	 AC_CHECK_TYPES( [std__enable_shared_from_this],
+			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__ENABLE_SHARED_FROM_THIS"],
+			 [USE_BOOST=1],
 			 [[#include <memory>
 			   typedef std::enable_shared_from_this<int> std__enable_shared_from_this;
 			 ]]
@@ -75,26 +77,51 @@ AC_CHECK_HEADERS([memory],
 			   [[ int main( void ) { foo boo; return 0; } ]]
 			  )],
 			  [AC_MSG_RESULT([yes])
-			   AC_DEFINE([HAVE_STD__WEAK_FROM_THIS],1,[has std::weak_from_this])
+			   STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__WEAK_FROM_THIS"
 			  ],
 			  [AC_MSG_RESULT([no])]
         )
 	]
 )
 
+# this doesn't seem to work on OSX clang 7.0.0?
 AX_CXX_HAVE_REF()
+
+PKGCONFIG_REQUIRES="own_or_observe_ptr cfitsio boost_filesystem"
+
+AS_IF( [test $USE_BOOST = 1],
+       [ PKGCONFIG_REQUIRES="$PKGCONFIG_REQUIRES boost_base"
+         # technically we don't know that we have Boost until after
+         # PKG_CHECK_MODULES is called, but since we can't do anything
+         # without Boost, there's no harm in putting this here
+         STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_BOOST_BASE"
+       ],
+       [
+         # for now, need boost for bind and ref; can't quite get the
+         # code to work with clang 7.0.0's implementation
+         PKGCONFIG_REQUIRES="$PKGCONFIG_REQUIRES boost_base"
+         STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_BOOST_BASE"
+       ]
+)
+
+# Use pkg-config to check for libraries.
+#e.g. PKG_CHECK_MODULES([raygen],[Exception >= 1.0.2])
+PKG_CHECK_MODULES([MISFITS],[$PKGCONFIG_REQUIRES])
+
+MISFITS_CPPFLAGS="$STDCXX_CPPFLAGS $MISFITS_CFLAGS"
+AC_SUBST([MISFITS_CPPFLAGS])
+
+AC_SUBST([PKGCONFIG_CPPFLAGS],[$STDCXX_CPPFLAGS])
+AM_SUBST_NOTMAKE([PKGCONFIG_CPPFLAGS])
+
+AC_SUBST([PKGCONFIG_REQUIRES])
+AM_SUBST_NOTMAKE([PKGCONFIG_REQUIRES])
+
 
 #---------------------------------------------------------
 # test dependencies
 
-MST_TESTDEP_SETUP
-
 MST_GTEST
-
-MST_TESTDEP_STATUS
-
-#---------------------------------------------------------
-# Checks for library functions.
 
 
 #---------------------------------------------------------

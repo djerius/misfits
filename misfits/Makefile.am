@@ -19,7 +19,7 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/types.cc		\
 			%D%/types.hpp
 
-include_HEADERS		+= 			\
+nobase_include_HEADERS	+= 			\
 			%D%/config.hpp		\
 			%D%/columninfo.hpp	\
 			%D%/extent.hpp		\
