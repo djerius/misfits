@@ -199,8 +199,7 @@ namespace misFITS {
     misFITS::Row
     Table::row() {
 
-	return misFITS::Row( this ) ;
-
+	return misFITS::Row( new own_or_observe::observed_ptr<Table>( this ) ) ;
     }
 
     LONGLONG

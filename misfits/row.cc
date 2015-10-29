@@ -156,6 +156,34 @@ namespace misFITS {
 
     }
 
+    //////////////////////
+    // Row Constructors //
+    //////////////////////
+
+    Row::Row( own_or_observe::rptr<Table>* table_ ) : idx_( 0 ) {
+	table.set( table_ );
+    }
+
+    Row::Row( TablePtr& table_ ) : idx_(0) {
+	table.set<own_or_observe::observed>( table_ );
+    }
+
+    Row::Row( Table& table_ ) : idx_(0) {
+	table.set<own_or_observe::observed>( &table_ );
+    }
+
+    Row::Row( FilePtr& file ) : idx_(0) {
+	TablePtr fp( file->table() );
+	table.set<own_or_observe::owned>( fp );
+    }
+
+    Row::Row( File& file ) : idx_(0) {
+	TablePtr tp( file.table() );
+	table.set<own_or_observe::owned>( tp );
+    }
+
+
+
     bool
     Row::read(){
 

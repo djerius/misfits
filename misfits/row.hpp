@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <own_or_observe_ptr.hpp>
 #include <misfits/types.hpp>
 
 namespace misFITS {
@@ -241,8 +242,16 @@ namespace misFITS {
 
 	Entry::GroupDSL<Row> group( void* base );
 
-	Row( Table* table ) : table( table ) {}
-	Row( Table& table ) : table( &table ) {}
+	/////////////////////////
+        // Constructors	       //
+        /////////////////////////
+
+	Row( own_or_observe::rptr<Table>* base );
+	Row( Table& table );
+	Row( TablePtr& table );
+	Row( FilePtr& file );
+	Row( File& file );
+
 	virtual ~Row() {
 
 	    for_each( entries.begin(), entries.end(), delete_entry );
@@ -252,7 +261,7 @@ namespace misFITS {
 	LONGLONG idx () { return idx_ ; }
 
     private :
-	Table* table;
+	own_or_observe::ptr<Table> table;
 
 	static void
 	delete_entry( Entry::Absolute* entry ) {
