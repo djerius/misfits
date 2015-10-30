@@ -160,24 +160,35 @@ namespace misFITS {
     // Row Constructors //
     //////////////////////
 
-    Row::Row( own_or_observe::rptr<Table>* table_ ) : idx_( 0 ) {
+    void
+    Row::init( ) {
+	idx(1);
+	auto_advance( true );
+    }
+
+    Row::Row( own_or_observe::rptr<Table>* table_ )  {
+	init();
 	table.set( table_ );
     }
 
-    Row::Row( TablePtr& table_ ) : idx_(0) {
+    Row::Row( TablePtr& table_ )  {
+	init();
 	table.set<own_or_observe::observed>( table_ );
     }
 
-    Row::Row( Table& table_ ) : idx_(0) {
+    Row::Row( Table& table_ ) {
+	init();
 	table.set<own_or_observe::observed>( &table_ );
     }
 
-    Row::Row( FilePtr& file ) : idx_(0) {
+    Row::Row( FilePtr& file ) {
+	init();
 	TablePtr fp( file->table() );
 	table.set<own_or_observe::owned>( fp );
     }
 
-    Row::Row( File& file ) : idx_(0) {
+    Row::Row( File& file ) {
+	init();
 	TablePtr tp( file.table() );
 	table.set<own_or_observe::owned>( tp );
     }
@@ -187,18 +198,17 @@ namespace misFITS {
     bool
     Row::read(){
 
-	if ( table->row_idx() > table->num_rows() )
+	if ( idx() > table->num_rows() )
 	    return false;
 
-	const File& fref(  );
-
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::Absolute::read, _1, boost::ref(*table->file()), table->row_idx() ) );
+		  boost::bind( &Entry::Absolute::read, _1, boost::ref(*table->file()),
+			       idx() )
+        );
 
-	if (table->auto_advance)
-	    table->advance_row();
+	if ( auto_advance() )
+	    advance();
 
-	idx_ = table->row_idx();
 	return true;
     }
 
@@ -206,10 +216,13 @@ namespace misFITS {
     Row::write() {
 
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::Absolute::write, _1, boost::ref(*table->file()), table->row_idx() ) );
+		  boost::bind( &Entry::Absolute::write, _1,
+			       boost::ref(*table->file()),
+			       idx() )
+		  );
 
-	if (table->auto_advance)
-	    table->advance_row();
+	if ( auto_advance() )
+	    advance();
     }
 
 

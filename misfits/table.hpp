@@ -61,7 +61,6 @@ namespace misFITS {
 
 	int num_columns() const;
 	LONGLONG num_rows() const;
-	bool auto_advance;
 
 	bool exists_column( const std::string& templt )  const;
 	void delete_column( int colnum );
@@ -69,9 +68,6 @@ namespace misFITS {
 
 
 	misFITS::Row row();
-	void set_row_idx( LONGLONG row_idx ) { row_idx_ = row_idx; }
-	LONGLONG row_idx( ) const { return row_idx_; }
-	void advance_row( LONGLONG nrows = 1 ) { row_idx_ += nrows; }
 
     protected:
 

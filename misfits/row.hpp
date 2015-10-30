@@ -258,19 +258,34 @@ namespace misFITS {
 
 	}
 
-	LONGLONG idx () { return idx_ ; }
+	LONGLONG idx() const { return idx_ ; }
+	LONGLONG idx( LONGLONG idx ) {
+	    idx_ = idx ;
+	    return idx_;
+	}
+	LONGLONG advance( LONGLONG nrows = 1 ) {
+	    idx_ += nrows;
+	    return idx_;
+	}
+
+	bool auto_advance() const { return auto_advance_ ; }
+	bool auto_advance( bool flag ) {
+	    auto_advance_ = flag;
+	    return auto_advance_;
+	}
 
     private :
 	own_or_observe::ptr<Table> table;
 
+	void init();
+
 	static void
 	delete_entry( Entry::Absolute* entry ) {
-
 	    delete entry;
-
 	}
 
 	LONGLONG idx_;
+	bool auto_advance_;
 	std::vector<Entry::Absolute*> entries;
 
     };
