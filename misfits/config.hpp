@@ -32,9 +32,11 @@
 #ifndef HAVE_STD__SHARED_PTR
 
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 namespace std {
     using boost::shared_ptr;
+    using boost::make_shared;
 }
 
 #define HAVE_STD__SHARED_PTR
