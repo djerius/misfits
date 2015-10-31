@@ -225,10 +225,10 @@ namespace misFITS {
 	Row& column( const std::string& column_name, T* base ) {
 
 	    const misFITS::ColumnInfo& ci = table->column( column_name );
-
+	    StorageType type = misFITS::StorageCode<T>::type;
 	    entries.push_back( std::make_shared<Entry::AbsoluteColumn>( ci.colnum,
 									ci.nelem(),
-									misFITS::StorageCode<T>::type,
+									type,
 									base ) );
 	    return *this;
 	}
