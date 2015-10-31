@@ -95,10 +95,10 @@ namespace misFITS {
 	Group::column( const std::string& column_name, misFITS::StorageType type, size_t offset ) {
 
 	    const misFITS::ColumnInfo& ci ( column_info( column_name ) );
-	    entries.push_back( new Entry::OffsetColumn( ci.colnum,
-							ci.nelem(),
-							type,
-							offset ) );
+	    entries.push_back( std::make_shared<Entry::OffsetColumn>( ci.colnum,
+								      ci.nelem(),
+								      type,
+								      offset ) );
 	}
 
 	void
@@ -122,9 +122,8 @@ namespace misFITS {
 
 	GroupOffset*
 	GroupOffset::group( size_t offset ) {
-	    GroupOffset* grp = new GroupOffset( row_, offset );
-	    entries.push_back( grp );
-	    return grp;
+	    entries.push_back( std::make_shared<GroupOffset>( row_, offset ) );
+	    return static_cast<GroupOffset*>( entries.back().get() );
 	}
 
 	void
@@ -139,9 +138,8 @@ namespace misFITS {
 
 	GroupOffset*
 	GroupAbsolute::group( size_t offset ) {
-	    GroupOffset* grp = new GroupOffset( row_, offset );
-	    entries.push_back( grp );
-	    return grp;
+	    entries.push_back( std::make_shared<GroupOffset>( row_, offset ) );
+	    return static_cast<GroupOffset*>( entries.back().get() );
 	}
 
 	void
@@ -207,7 +205,7 @@ namespace misFITS {
 	for_each( entries.begin(), entries.end(),
 		  boost::bind( &Entry::Absolute::read, _1, boost::ref(*table->file()),
 			       idx() )
-        );
+		  );
 
 	if ( auto_advance() )
 	    advance();
@@ -235,10 +233,9 @@ namespace misFITS {
     Entry::GroupDSL<Row>
     Row::group( void* base ) {
 
-	Entry::GroupAbsolute* grp = new Entry::GroupAbsolute( this, base );
-	entries.push_back( grp );
+	entries.push_back( std::make_shared<Entry::GroupAbsolute>( this, base ) );
 
-	return Entry::GroupDSL<Row>( this, grp );
+	return Entry::GroupDSL<Row>( this, static_cast<Entry::GroupAbsolute *>( entries.back().get() ) );
     }
 
 

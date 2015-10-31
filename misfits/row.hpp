@@ -94,12 +94,13 @@ namespace misFITS {
 
 	    friend class misFITS::Row;
 
-	private:
-
+	public:
 	    AbsoluteColumn( int colnum, LONGLONG nelem, misFITS::StorageType storage_type, void* base )
 		: Column( colnum, nelem, storage_type ),
 		  Absolute( base )
 	    {}
+
+	private:
 
 	    void read( const File& file, LONGLONG firstrow );
 	    void write( const File& file, LONGLONG firstrow );
@@ -135,22 +136,12 @@ namespace misFITS {
 	protected:
 
 	    Group( misFITS::Row* row ) : row_( row ) {}
-	    virtual ~Group() {
-		for_each( entries.begin(), entries.end(), delete_entry );
-	    }
 
 	    misFITS::Row* row_;
-	    std::vector<Offset*> entries;
+	    std::vector< std::shared_ptr<Offset> > entries;
 	    const misFITS::ColumnInfo& column_info( const std::string& column_name );
 	    void read( const File& file, LONGLONG firstrow, void* base );
 	    void write( const File& file, LONGLONG firstrow, void* base );
-
-	private:
-	    static void delete_entry (Offset* entry ) {
-
-		delete entry;
-
-	    }
 
 	};
 
@@ -158,9 +149,11 @@ namespace misFITS {
 
 	    friend class GroupAbsolute;
 
-	private:
 
+	public:
 	    GroupOffset( misFITS::Row* row, size_t offset ) : Group( row ), Offset( offset ) { }
+
+	private:
 
 	    GroupOffset* group( size_t offset );
 
@@ -174,10 +167,10 @@ namespace misFITS {
 
 	    friend class misFITS::Row;
 
-	private:
-
+	public:
 	    GroupAbsolute( misFITS::Row *row, void* base ) : Group( row ), Absolute( base ) { }
 
+	private:
 	    GroupOffset* group( size_t offset );
 
 	    void read( const File& file, LONGLONG firstrow );
@@ -233,10 +226,10 @@ namespace misFITS {
 
 	    const misFITS::ColumnInfo& ci = table->column( column_name );
 
-	    entries.push_back( new Entry::AbsoluteColumn( ci.colnum,
-							  ci.nelem(),
-							  misFITS::StorageCode<T>::type,
-							  base ) );
+	    entries.push_back( std::make_shared<Entry::AbsoluteColumn>( ci.colnum,
+									ci.nelem(),
+									misFITS::StorageCode<T>::type,
+									base ) );
 	    return *this;
 	}
 
@@ -251,12 +244,6 @@ namespace misFITS {
 	Row( TablePtr& table );
 	Row( FilePtr& file );
 	Row( File& file );
-
-	virtual ~Row() {
-
-	    for_each( entries.begin(), entries.end(), delete_entry );
-
-	}
 
 	LONGLONG idx() const { return idx_ ; }
 	LONGLONG idx( LONGLONG idx ) {
@@ -279,14 +266,11 @@ namespace misFITS {
 
 	void init();
 
-	static void
-	delete_entry( Entry::Absolute* entry ) {
-	    delete entry;
-	}
-
 	LONGLONG idx_;
 	bool auto_advance_;
-	std::vector<Entry::Absolute*> entries;
+	// if the row object is copied, don't want two objects
+	// managing the same column entries
+	std::vector< std::shared_ptr<Entry::Absolute> > entries;
 
     };
 
