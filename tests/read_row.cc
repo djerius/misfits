@@ -91,7 +91,8 @@ struct from_row_table : public read_row {
     bool init;
 
     from_row_table( std::string file_name ) :
-	read_row( file_name )
+	read_row( file_name ),
+	init( false )
     {}
 
 
@@ -195,3 +196,89 @@ INSTANTIATE_TEST_CASE_P( ReadRow,
 					   std::shared_ptr<read_row>( new from_row_file(  TEST_FITS_QFILENAME ) )
 					   )
 			 );
+
+
+
+TEST_F( ReadTest, Cursors ) {
+
+
+    misFITS::File file( TEST_FITS_QFILENAME );
+
+    misFITS::Table table( file );
+
+    misFITS::Row r1( table );
+
+    int Icol;
+
+    r1.column( "Icol", &Icol );
+
+    r1.read();
+    ASSERT_EQ( 2, r1.idx() );
+    EXPECT_EQ( r1.idx(), Icol );
+
+    r1.read();
+    ASSERT_EQ( 3, r1.idx() );
+    EXPECT_EQ( r1.idx(), Icol );
+
+    misFITS::Row r2( table );
+
+    r2.column( "Icol", &Icol );
+
+    r2.read();
+    ASSERT_EQ( 2, r2.idx() );
+    EXPECT_EQ( r2.idx(), Icol );
+
+    r2.read();
+    ASSERT_EQ( 3, r2.idx() );
+    EXPECT_EQ( r2.idx(), Icol );
+
+    r1.read();
+    r1.read();
+    ASSERT_EQ( 5, r1.idx() );
+    EXPECT_EQ( r1.idx(), Icol );
+
+    r2.read();
+    ASSERT_EQ( 4, r2.idx() );
+    EXPECT_EQ( r2.idx(), Icol );
+}
+
+TEST_F( ReadTest, CopyRow ) {
+
+    misFITS::File file( TEST_FITS_QFILENAME );
+
+    misFITS::Table table( file );
+
+    misFITS::Row r1( table );
+
+    int Icol;
+
+    r1.column( "Icol", &Icol );
+
+    r1.read();
+    ASSERT_EQ( 2, r1.idx() );
+    EXPECT_EQ( r1.idx(), Icol );
+
+    r1.read();
+    ASSERT_EQ( 3, r1.idx() );
+    EXPECT_EQ( r1.idx(), Icol );
+
+    misFITS::Row r2( r1 );
+    ASSERT_EQ( 3, r2.idx() );
+
+    r2.read();
+    ASSERT_EQ( 4, r2.idx() );
+    EXPECT_EQ( r2.idx(), Icol );
+
+    r2.read();
+    ASSERT_EQ( 5, r2.idx() );
+    EXPECT_EQ( r2.idx(), Icol );
+
+    r1.read();
+    r1.read();
+    ASSERT_EQ( 5, r1.idx() );
+    EXPECT_EQ( r1.idx(), Icol );
+
+    r2.read();
+    ASSERT_EQ( 6, r2.idx() );
+    EXPECT_EQ( r2.idx(), Icol );
+}
