@@ -198,6 +198,9 @@ namespace misFITS {
     bool
     Row::read(){
 
+	if ( ! entries.size() )
+	    throw Exception::Assert( "row object was not assigned any columns to read" );
+
 	if ( idx() > table->num_rows() )
 	    return false;
 
@@ -214,6 +217,9 @@ namespace misFITS {
 
     void
     Row::write() {
+
+	if ( ! entries.size() )
+	    throw Exception::Assert( "row object was not assigned any columns to write" );
 
 	for_each( entries.begin(), entries.end(),
 		  boost::bind( &Entry::Absolute::write, _1,
