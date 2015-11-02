@@ -12,6 +12,7 @@ AC_CONFIG_TESTDIR([tests])
 AM_INIT_AUTOMAKE([ check-news  silent-rules color-tests parallel-tests subdir-objects ])
 
 AC_LANG([C++])
+AX_CXX_COMPILE_STDCXX_11([noext],[optional])
 
 AX_AM_OVERRIDE_VAR(CXXFLAGS)
 
