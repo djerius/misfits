@@ -28,6 +28,8 @@
 #include <misfits/fits_p.hpp>
 #include <misfits/table.hpp>
 
+#include <boost/preprocessor/seq/elem.hpp>
+
 using namespace std;
 
 // includes final \0
@@ -173,7 +175,7 @@ namespace misFITS {
     //////////////////////////////////////////////////////////
 
     template <Entity::Type Entity, class Mode>
-	FilePtr open( const std::string&file )  {
+    FilePtr open( const std::string&file )  {
 
 	return FilePtr( new File(file, Open::open<Entity,Mode>( file ) ) );
     }
@@ -183,24 +185,25 @@ namespace misFITS {
     }
 
 
-    template FilePtr open<Entity::File, Mode::ReadOnly>( const std::string& file );
-    template FilePtr open<Entity::File, Mode::ReadWrite>( const std::string& file );
-    template FilePtr open<Entity::File, Mode::Create>( const std::string& file );
-    template FilePtr open<Entity::File, Mode::CreateOverWrite>( const std::string& file );
+#define ENTITY_SEQ (File)(DiskFile)
+#define MODE_SEQ   (ReadOnly)(ReadWrite)(Create)(CreateOverWrite)
 
-    template FilePtr open<Entity::DiskFile, Mode::ReadOnly>( const std::string& file );
-    template FilePtr open<Entity::DiskFile, Mode::ReadWrite>( const std::string& file );
-    template FilePtr open<Entity::DiskFile, Mode::Create>( const std::string& file );
-    template FilePtr open<Entity::DiskFile, Mode::CreateOverWrite>( const std::string& file );
+#define OPEN_FITS(r,seq) \
+    template FilePtr open<Entity::BOOST_PP_SEQ_ELEM(0,seq), Mode::BOOST_PP_SEQ_ELEM(1,seq)> ( const std::string& file );
 
-    template FilePtr open<Entity::Data, Mode::ReadOnly>( const std::string& file );
-    template FilePtr open<Entity::Data, Mode::ReadWrite>( const std::string& file );
 
-    template FilePtr open<Entity::Table, Mode::ReadOnly>( const std::string& file );
-    template FilePtr open<Entity::Table, Mode::ReadWrite>( const std::string& file );
+    BOOST_PP_SEQ_FOR_EACH_PRODUCT(OPEN_FITS,(ENTITY_SEQ)(MODE_SEQ))
 
-    template FilePtr open<Entity::Image, Mode::ReadOnly>( const std::string& file );
-    template FilePtr open<Entity::Image, Mode::ReadWrite>( const std::string& file );
+#undef ENTITY_SEQ
+#undef MODE_SEQ
+
+#define ENTITY_SEQ (Data)(Table)(Image)
+#define MODE_SEQ (ReadOnly)(ReadWrite)
+
+
+    BOOST_PP_SEQ_FOR_EACH_PRODUCT(OPEN_FITS,(ENTITY_SEQ)(MODE_SEQ))
+
+
     template FilePtr open<Entity::Memory>() ;
 
 
@@ -371,6 +374,8 @@ namespace misFITS {
 				comment );
     }
 
+    //-----------------------------------------
+
     template<typename T>
     Keyword<T> File::read_key( const std::string& keyname, const T& default_value ) const {
 
@@ -391,6 +396,12 @@ namespace misFITS {
 	return Keyword<T>( keyname, value, comment );
     }
 
+
+#define READ_KEY(r,d,T) \
+    template Keyword<T> File::read_key<T>( const std::string& keyname, const T& default_value ) const;
+
+
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(READ_KEY)
 
     //-----------------------------------------
     template<typename T>
