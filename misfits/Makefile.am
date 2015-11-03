@@ -10,6 +10,7 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/extent.hpp		\
 			%D%/fits.cc		\
 			%D%/fits.hpp		\
+			%D%/fits_p.hpp		\
 			%D%/hdu.cc		\
 			%D%/hdu.hpp		\
 			%D%/row.cc		\

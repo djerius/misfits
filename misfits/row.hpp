@@ -48,7 +48,7 @@ namespace misFITS {
 	    virtual ~Offset(){}
 
 	    virtual void read( const File& file, LONGLONG firstrow, void* base ) = 0;
-	    virtual void write( const File& file, LONGLONG firstrow, void *base  ) = 0;
+	    virtual void write( const File& file, LONGLONG firstrow, void* base  ) = 0;
 	    void reset( size_t offset ) { offset_ = offset; }
 
 	    size_t offset_;
@@ -73,50 +73,63 @@ namespace misFITS {
         // Columns	  //
         ////////////////////
 
+	template< class T >
 	class Column {
 
 	protected:
-	    Column( int colnum, LONGLONG nelem, misFITS::StorageType storage_type ) :
-		colnum_( colnum ), nelem_( nelem ), storage_type_( storage_type ) {}
+	    Column( int colnum, LONGLONG nelem ) :
+		colnum_( colnum ), nelem_( nelem ) {}
 	    virtual ~Column() { };
 
-	    void read( const File& file, LONGLONG firstrow, void* data );
-	    void write( const File& file, LONGLONG firstrow, void* data );
+	    void read( const File& file, LONGLONG firstrow, T* data ) {
+		file.read_col( colnum_, firstrow, 1, nelem_, data );
+	    }
+
+	    void write( const File& file, LONGLONG firstrow, T* data ) {
+		file.write_col( colnum_, firstrow, 1, nelem_, data );
+	    }
 
 	private:
 	    int colnum_;
 	    LONGLONG nelem_;
-	    misFITS::StorageType storage_type_;
 	};
 
 
-	class AbsoluteColumn : public Column, public Absolute  {
+	template< class T>
+	class AbsoluteColumn : public Column<T>, public Absolute  {
 
 	    friend class misFITS::Row;
 
 	public:
-	    AbsoluteColumn( int colnum, LONGLONG nelem, misFITS::StorageType storage_type, void* base )
-		: Column( colnum, nelem, storage_type ),
+	    AbsoluteColumn( int colnum, LONGLONG nelem, T* base )
+		: Column<T>( colnum, nelem  ),
 		  Absolute( base )
 	    {}
 
 	private:
 
-	    void read( const File& file, LONGLONG firstrow );
-	    void write( const File& file, LONGLONG firstrow );
+	    void read( const File& file, LONGLONG firstrow )  { Column<T>::read( file, firstrow, static_cast<T*>(base_) ); }
+	    void write( const File& file, LONGLONG firstrow ) { Column<T>::write( file, firstrow, static_cast<T*>(base_) ); }
+	    ;
 	};
 
-	class OffsetColumn : public Column, public Offset  {
+	template< class T>
+	class OffsetColumn : public Column<T>, public Offset  {
 
 	public:
 
-	    OffsetColumn( int colnum, LONGLONG nelem, misFITS::StorageType storage_type, size_t offset )
-		: Column( colnum, nelem, storage_type ),
+	    OffsetColumn( int colnum, LONGLONG nelem, size_t offset )
+		: Column<T>( colnum, nelem ),
 		  Offset( offset )
 	    {}
 
-	    void read( const File& file, LONGLONG firstrow, void *base );
-	    void write( const File& file, LONGLONG firstrow, void *base );
+	    void read( const File& file, LONGLONG firstrow, void *base ) {
+		Column<T>::read( file, firstrow, reinterpret_cast<T*>( static_cast<char*>(base) + offset_  ));
+	    }
+
+	    void write( const File& file, LONGLONG firstrow, void *base ) {
+		Column<T>::write( file, firstrow, reinterpret_cast<T*>( static_cast<char*>(base) + offset_ ) );
+	    }
 
 	};
 
@@ -130,8 +143,16 @@ namespace misFITS {
 	public:
 	    virtual Group* group( size_t offset ) = 0;
 
-	    void column( const std::string& column_name, misFITS::StorageType type, size_t offset );
-	    void column( const char* column_name, misFITS::StorageType type, size_t offset );
+	    template< class T>
+	    void column( const std::string& column_name, size_t offset );
+
+	    const misFITS::ColumnInfo& column_info( const std::string& column_name );
+
+	    void
+	    push_back( std::shared_ptr<Offset> offset ) {
+		entries.push_back( offset );
+	    }
+
 
 	protected:
 
@@ -139,7 +160,6 @@ namespace misFITS {
 
 	    misFITS::Row* row_;
 	    std::vector< std::shared_ptr<Offset> > entries;
-	    const misFITS::ColumnInfo& column_info( const std::string& column_name );
 	    void read( const File& file, LONGLONG firstrow, void* base );
 	    void write( const File& file, LONGLONG firstrow, void* base );
 
@@ -186,7 +206,12 @@ namespace misFITS {
 
 	    template< class T >
 	    GroupDSL& column( const std::string& column_name, size_t offset ) {
-		group_->column( column_name, misFITS::StorageCode<T>::type, offset );
+		const misFITS::ColumnInfo& ci ( group_->column_info( column_name ) );
+		std::shared_ptr< Entry::OffsetColumn<T> > column( std::make_shared< Entry::OffsetColumn<T> >( ci.colnum,
+													      ci.nelem(),
+													      offset )
+								  );
+		group_->push_back( column );
 		return *this;
 	    }
 
@@ -225,11 +250,9 @@ namespace misFITS {
 	Row& column( const std::string& column_name, T* base ) {
 
 	    const misFITS::ColumnInfo& ci = table->column( column_name );
-	    StorageType type = misFITS::StorageCode<T>::type;
-	    entries.push_back( std::make_shared<Entry::AbsoluteColumn>( ci.colnum,
-									ci.nelem(),
-									type,
-									base ) );
+	    entries.push_back( std::make_shared< Entry::AbsoluteColumn<T> >( ci.colnum,
+									     ci.nelem(),
+									     base ) );
 	    return *this;
 	}
 

@@ -57,17 +57,17 @@ namespace misFITS {
 
 
 #define misFITS_CHECK_CFITSIO_EXPR( expr )	\
-do {						\
+    do {					\
 	int status = 0;				\
 	expr;					\
 	if ( status )				\
 	    throw Exception::CFITSIO (status );	\
-} while (0)
+    } while (0)
 
 
     // forward declarations for befriending
     namespace Entry {
-	class Column;
+	template<class T> class Column;
     }
     class Row;
 
@@ -189,7 +189,6 @@ do {						\
 
 	friend class HDU;
 	friend class Table;
-	friend class Entry::Column;
 	friend class ColumnInfo;
 
 	inline fitsfile* fptr() const {
@@ -239,6 +238,13 @@ do {						\
 	void copy_hdu ( FilePtr& outfile, int morekeys = 0 ) const;
 	void copy_header ( FilePtr& outfile ) const;
 	HDU_Type delete_hdu ( ) const;
+
+	template< typename T>
+	void read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
+	template< typename T>
+	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
+
+
 
 	Keyword<std::string> read_keyword( const std::string& keyname,
 					   const std::string& default_value = "") const;

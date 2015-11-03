@@ -25,6 +25,7 @@
 #include <cfitsio/fitsio.h>
 
 #include <misfits/fits.hpp>
+#include <misfits/fits_p.hpp>
 #include <misfits/table.hpp>
 
 using namespace std;
@@ -390,5 +391,49 @@ namespace misFITS {
 	return Keyword<T>( keyname, value, comment );
     }
 
+
+    //-----------------------------------------
+    template<typename T>
+    void File::read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const {
+
+    	misFITS_CHECK_CFITSIO_EXPR
+    	    (
+    	     fits_read_col( fptr(),
+    			    StorageCode<T>::type,
+    			    colnum,
+    			    firstrow, firstelem,
+    			    nelem,
+    			    NULL,
+    			    data, NULL, &status)
+    	     );
+
+    }
+
+#define READ_COL(r,d,T) \
+    template void File::read_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
+
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(READ_COL)
+
+    //-----------------------------------------
+
+    template<typename T>
+    void File::write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_col( fptr(),
+			     StorageCode<T>::type,
+			     colnum,
+			     firstrow, firstelem,
+			     nelem,
+			     data, &status)
+	     );
+
+    }
+
+#define WRITE_COL(r,d,T) \
+    template void File::write_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const;
+
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(WRITE_COL)
 
 }

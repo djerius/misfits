@@ -30,60 +30,6 @@ namespace misFITS {
 
     namespace Entry {
 
-	void
-	Column::write( const File& file, LONGLONG firstrow, void* data ) {
-	    misFITS_CHECK_CFITSIO_EXPR
-		(
-		 fits_write_col( file.fptr(),
-				 storage_type_,
-				 colnum_,
-				 firstrow, 1,
-				 nelem_,
-				 data, &status)
-		 );
-	}
-
-	void
-	Column::read( const File& file, LONGLONG firstrow, void* data ) {
-
-	    misFITS_CHECK_CFITSIO_EXPR
-		(
-		 fits_read_col( file.fptr(),
-				storage_type_,
-				colnum_,
-				firstrow, 1,
-				nelem_,
-				NULL,
-				data, NULL, &status)
-		 );
-	}
-
-
-	void
-	AbsoluteColumn::read( const File& file, LONGLONG firstrow ) {
-
-	    Column::read( file, firstrow, base_ );
-
-	}
-
-	void
-	AbsoluteColumn::write( const File& file, LONGLONG firstrow ) {
-
-	    Column::write( file, firstrow, base_ );
-
-	}
-
-	void
-	OffsetColumn:: write( const File& file, LONGLONG firstrow, void *base  ) {
-	    Column::write( file, firstrow, static_cast<char*>(base) + offset_ );
-	}
-
-	void
-	OffsetColumn:: read( const File& file, LONGLONG firstrow, void *base  ) {
-	    Column::read( file, firstrow, static_cast<char*>(base) + offset_ );
-	}
-
-
 	const ColumnInfo&
 	Group::column_info( const std::string& column_name ) {
 
@@ -91,19 +37,14 @@ namespace misFITS {
 
 	}
 
+	template<class T>
 	void
-	Group::column( const std::string& column_name, misFITS::StorageType type, size_t offset ) {
+	Group::column( const std::string& column_name, size_t offset ) {
 
 	    const misFITS::ColumnInfo& ci ( column_info( column_name ) );
-	    entries.push_back( std::make_shared<Entry::OffsetColumn>( ci.colnum,
-								      ci.nelem(),
-								      type,
-								      offset ) );
-	}
-
-	void
-	Group::column( const char* column_name, misFITS::StorageType type, size_t offset ) {
-	    column( std::string(column_name), type, offset );
+	    entries.push_back( std::make_shared< Entry::OffsetColumn<T> >( ci.colnum,
+									   ci.nelem(),
+									   offset ) );
 	}
 
 	void
