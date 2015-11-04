@@ -12,7 +12,6 @@ AC_CONFIG_TESTDIR([tests])
 AM_INIT_AUTOMAKE([ check-news  silent-rules color-tests parallel-tests subdir-objects ])
 
 AC_LANG([C++])
-AX_CXX_COMPILE_STDCXX_11([noext],[optional])
 
 AX_AM_OVERRIDE_VAR(CXXFLAGS)
 
@@ -23,7 +22,7 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-AX_AM_OVERRIDE_FINALIZE
+AX_CXX_COMPILE_STDCXX_11([noext],[optional])
 
 MST_POD_GEN_DOCS
 m4_include(prog_help.ac)
@@ -87,6 +86,8 @@ AC_CHECK_HEADERS([memory],
 
 # this doesn't seem to work on OSX clang 7.0.0?
 AX_CXX_HAVE_REF()
+
+AX_AM_OVERRIDE_FINALIZE
 
 PKGCONFIG_REQUIRES="own_or_observe_ptr cfitsio boost_filesystem"
 
