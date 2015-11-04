@@ -1,6 +1,7 @@
 lib_LTLIBRARIES += %D%/libmisfits.la
 
 %C%_libmisfits_la_CPPFLAGS = $(AM_CPPFLAGS)
+%C%_libmisfits_la_CXXFLAGS = $(AM_CXXFLAGS)
 
 %C%_libmisfits_la_SOURCES =			\
 			%D%/columninfo.cc	\
