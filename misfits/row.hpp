@@ -169,6 +169,9 @@ namespace misFITS {
 	bool read();
 	void write();
 
+	const ColumnInfo& colinfo( int colnum ) { return table->colinfo( colnum ); }
+	const ColumnInfo& colinfo( const std::string& name ) { return table->colinfo( name ); }
+
 	template< class T >
 	Row& column( const std::string& column_name, T* base ) {
 
@@ -228,7 +231,7 @@ namespace misFITS {
 	template<class ReturnClass>
 	template< class T >
 	MemBlockDSL<ReturnClass>& MemBlockDSL<ReturnClass>::column( const std::string& column_name, size_t offset ) {
-	    const misFITS::ColumnInfo& ci ( row_->table->colinfo( column_name ) );
+	    const misFITS::ColumnInfo& ci ( row_->colinfo( column_name ) );
 	    row_->push_back( std::make_shared< Entry::Column<T> >( ci, reinterpret_cast<T*>(static_cast<char*>(base_) + offset )) ) ;
 	    return *this;
 	}
