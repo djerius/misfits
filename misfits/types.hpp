@@ -102,6 +102,18 @@ namespace misFITS {
 	static const char* default_value () { return ""; }
     };
 
+    template <StorageType T> struct NativeType;
+
+    template <> struct NativeType<SC_DOUBLE> { typedef double 	       storage_type; };
+    template <> struct NativeType<SC_FLOAT>  { typedef float 	       storage_type; };
+    template <> struct NativeType<SC_INT>    { typedef int 	       storage_type; };
+    template <> struct NativeType<SC_LONG>   { typedef long 	       storage_type; };
+    template <> struct NativeType<SC_SHORT>  { typedef short 	       storage_type; };
+    template <> struct NativeType<SC_BYTE>   { typedef unsigned char   storage_type; };
+    template <> struct NativeType<SC_UINT>   { typedef unsigned int    storage_type; };
+    template <> struct NativeType<SC_ULONG>  { typedef unsigned long   storage_type; };
+    template <> struct NativeType<SC_USHORT> { typedef unsigned short  storage_type; };
+
 
     enum ColumnType {
 	CT_BIT 	       = TBIT,
