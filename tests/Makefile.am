@@ -29,9 +29,15 @@ noinst_LTLIBRARIES	+= %D%/libtest_utils.la
 			$(AM_CPPFLAGS)		\
 			$(CPPFLAGS_%C%)
 
+%C%_libtest_utils_la_CXXFLAGS =			\
+			$(CXXFLAGS_%C%)
+
 %C%_libtest_utils_la_SOURCES  =			\
 			%D%/util.hpp		\
-			%D%/util.cc
+			%D%/util.cc		\
+			%D%/row_test.hpp	\
+			%D%/row_utils.hpp	\
+			%D%/row_utils.cc
 
 
 ##############################
@@ -53,8 +59,7 @@ CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
 check_PROGRAMS		+= %D%/gen_fits
 
 %C%_gen_fits_SOURCES	=			\
-			%D%/gen_fits.cc		\
-			%D%/util.hpp
+			%D%/gen_fits.cc
 
 %C%_gen_fits_LDADD	= $(LDADD_%C%_TESTS)
 %C%_gen_fits_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
@@ -65,8 +70,7 @@ check_PROGRAMS		+= %D%/gen_fits
 check_PROGRAMS		+= %D%/read_row
 
 %C%_read_row_SOURCES	=			\
-			%D%/read_row.cc		\
-			%D%/util.hpp
+			%D%/read_row.cc
 
 %C%_read_row_LDADD	= $(LDADD_%C%_TESTS)
 %C%_read_row_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
@@ -77,8 +81,7 @@ check_PROGRAMS		+= %D%/read_row
 check_PROGRAMS		+= %D%/writeable
 
 %C%_writeable_SOURCES	=			\
-			%D%/writeable.cc		\
-			%D%/util.hpp
+			%D%/writeable.cc
 
 %C%_writeable_LDADD	= $(LDADD_%C%_TESTS)
 %C%_writeable_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
@@ -90,8 +93,7 @@ check_PROGRAMS		+= %D%/writeable
 check_PROGRAMS		+= %D%/table
 
 %C%_table_SOURCES	=			\
-			%D%/table.cc		\
-			%D%/util.hpp
+			%D%/table.cc
 
 %C%_table_LDADD		= $(LDADD_%C%_TESTS)
 %C%_table_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
@@ -102,8 +104,7 @@ check_PROGRAMS		+= %D%/table
 check_PROGRAMS		+= %D%/reopen
 
 %C%_reopen_SOURCES	=			\
-			%D%/reopen.cc		\
-			%D%/util.hpp
+			%D%/reopen.cc
 
 %C%_reopen_LDADD	= $(LDADD_%C%_TESTS)
 %C%_reopen_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
