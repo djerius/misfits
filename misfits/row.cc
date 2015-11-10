@@ -36,13 +36,13 @@ namespace misFITS {
         // Specialized Columns	   //
         /////////////////////////////
 
-	Column<BitStore>::Column( const ColumnInfo& info, BitStore* base ) :
+	Column<BitSet>::Column( const ColumnInfo& info, BitSet* base ) :
 	    base_( base ),
 	    colnum_( info.colnum ),
 	    nelem_( info.nelem() ) {
 
 	    if ( CT_BIT != info.column_type )
-		throw( Exception::Assert( "can't use an misFITS::BitStore object with a non bit FITS column" ) );
+		throw( Exception::Assert( "can't use an misFITS::BitSet object with a non bit FITS column" ) );
 
 	    // FITS bits are left justified in the bytes, with
 	    // unused bits set to zero at the end.  e.g., if the
@@ -50,14 +50,14 @@ namespace misFITS {
 	    // XXXXX000. Preallocate enough bits for the total number of bytes
 	    // so that the value can be left shifted before being output
 	    base_->resize( nelem_ );
-	    nbits_ = base_->num_blocks() * BitStore::bits_per_block;
+	    nbits_ = base_->num_blocks() * BitSet::bits_per_block;
 	    base_->resize( nbits_ );
 	    nbytes_ = base_->num_blocks();
 	    buffer.resize( nbytes_ );
 	}
 
 	void
-	Column<BitStore>::read( const File& file, LONGLONG firstrow ) {
+	Column<BitSet>::read( const File& file, LONGLONG firstrow ) {
 
 	    file.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 
@@ -66,7 +66,7 @@ namespace misFITS {
 	}
 
 	void
-	Column<BitStore>::write( const File& file, LONGLONG firstrow ) {
+	Column<BitSet>::write( const File& file, LONGLONG firstrow ) {
 
 	    (*base_) <<= nbits_ - nelem_;
 	    boost::to_block_range(*base_, buffer.rbegin());

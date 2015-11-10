@@ -49,7 +49,7 @@ test_fiducial( misFITS::Row &row ) {
     };
 
     struct C {
-	misFITS::BitStore Xcol_bitstore;
+	misFITS::BitSet Xcol_bitset;
 	misFITS::byte_t Xcol_array[NBYTES];
 	vector<misFITS::byte_t> Xcol_vector;
     };
@@ -64,7 +64,7 @@ test_fiducial( misFITS::Row &row ) {
     short Jcol;
     float Ecol;
     double Dcol;
-    misFITS::BitStore Xcol_bitstore;
+    misFITS::BitSet Xcol_bitset;
     misFITS::byte_t Xcol_array[NBYTES];
     vector<misFITS::byte_t> Xcol_vector;
 
@@ -74,7 +74,7 @@ test_fiducial( misFITS::Row &row ) {
     	.column( "Jcol", &Jcol )
         .column( "Ecol", &Ecol )
         .column( "Dcol", &Dcol )
-	.column( "Xcol", &Xcol_bitstore )
+	.column( "Xcol", &Xcol_bitset )
 	.column( "Xcol", Xcol_array )
 	.column( "Xcol", &Xcol_vector )
 
@@ -90,7 +90,7 @@ test_fiducial( misFITS::Row &row ) {
 	  .end_memblock()
 
 	  .memblock( offsetof( Row, c ) )
-	    .column<misFITS::BitStore>(  "Xcol", offsetof( C, Xcol_bitstore ) )
+	    .column<misFITS::BitSet>(  "Xcol", offsetof( C, Xcol_bitset ) )
 	    .column< misFITS::byte_t > ( "Xcol", offsetof( C, Xcol_array ) )
 	    .column< vector<misFITS::byte_t> > ( "Xcol", offsetof( C, Xcol_vector ) )
 	  .end_memblock()
@@ -119,8 +119,8 @@ test_fiducial( misFITS::Row &row ) {
     	ASSERT_DOUBLE_EQ( D, Dcol );
     	ASSERT_DOUBLE_EQ( D, storage.b.Dcol );
 
-	ASSERT_TRUE( Xcol_bitstore[NBITS - i] );
-	ASSERT_TRUE( storage.c.Xcol_bitstore[NBITS - i] );
+	ASSERT_TRUE( Xcol_bitset[NBITS - i] );
+	ASSERT_TRUE( storage.c.Xcol_bitset[NBITS - i] );
 
 	int byte = (i - 1) / 8;
 	int shift = ( 8 - (i - byte * 8) );

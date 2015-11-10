@@ -68,7 +68,7 @@ TEST( WriteRow, Copy ) {
 	short Jcol;
 	float Ecol;
 	double Dcol;
-	misFITS::BitStore Xcol;
+	misFITS::BitSet Xcol;
     } data;
 
 
@@ -80,7 +80,7 @@ TEST( WriteRow, Copy ) {
     	.column<short>( "Jcol", offsetof( Row, Jcol ) )
         .column<float>( "Ecol", offsetof( Row, Ecol ) )
         .column<double>( "Dcol", offsetof( Row, Dcol ) )
-        .column<misFITS::BitStore>( "Xcol", offsetof( Row, Xcol ) )
+        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
 	.end_memblock();
 
     orow.memblock( &data )
@@ -88,7 +88,7 @@ TEST( WriteRow, Copy ) {
     	.column<short>( "Jcol", offsetof( Row, Jcol ) )
         .column<float>( "Ecol", offsetof( Row, Ecol ) )
         .column<double>( "Dcol", offsetof( Row, Dcol ) )
-        .column<misFITS::BitStore>( "Xcol", offsetof( Row, Xcol ) )
+        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
 	.end_memblock();
 
     while( irow.read() )

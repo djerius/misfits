@@ -97,12 +97,12 @@ namespace misFITS {
 	};
 
 	template<>
-	class Column< BitStore > : public ColumnBase {
+	class Column< BitSet > : public ColumnBase {
 
 
 	public:
 
-	    Column( const ColumnInfo& info, BitStore* base );
+	    Column( const ColumnInfo& info, BitSet* base );
 	    virtual ~Column() { };
 
 	    void read(  const File& file, LONGLONG firstrow );
@@ -110,14 +110,14 @@ namespace misFITS {
 
 
 	private:
-	    BitStore* base_;
+	    BitSet* base_;
 	    int colnum_;
 	    LONGLONG nelem_;
 
-	    BitStore::size_type nbits_;
-	    BitStore::size_type nbytes_;
+	    BitSet::size_type nbits_;
+	    BitSet::size_type nbytes_;
 
-	    std::vector<BitStore::block_type> buffer;
+	    std::vector<BitSet::block_type> buffer;
 	};
 
 

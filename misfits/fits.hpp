@@ -131,7 +131,7 @@ namespace misFITS {
 
     //
     typedef uint8_t byte_t;
-    typedef boost::dynamic_bitset<byte_t> BitStore;
+    typedef boost::dynamic_bitset<byte_t> BitSet;
 
 
     // predeclare "factory" open function
