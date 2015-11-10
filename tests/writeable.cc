@@ -41,11 +41,11 @@ TEST( FITSFileTest, DeleteColumn ) {
 
 	misFITS::Table table( file );
 
-	ASSERT_EQ( 4, table.num_columns() );
+	ASSERT_EQ( 5, table.num_columns() );
 
 	table.delete_column( "Ecol" );
 
-	EXPECT_EQ( 3, table.num_columns() );
+	EXPECT_EQ( 4, table.num_columns() );
 	ASSERT_EQ( 3, table.column( "Dcol" ).colnum );
     }
 
@@ -55,7 +55,7 @@ TEST( FITSFileTest, DeleteColumn ) {
 
 	misFITS::TablePtr table( file.table() );
 
-	EXPECT_EQ( 3, table->num_columns() );
+	EXPECT_EQ( 4, table->num_columns() );
 	ASSERT_EQ( 3, table->column( "Dcol" ).colnum );
     }
 

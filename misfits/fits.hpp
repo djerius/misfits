@@ -26,8 +26,9 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <misfits/config.hpp>
+#include <boost/dynamic_bitset.hpp>
 
+#include <misfits/config.hpp>
 #include <misfits/types.hpp>
 
 namespace misFITS {
@@ -127,6 +128,10 @@ namespace misFITS {
     typedef std::shared_ptr<Table> SharedTablePtr;
     typedef std::weak_ptr<Table> WeakTablePtr;
     typedef SharedTablePtr TablePtr;
+
+    //
+    typedef uint8_t byte_t;
+    typedef boost::dynamic_bitset<byte_t> BitStore;
 
 
     // predeclare "factory" open function

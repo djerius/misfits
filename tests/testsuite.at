@@ -10,6 +10,8 @@ AT_SETUP([row])
 
 AT_CHECK(read_row,,[ignore])
 
+AT_CHECK(write_row,,[ignore])
+
 AT_CHECK(writeable,,[ignore])
 
 AT_CLEANUP

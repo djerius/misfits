@@ -23,10 +23,9 @@
 #include <cstdlib>
 
 #include <iostream>
-#include <limits.h>
 
+#include <misfits/config.hpp>
 #include <boost/filesystem.hpp>
-
 #include <cfitsio/fitsio.h>
 
 using namespace std;
@@ -53,6 +52,9 @@ gen_fits ( ) {
     int status = 0;
     fitsfile *fp;
 
+#define NROWS 20
+#define NBITS 23
+
     boost::filesystem::remove( boost::filesystem::path( TEST_FITS_QFILENAME ) );
 
     die_if( fits_create_file( &fp, "!" TEST_FITS_QFILENAME, &status),
@@ -60,14 +62,14 @@ gen_fits ( ) {
 	    );
 
     // for now, just create the most often used ones
-    const char * const ttype[] = { "Icol", "Jcol", "Ecol", "Dcol" };
-    const char * const tform[] = { "I"   , "J"   , "E"   , "D"    };
-    const char * const tunit[] = { "Iunt", "Junt", "Eunt", "Dunt" };
+    const char * const ttype[] = { "Icol", "Jcol", "Ecol", "Dcol", "Xcol" };
+    const char * const tform[] = { "I"   , "J"   , "E"   , "D"   , quote(NBITS) "X"    };
+    const char * const tunit[] = { "Iunt", "Junt", "Eunt", "Dunt", "Xunt" };
 
 #define TFIELDS sizeof(ttype) / sizeof(*ttype)
 
     die_if( fits_create_tbl( fp, BINARY_TBL, 0, TFIELDS,
-			     const_cast<char**>(ttype ),
+			     const_cast<char**>( ttype ),
 			     const_cast<char**>( tform ),
 			     const_cast<char**>( tunit ),
 			     "stuff",
@@ -75,12 +77,26 @@ gen_fits ( ) {
 	    TEST_FITS_QFILENAME ": couldn't create binary table" );
 
 
-    for ( int i = 1 ; i <= 20 ; i++ ) {
+    int nbytes = NBITS / 8;
+    if ( nbytes * 8 < NBITS ) nbytes++;
+
+    for ( int i = 1 ; i <= NROWS ; i++ ) {
 
 	double D = 1.0 / i;
 	float  E = 2.0 / i;
 	short  I = i + 1;
 	int    J = i + 2;
+	vector<uint8_t> X(nbytes);
+
+	X.assign(X.size(), 0 );
+
+	// set the bit s.t. i == 1 => MSB, i == NROWS => LSB
+	// this is left justified in the bit array, as specified
+	// by the FITS standard.
+
+	int byte = (i - 1) / 8;
+	int shift = ( 8 - (i - byte * 8) );
+	X[byte] |= 1<<shift;
 
 	die_if( fits_write_col( fp, TSHORT,  1, i, 1, 1, &I, &status ),
 		"writing column Dcol" );
@@ -93,6 +109,9 @@ gen_fits ( ) {
 
 	die_if( fits_write_col( fp, TDOUBLE, 4, i, 1, 1, &D, &status ),
 		"writing column Dcol" );
+
+	die_if( fits_write_col( fp, TBYTE,   5, i, 1, nbytes, &X[0], &status ),
+		"writing column Xcol" );
     }
 
     die_if( fits_close_file( fp, &status ),

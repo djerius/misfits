@@ -112,6 +112,39 @@ namespace std {
 #endif // ! HAVE_STD__ENABLE_SHARED_FROM_THIS
 
 
+#ifndef HAVE_UINT8_T
+
+#ifdef HAVE_BOOST_BASE
+
+#include <boost/cstdint.hpp>
+
+namespace misFITS {
+
+    using boost::uint8_t;
+
+}
+
+#define HAVE_UINT8_T
+
+#else
+
+#error require Boost for uint8_t
+
+#endif // HAVE_BOOST_BASE
+
+#else
+
+#include <cstdint>
+
+namespace misFITS {
+
+    using std::uint8_t;
+
+}
+
+#endif // HAVE_UINT8_T
+
+
 #endif  // ! misFITS_misCONFIG_H
 
 

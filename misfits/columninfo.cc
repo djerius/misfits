@@ -89,10 +89,6 @@ namespace misFITS {
 	// turn repeat count in bits into 8bit bytes.
 	switch ( typecode ) {
 
-	case TBIT:
-	    nelem_ = int(nelem_ / 8 ) * 8 < nelem_ ? nelem_ / 8 + 1 : nelem_ / 8;
-	    break;
-
 	case TSTRING:
 	    // FIXME. this is confuuused.
 	    nelem_ = 1;

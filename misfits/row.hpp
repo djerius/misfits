@@ -25,208 +25,130 @@
 #include <algorithm>
 #include <vector>
 
+#include <boost/dynamic_bitset.hpp>
+
 #include <own_or_observe_ptr.hpp>
 #include <misfits/types.hpp>
 
 namespace misFITS {
 
+    class Row;
     namespace Entry {
-
-
-	////////////////////////////////
-        // Types of addressing	      //
-        ////////////////////////////////
-
-
-	class Offset {
-
-	    friend class Group;
-
-	protected:
-
-	    Offset( size_t offset ) : offset_( offset ) {}
-	    virtual ~Offset(){}
-
-	    virtual void read( const File& file, LONGLONG firstrow, void* base ) = 0;
-	    virtual void write( const File& file, LONGLONG firstrow, void* base  ) = 0;
-	    void reset( size_t offset ) { offset_ = offset; }
-
-	    size_t offset_;
-	};
-
-	class Absolute {
-
-	    friend class misFITS::Row;
-
-	protected:
-	    Absolute( void* base ) : base_( base ) {}
-	    virtual ~Absolute(){}
-
-	    virtual void read( const File& file, LONGLONG firstrow ) = 0;
-	    virtual void write( const File& file, LONGLONG firstrow ) = 0;
-	    void reset( void* base ) { base_ = base; }
-
-	    void* base_;
-	};
 
 	////////////////////
         // Columns	  //
         ////////////////////
 
-	template< class T >
-	class Column {
+	class ColumnBase {
 
-	protected:
-	    Column( int colnum, LONGLONG nelem ) :
-		colnum_( colnum ), nelem_( nelem ) {}
-	    virtual ~Column() { };
-
-	    void read( const File& file, LONGLONG firstrow, T* data ) {
-		file.read_col( colnum_, firstrow, 1, nelem_, data );
-	    }
-
-	    void write( const File& file, LONGLONG firstrow, T* data ) {
-		file.write_col( colnum_, firstrow, 1, nelem_, data );
-	    }
+	    friend class misFITS::Row;
 
 	private:
+	    virtual void read( const File& file, LONGLONG firstrow ) = 0;
+	    virtual void write( const File& file, LONGLONG firstrow ) = 0;
+
+	protected:
+	    virtual ~ColumnBase() {}
+	};
+
+	template< typename T >
+	class Column : public ColumnBase {
+
+	public:
+	    Column( const ColumnInfo& info, T* base ) : base_( base ),
+						  colnum_( info.colnum ),
+						  nelem_( info.nelem() ) {}
+	    virtual ~Column() { };
+
+	    virtual void read( const File& file, LONGLONG firstrow ) {
+		file.read_col( colnum_, firstrow, 1, nelem_, base_ );
+	    }
+	    virtual void write( const File& file, LONGLONG firstrow ) {
+		file.write_col( colnum_, firstrow, 1, nelem_, base_ );
+	    }
+
+	protected:
+	    T* base_;
 	    int colnum_;
 	    LONGLONG nelem_;
 	};
 
-
-	template< class T>
-	class AbsoluteColumn : public Column<T>, public Absolute  {
-
-	    friend class misFITS::Row;
+	template< typename T>
+	class Column< std::vector<T> > : public ColumnBase {
 
 	public:
-	    AbsoluteColumn( int colnum, LONGLONG nelem, T* base )
-		: Column<T>( colnum, nelem  ),
-		  Absolute( base )
-	    {}
+	    Column( const ColumnInfo& info, std::vector<T>* base ) : base_( base ),
+							       colnum_( info.colnum ),
+							       nelem_( info.nelem() ) {
+		base_->resize( nelem_ );
+	    }
+
+	    void read( const File& file, LONGLONG firstrow ) {
+		file.read_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
+	    }
+	    void write( const File& file, LONGLONG firstrow ) {
+		file.write_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
+	    }
 
 	private:
-
-	    void read( const File& file, LONGLONG firstrow )  { Column<T>::read( file, firstrow, static_cast<T*>(base_) ); }
-	    void write( const File& file, LONGLONG firstrow ) { Column<T>::write( file, firstrow, static_cast<T*>(base_) ); }
-	    ;
+	    std::vector<T>* base_;
+	    int colnum_;
+	    LONGLONG nelem_;
 	};
 
-	template< class T>
-	class OffsetColumn : public Column<T>, public Offset  {
+	template<>
+	class Column< BitStore > : public ColumnBase {
+
 
 	public:
 
-	    OffsetColumn( int colnum, LONGLONG nelem, size_t offset )
-		: Column<T>( colnum, nelem ),
-		  Offset( offset )
-	    {}
+	    Column( const ColumnInfo& info, BitStore* base );
+	    virtual ~Column() { };
 
-	    void read( const File& file, LONGLONG firstrow, void *base ) {
-		Column<T>::read( file, firstrow, reinterpret_cast<T*>( static_cast<char*>(base) + offset_  ));
-	    }
+	    void read(  const File& file, LONGLONG firstrow );
+	    void write( const File& file, LONGLONG firstrow );
 
-	    void write( const File& file, LONGLONG firstrow, void *base ) {
-		Column<T>::write( file, firstrow, reinterpret_cast<T*>( static_cast<char*>(base) + offset_ ) );
-	    }
 
+	private:
+	    BitStore* base_;
+	    int colnum_;
+	    LONGLONG nelem_;
+
+	    BitStore::size_type nbits_;
+	    BitStore::size_type nbytes_;
+
+	    std::vector<BitStore::block_type> buffer;
 	};
+
+
+	template<> Column<byte_t>::Column( const ColumnInfo& info, byte_t* base );
+	template<> Column< std::vector<byte_t> >::Column( const ColumnInfo& info, std::vector<byte_t>* base );
 
 
 	///////////////////
         // Groups	 //
         ///////////////////
 
-	class Group  {
-
-	public:
-	    virtual Group* group( size_t offset ) = 0;
-
-	    template< class T>
-	    void column( const std::string& column_name, size_t offset );
-
-	    const misFITS::ColumnInfo& column_info( const std::string& column_name );
-
-	    void
-	    push_back( std::shared_ptr<Offset> offset ) {
-		entries.push_back( offset );
-	    }
-
-
-	protected:
-
-	    Group( misFITS::Row* row ) : row_( row ) {}
-
-	    misFITS::Row* row_;
-	    std::vector< std::shared_ptr<Offset> > entries;
-	    void read( const File& file, LONGLONG firstrow, void* base );
-	    void write( const File& file, LONGLONG firstrow, void* base );
-
-	};
-
-	class GroupOffset : public Group, public Offset {
-
-	    friend class GroupAbsolute;
-
-
-	public:
-	    GroupOffset( misFITS::Row* row, size_t offset ) : Group( row ), Offset( offset ) { }
-
-	private:
-
-	    GroupOffset* group( size_t offset );
-
-	    void read( const File& file, LONGLONG firstrow, void* base );
-	    void write( const File& file, LONGLONG firstrow, void* base );
-
-	};
-
-
-	class GroupAbsolute : public Group, public Absolute {
-
-	    friend class misFITS::Row;
-
-	public:
-	    GroupAbsolute( misFITS::Row *row, void* base ) : Group( row ), Absolute( base ) { }
-
-	private:
-	    GroupOffset* group( size_t offset );
-
-	    void read( const File& file, LONGLONG firstrow );
-	    void write( const File& file, LONGLONG firstrow );
-
-	};
-
 	template<class ReturnClass>
 	class GroupDSL {
 
 	public:
-	    GroupDSL( ReturnClass* caller, Group* group ) : caller_( caller ), group_( group ) {}
+	    GroupDSL( misFITS::Row* row, ReturnClass* caller, void* base ) : row_( row ), caller_( caller ), base_( base ) {}
 
 	    template< class T >
-	    GroupDSL& column( const std::string& column_name, size_t offset ) {
-		const misFITS::ColumnInfo& ci ( group_->column_info( column_name ) );
-		std::shared_ptr< Entry::OffsetColumn<T> > column( std::make_shared< Entry::OffsetColumn<T> >( ci.colnum,
-													      ci.nelem(),
-													      offset )
-								  );
-		group_->push_back( column );
-		return *this;
-	    }
-
-	    ReturnClass& endgroup() { return *caller_; }
+	    GroupDSL& column( const std::string& column_name, size_t offset );
+	    ReturnClass& endgroup() { return *caller_ ; }
 
 	    GroupDSL<GroupDSL> group( size_t offset ) {
-		return GroupDSL<GroupDSL>( this, group_->group( offset ) );
+		return GroupDSL<GroupDSL>( row_, this, static_cast<char*>(base_) + offset  );
 	    }
 
 
 	private:
 
+	    misFITS::Row* row_;
 	    ReturnClass* caller_;
-	    Group* group_;
-
+	    void* base_;
 	};
 
 
@@ -239,24 +161,25 @@ namespace misFITS {
 
     class Row {
 
-	friend class Entry::Group;
+	template<class ReturnClass>
+	friend class Entry::GroupDSL;
+
     public:
 
 	bool read();
-
 	void write();
 
 	template< class T >
 	Row& column( const std::string& column_name, T* base ) {
 
 	    const misFITS::ColumnInfo& ci = table->column( column_name );
-	    entries.push_back( std::make_shared< Entry::AbsoluteColumn<T> >( ci.colnum,
-									     ci.nelem(),
-									     base ) );
+	    entries.push_back( std::make_shared< Entry::Column<T> >( ci, base ) );
 	    return *this;
 	}
 
-	Entry::GroupDSL<Row> group( void* base );
+	Entry::GroupDSL<Row> group( void* base ) {
+	    return Entry::GroupDSL<Row>( this, this, base );
+	}
 
 	/////////////////////////
         // Constructors	       //
@@ -287,15 +210,29 @@ namespace misFITS {
     private :
 	own_or_observe::ptr<Table> table;
 
-	void init();
+	void init ();
+	void push_back( std::shared_ptr<Entry::ColumnBase> col ) {
+	    entries.push_back( col );
+	}
 
 	LONGLONG idx_;
 	bool auto_advance_;
 	// if the row object is copied, don't want two objects
 	// managing the same column entries
-	std::vector< std::shared_ptr<Entry::Absolute> > entries;
-
+	std::vector< std::shared_ptr<Entry::ColumnBase> > entries;
     };
+
+
+    namespace Entry {
+
+	template<class ReturnClass>
+	template< class T >
+	GroupDSL<ReturnClass>& GroupDSL<ReturnClass>::column( const std::string& column_name, size_t offset ) {
+	    const misFITS::ColumnInfo& ci ( row_->table->column( column_name ) );
+	    row_->push_back( std::make_shared< Entry::Column<T> >( ci, reinterpret_cast<T*>(static_cast<char*>(base_) + offset )) ) ;
+	    return *this;
+	}
+    }
 
 
 }

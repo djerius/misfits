@@ -49,17 +49,19 @@ TEST_F( ExistingTable, MetaData ) {
 
     misFITS::Table table( file );
 
-    ASSERT_EQ( 4, table.num_columns() );
+    ASSERT_EQ( 5, table.num_columns() );
 
     ASSERT_TRUE( table.exists_column( "Icol" ) );
     ASSERT_TRUE( table.exists_column( "Jcol" ) );
     ASSERT_TRUE( table.exists_column( "Ecol" ) );
     ASSERT_TRUE( table.exists_column( "Dcol" ) );
+    ASSERT_TRUE( table.exists_column( "Xcol" ) );
 
     ASSERT_EQ( 1, table.column( "Icol" ).colnum );
     ASSERT_EQ( 2, table.column( "Jcol" ).colnum );
     ASSERT_EQ( 3, table.column( "Ecol" ).colnum );
     ASSERT_EQ( 4, table.column( "Dcol" ).colnum );
+    ASSERT_EQ( 5, table.column( "Xcol" ).colnum );
 }
 
 TEST( TableTest, CreateTable ) {

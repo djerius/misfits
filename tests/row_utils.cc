@@ -48,15 +48,25 @@ test_fiducial( misFITS::Row &row ) {
 	double Dcol;
     };
 
+    struct C {
+	misFITS::BitStore Xcol_bitstore;
+	misFITS::byte_t Xcol_array[NBYTES];
+	vector<misFITS::byte_t> Xcol_vector;
+    };
+
     struct Row {
 	struct A a;
 	struct B b;
+	struct C c;
     } storage;
 
     int Icol;
     short Jcol;
     float Ecol;
     double Dcol;
+    misFITS::BitStore Xcol_bitstore;
+    misFITS::byte_t Xcol_array[NBYTES];
+    vector<misFITS::byte_t> Xcol_vector;
 
 
     row
@@ -64,6 +74,9 @@ test_fiducial( misFITS::Row &row ) {
     	.column( "Jcol", &Jcol )
         .column( "Ecol", &Ecol )
         .column( "Dcol", &Dcol )
+	.column( "Xcol", &Xcol_bitstore )
+	.column( "Xcol", Xcol_array )
+	.column( "Xcol", &Xcol_vector )
     	.group( &storage)
     	.group( offsetof( Row, a ) )
     	.column<int>( "Icol", offsetof( A, Icol ) )
@@ -73,6 +86,11 @@ test_fiducial( misFITS::Row &row ) {
         .column<float>( "Ecol", offsetof( B, Ecol ) )
         .column<double>( "Dcol", offsetof( B, Dcol ) )
     	.endgroup()
+	.group( offsetof( Row, c ) )
+	.column<misFITS::BitStore>(  "Xcol", offsetof( C, Xcol_bitstore ) )
+	.column< misFITS::byte_t > ( "Xcol", offsetof( C, Xcol_array ) )
+	.column< vector<misFITS::byte_t> > ( "Xcol", offsetof( C, Xcol_vector ) )
+	.endgroup()
     	;
 
 
@@ -96,6 +114,23 @@ test_fiducial( misFITS::Row &row ) {
 
     	ASSERT_DOUBLE_EQ( D, Dcol );
     	ASSERT_DOUBLE_EQ( D, storage.b.Dcol );
+
+	ASSERT_TRUE( Xcol_bitstore[NBITS - i] );
+	ASSERT_TRUE( storage.c.Xcol_bitstore[NBITS - i] );
+
+	int byte = (i - 1) / 8;
+	int shift = ( 8 - (i - byte * 8) );
+
+	for( int ibyt = 0 ; ibyt < NBYTES ; ++ibyt ) {
+
+	    misFITS::byte_t value = ibyt == byte ? 1 << shift : 0;
+
+	    ASSERT_EQ( value, Xcol_array[ibyt] );
+	    ASSERT_EQ( value, Xcol_vector[ibyt] );
+
+	    ASSERT_EQ( value, storage.c.Xcol_array[ibyt] );
+	    ASSERT_EQ( value, storage.c.Xcol_vector[ibyt] );
+	}
 
     }
 

@@ -19,6 +19,8 @@
 //
 // -->8-->8-->8-->8--
 
+#include <cmath>
+
 #include <boost/bind.hpp>
 #include <boost/core/ref.hpp>
 
@@ -30,67 +32,76 @@ namespace misFITS {
 
     namespace Entry {
 
-	const ColumnInfo&
-	Group::column_info( const std::string& column_name ) {
+	/////////////////////////////
+        // Specialized Columns	   //
+        /////////////////////////////
 
-	    return row_->table->column( column_name );
+	Column<BitStore>::Column( const ColumnInfo& info, BitStore* base ) :
+	    base_( base ),
+	    colnum_( info.colnum ),
+	    nelem_( info.nelem() ) {
 
-	}
+	    if ( CT_BIT != info.column_type )
+		throw( Exception::Assert( "can't use an misFITS::BitStore object with a non bit FITS column" ) );
 
-	template<class T>
-	void
-	Group::column( const std::string& column_name, size_t offset ) {
-
-	    const misFITS::ColumnInfo& ci ( column_info( column_name ) );
-	    entries.push_back( std::make_shared< Entry::OffsetColumn<T> >( ci.colnum,
-									   ci.nelem(),
-									   offset ) );
-	}
-
-	void
-	Group::read( const File& file, LONGLONG firstrow, void* base ) {
-	    for_each( entries.begin(), entries.end(),
-		      boost::bind( &Offset::read, _1, boost::ref(file), firstrow, base )
-		      );
-	}
-
-	void
-	Group::write( const File& file, LONGLONG firstrow, void* base ) {
-	    for_each( entries.begin(), entries.end(),
-		      boost::bind( &Offset::write, _1, boost::ref(file), firstrow, base )
-		      );
-	}
-
-	GroupOffset*
-	GroupOffset::group( size_t offset ) {
-	    entries.push_back( std::make_shared<GroupOffset>( row_, offset ) );
-	    return static_cast<GroupOffset*>( entries.back().get() );
+	    // FITS bits are left justified in the bytes, with
+	    // unused bits set to zero at the end.  e.g., if the
+	    // format is 5X, it is stored in the 8 bit byte as
+	    // XXXXX000. Preallocate enough bits for the total number of bytes
+	    // so that the value can be left shifted before being output
+	    base_->resize( nelem_ );
+	    nbits_ = base_->num_blocks() * BitStore::bits_per_block;
+	    base_->resize( nbits_ );
+	    nbytes_ = base_->num_blocks();
+	    buffer.resize( nbytes_ );
 	}
 
 	void
-	GroupOffset::read( const File& file, LONGLONG firstrow, void* base ) {
-	    Group::read( file, firstrow, static_cast<char*>(base) + offset_ );
+	Column<BitStore>::read( const File& file, LONGLONG firstrow ) {
+
+	    file.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
+
+	    boost::from_block_range(buffer.rbegin(), buffer.rend(), *base_ );
+	    (*base_) >>= nbits_ - nelem_;
 	}
 
 	void
-	GroupOffset::write( const File& file, LONGLONG firstrow, void* base ) {
-	    Group::write( file, firstrow, static_cast<char*>(base) + offset_ );
+	Column<BitStore>::write( const File& file, LONGLONG firstrow ) {
+
+	    (*base_) <<= nbits_ - nelem_;
+	    boost::to_block_range(*base_, buffer.rbegin());
+
+	    file.write_col( colnum_, firstrow, 1, nbytes_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 	}
 
-	GroupOffset*
-	GroupAbsolute::group( size_t offset ) {
-	    entries.push_back( std::make_shared<GroupOffset>( row_, offset ) );
-	    return static_cast<GroupOffset*>( entries.back().get() );
+
+
+	template<>
+	Column<byte_t>::Column( const ColumnInfo& info, byte_t* base ) :
+	    base_( base ),
+	    colnum_( info.colnum ),
+	    nelem_( info.nelem() ) {
+
+	    // if reading bits, nelem_ is the number of 8 bit bytes
+	    if ( CT_BIT == info.column_type ) {
+		nelem_ /= 8;
+		if ( nelem_ * 8 < info.nelem() ) ++nelem_;
+	    }
 	}
 
-	void
-	GroupAbsolute::read( const File& file, LONGLONG firstrow ) {
-	    Group::read( file, firstrow, base_ );
-	}
+	template<>
+	Column< std::vector<byte_t> >::Column( const ColumnInfo& info, std::vector<byte_t>* base ) :
+	    base_( base ),
+	    colnum_( info.colnum ),
+	    nelem_( info.nelem() ) {
 
-	void
-	GroupAbsolute::write( const File& file, LONGLONG firstrow ) {
-	    Group::write( file, firstrow, base_ );
+	    // if reading bits, nelem_ is the number of 8 bit bytes
+	    if ( CT_BIT == info.column_type ) {
+		nelem_ /= 8;
+		if ( nelem_ * 8 < info.nelem() ) ++nelem_;
+	    }
+
+	    base_->resize( nelem_ );
 	}
 
     }
@@ -144,7 +155,7 @@ namespace misFITS {
 	    return false;
 
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::Absolute::read, _1, boost::ref(*table->file()),
+		  boost::bind( &Entry::ColumnBase::read, _1, boost::ref(*table->file()),
 			       idx() )
 		  );
 
@@ -161,22 +172,13 @@ namespace misFITS {
 	    throw Exception::Assert( "row object was not assigned any columns to write" );
 
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::Absolute::write, _1,
+		  boost::bind( &Entry::ColumnBase::write, _1,
 			       boost::ref(*table->file()),
 			       idx() )
 		  );
 
 	if ( auto_advance() )
 	    advance();
-    }
-
-
-    Entry::GroupDSL<Row>
-    Row::group( void* base ) {
-
-	entries.push_back( std::make_shared<Entry::GroupAbsolute>( this, base ) );
-
-	return Entry::GroupDSL<Row>( this, static_cast<Entry::GroupAbsolute *>( entries.back().get() ) );
     }
 
 

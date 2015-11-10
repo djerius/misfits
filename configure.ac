@@ -40,7 +40,13 @@ m4_include(prog_help.ac)
 USE_BOOST=0
 STDCXX_CPPFLAGS=
 AC_CHECK_HEADERS([memory],
-	[AC_CHECK_TYPES( [std__shared_ptr],
+	[
+	 AC_CHECK_TYPES( [uint8_t],
+			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_UINT8_T"],
+			 [USE_BOOST=1],
+			 [[#include <cstdint>]],
+	 )
+	 AC_CHECK_TYPES( [std__shared_ptr],
 			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__SHARED_PTR"],
 			 [USE_BOOST=1],
 			 [[#include <memory>
