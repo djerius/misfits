@@ -90,12 +90,12 @@ namespace misFITS {
     }
 
     const ColumnInfo&
-    Table::column( int colnum ) {
+    Table::colinfo( int colnum ) {
 	return columns.at(colnum - 1);
     }
 
     const ColumnInfo&
-    Table::column( const string& colname ) {
+    Table::colinfo( const string& colname ) {
 	int colnum;
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_colnum( file()->fptr(), 0, const_cast<char*>(colname.c_str()), &colnum, &status )
@@ -179,7 +179,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_delete_col( file()->fptr(), column(name).colnum, &status )
+	     fits_delete_col( file()->fptr(), colinfo(name).colnum, &status )
 	     );
     }
 

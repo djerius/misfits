@@ -46,7 +46,7 @@ TEST( FITSFileTest, DeleteColumn ) {
 	table.delete_column( "Ecol" );
 
 	EXPECT_EQ( 4, table.num_columns() );
-	ASSERT_EQ( 3, table.column( "Dcol" ).colnum );
+	ASSERT_EQ( 3, table.colinfo( "Dcol" ).colnum );
     }
 
     // make sure changes were flushed and the file was closed
@@ -56,7 +56,7 @@ TEST( FITSFileTest, DeleteColumn ) {
 	misFITS::TablePtr table( file.table() );
 
 	EXPECT_EQ( 4, table->num_columns() );
-	ASSERT_EQ( 3, table->column( "Dcol" ).colnum );
+	ASSERT_EQ( 3, table->colinfo( "Dcol" ).colnum );
     }
 
 }

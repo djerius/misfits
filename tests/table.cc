@@ -57,11 +57,11 @@ TEST_F( ExistingTable, MetaData ) {
     ASSERT_TRUE( table.exists_column( "Dcol" ) );
     ASSERT_TRUE( table.exists_column( "Xcol" ) );
 
-    ASSERT_EQ( 1, table.column( "Icol" ).colnum );
-    ASSERT_EQ( 2, table.column( "Jcol" ).colnum );
-    ASSERT_EQ( 3, table.column( "Ecol" ).colnum );
-    ASSERT_EQ( 4, table.column( "Dcol" ).colnum );
-    ASSERT_EQ( 5, table.column( "Xcol" ).colnum );
+    ASSERT_EQ( 1, table.colinfo( "Icol" ).colnum );
+    ASSERT_EQ( 2, table.colinfo( "Jcol" ).colnum );
+    ASSERT_EQ( 3, table.colinfo( "Ecol" ).colnum );
+    ASSERT_EQ( 4, table.colinfo( "Dcol" ).colnum );
+    ASSERT_EQ( 5, table.colinfo( "Xcol" ).colnum );
 }
 
 TEST( TableTest, CreateTable ) {
@@ -77,9 +77,9 @@ TEST( TableTest, CreateTable ) {
     table.add( "col3", misFITS::CT_DOUBLE, 1, 0 );
 
     EXPECT_EQ( 3, table.num_columns() );
-    EXPECT_EQ( "col1", table.column(1).ttype );
-    EXPECT_EQ( "col2", table.column(2).ttype );
-    EXPECT_EQ( "col3", table.column(3).ttype );
+    EXPECT_EQ( "col1", table.colinfo(1).ttype );
+    EXPECT_EQ( "col2", table.colinfo(2).ttype );
+    EXPECT_EQ( "col3", table.colinfo(3).ttype );
 
     misFITS::FilePtr file( misFITS::open<Entity::Memory>() );
     table.copy( file );
@@ -88,9 +88,9 @@ TEST( TableTest, CreateTable ) {
     misFITS::Table table2( file );
 
     EXPECT_EQ( 3, table2.num_columns() );
-    EXPECT_EQ( "col1", table2.column(1).ttype );
-    EXPECT_EQ( "col2", table2.column(2).ttype );
-    EXPECT_EQ( "col3", table2.column(3).ttype );
+    EXPECT_EQ( "col1", table2.colinfo(1).ttype );
+    EXPECT_EQ( "col2", table2.colinfo(2).ttype );
+    EXPECT_EQ( "col3", table2.colinfo(3).ttype );
 
     table2.add( "col4", misFITS::CT_DOUBLE, 1, 0 );
 

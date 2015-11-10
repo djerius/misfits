@@ -43,8 +43,8 @@ namespace misFITS {
 	Table( WeakFilePtr file );
 	Table( File& file );
 
-	const ColumnInfo& column( int colnum );
-	const ColumnInfo& column( const std::string& name );
+	const ColumnInfo& colinfo( int colnum );
+	const ColumnInfo& colinfo( const std::string& name );
 
 	// copy table header to other file
 	TablePtr copy_header( FilePtr& file_ ) const;
