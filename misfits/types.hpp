@@ -104,18 +104,18 @@ namespace misFITS {
 
 
     enum ColumnType {
-	CT_BIT 	       = 'X',
-	CT_BYTE        = 'B',
-	CT_LOGICAL     = 'L',
-	CT_STRING      = 'A',
-	CT_SHORT       = 'I',
-	CT_INT32BIT    = 'J',
-	CT_LONG        = 'J',
-	CT_LONGLONG    = 'K',
-	CT_FLOAT       = 'E',
-	CT_DOUBLE      = 'D',
-	CT_COMPLEX     = 'C',
-	CT_DBL_COMPLEX = 'M'
+	CT_BIT 	       = TBIT,
+	CT_BYTE        = TBYTE,
+	CT_LOGICAL     = TLOGICAL,
+	CT_STRING      = TSTRING,
+	CT_SHORT       = TSHORT,
+	CT_LONG        = TINT32BIT,
+	CT_INT32BIT    = TINT32BIT,
+	CT_LONGLONG    = TLONGLONG,
+	CT_FLOAT       = TFLOAT,
+	CT_DOUBLE      = TDOUBLE,
+	CT_COMPLEX     = TCOMPLEX,
+	CT_DBL_COMPLEX = TDBLCOMPLEX
     };
 
     class ColumnCode {
