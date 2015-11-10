@@ -75,21 +75,21 @@ TEST( WriteRow, Copy ) {
     misFITS::Row irow( input );
     misFITS::Row orow( otable );
 
-    irow.group( &data )
+    irow.memblock( &data )
     	.column<int>( "Icol", offsetof( Row, Icol ) )
     	.column<short>( "Jcol", offsetof( Row, Jcol ) )
         .column<float>( "Ecol", offsetof( Row, Ecol ) )
         .column<double>( "Dcol", offsetof( Row, Dcol ) )
         .column<misFITS::BitStore>( "Xcol", offsetof( Row, Xcol ) )
-	.endgroup();
+	.end_memblock();
 
-    orow.group( &data )
+    orow.memblock( &data )
     	.column<int>( "Icol", offsetof( Row, Icol ) )
     	.column<short>( "Jcol", offsetof( Row, Jcol ) )
         .column<float>( "Ecol", offsetof( Row, Ecol ) )
         .column<double>( "Dcol", offsetof( Row, Dcol ) )
         .column<misFITS::BitStore>( "Xcol", offsetof( Row, Xcol ) )
-	.endgroup();
+	.end_memblock();
 
     while( irow.read() )
 	orow.write();

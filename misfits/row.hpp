@@ -126,21 +126,21 @@ namespace misFITS {
 
 
 	///////////////////
-        // Groups	 //
+        // MemBlocks	 //
         ///////////////////
 
 	template<class ReturnClass>
-	class GroupDSL {
+	class MemBlockDSL {
 
 	public:
-	    GroupDSL( misFITS::Row* row, ReturnClass* caller, void* base ) : row_( row ), caller_( caller ), base_( base ) {}
+	    MemBlockDSL( misFITS::Row* row, ReturnClass* caller, void* base ) : row_( row ), caller_( caller ), base_( base ) {}
 
 	    template< class T >
-	    GroupDSL& column( const std::string& column_name, size_t offset );
-	    ReturnClass& endgroup() { return *caller_ ; }
+	    MemBlockDSL& column( const std::string& column_name, size_t offset );
+	    ReturnClass& end_memblock() { return *caller_ ; }
 
-	    GroupDSL<GroupDSL> group( size_t offset ) {
-		return GroupDSL<GroupDSL>( row_, this, static_cast<char*>(base_) + offset  );
+	    MemBlockDSL<MemBlockDSL> memblock( size_t offset ) {
+		return MemBlockDSL<MemBlockDSL>( row_, this, static_cast<char*>(base_) + offset  );
 	    }
 
 
@@ -162,7 +162,7 @@ namespace misFITS {
     class Row {
 
 	template<class ReturnClass>
-	friend class Entry::GroupDSL;
+	friend class Entry::MemBlockDSL;
 
     public:
 
@@ -177,8 +177,8 @@ namespace misFITS {
 	    return *this;
 	}
 
-	Entry::GroupDSL<Row> group( void* base ) {
-	    return Entry::GroupDSL<Row>( this, this, base );
+	Entry::MemBlockDSL<Row> memblock( void* base ) {
+	    return Entry::MemBlockDSL<Row>( this, this, base );
 	}
 
 	/////////////////////////
@@ -227,7 +227,7 @@ namespace misFITS {
 
 	template<class ReturnClass>
 	template< class T >
-	GroupDSL<ReturnClass>& GroupDSL<ReturnClass>::column( const std::string& column_name, size_t offset ) {
+	MemBlockDSL<ReturnClass>& MemBlockDSL<ReturnClass>::column( const std::string& column_name, size_t offset ) {
 	    const misFITS::ColumnInfo& ci ( row_->table->column( column_name ) );
 	    row_->push_back( std::make_shared< Entry::Column<T> >( ci, reinterpret_cast<T*>(static_cast<char*>(base_) + offset )) ) ;
 	    return *this;

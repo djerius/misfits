@@ -77,20 +77,24 @@ test_fiducial( misFITS::Row &row ) {
 	.column( "Xcol", &Xcol_bitstore )
 	.column( "Xcol", Xcol_array )
 	.column( "Xcol", &Xcol_vector )
-    	.group( &storage)
-    	.group( offsetof( Row, a ) )
-    	.column<int>( "Icol", offsetof( A, Icol ) )
-    	.column<short>( "Jcol", offsetof( A, Jcol ) )
-    	.endgroup()
-    	.group( offsetof( Row, b ) )
-        .column<float>( "Ecol", offsetof( B, Ecol ) )
-        .column<double>( "Dcol", offsetof( B, Dcol ) )
-    	.endgroup()
-	.group( offsetof( Row, c ) )
-	.column<misFITS::BitStore>(  "Xcol", offsetof( C, Xcol_bitstore ) )
-	.column< misFITS::byte_t > ( "Xcol", offsetof( C, Xcol_array ) )
-	.column< vector<misFITS::byte_t> > ( "Xcol", offsetof( C, Xcol_vector ) )
-	.endgroup()
+
+    	.memblock( &storage)
+	  .memblock( offsetof( Row, a ) )
+	    .column<int>( "Icol", offsetof( A, Icol ) )
+	    .column<short>( "Jcol", offsetof( A, Jcol ) )
+	  .end_memblock()
+
+	  .memblock( offsetof( Row, b ) )
+	    .column<float>( "Ecol", offsetof( B, Ecol ) )
+	    .column<double>( "Dcol", offsetof( B, Dcol ) )
+	  .end_memblock()
+
+	  .memblock( offsetof( Row, c ) )
+	    .column<misFITS::BitStore>(  "Xcol", offsetof( C, Xcol_bitstore ) )
+	    .column< misFITS::byte_t > ( "Xcol", offsetof( C, Xcol_array ) )
+	    .column< vector<misFITS::byte_t> > ( "Xcol", offsetof( C, Xcol_vector ) )
+	  .end_memblock()
+	.end_memblock()
     	;
 
 
