@@ -99,18 +99,6 @@ check_PROGRAMS		+= %D%/table
 
 ##############################
 
-check_PROGRAMS		+= %D%/temptable
-
-%C%_temptable_SOURCES	=			\
-			%D%/temptable.cc	\
-			%D%/util.hpp
-
-%C%_temptable_LDADD	= $(LDADD_%C%_TESTS)
-%C%_temptable_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
-%C%_temptable_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
-
-##############################
-
 check_PROGRAMS		+= %D%/reopen
 
 %C%_reopen_SOURCES	=			\

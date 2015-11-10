@@ -4,8 +4,6 @@ AT_SETUP([tables])
 
 AT_CHECK(table,,[ignore])
 
-AT_CHECK(temptable,,[ignore])
-
 AT_CLEANUP
 
 AT_SETUP([row])
