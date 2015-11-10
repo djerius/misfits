@@ -24,12 +24,11 @@
 #ifndef misFITS_misCONFIG_H
 #define misFITS_misCONFIG_H
 
-
 #include <memory>
 
-#ifdef HAVE_BOOST_BASE
-
 #ifndef HAVE_STD__SHARED_PTR
+
+#ifdef HAVE_BOOST_BASE
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
@@ -41,10 +40,18 @@ namespace std {
 
 #define HAVE_STD__SHARED_PTR
 
+#else
+
+#error require Boost for std::shared_ptr
+
+#endif // HAVE_BOOST_BASE
+
 #endif	// ! HAVE_STD__SHARED_PTR
 
 
 #ifndef HAVE_STD__UNIQUE_PTR
+
+#ifdef HAVE_BOOST_BASE
 
 #include <boost/move/unique_ptr.hpp>
 
@@ -52,10 +59,18 @@ namespace std {
     using boost::movelib::unique_ptr;
 }
 
+#else
+
+#error require Boost for std::unique_ptr
+
+#endif // HAVE_BOOST_BASE
+
 #endif	// ! HAVE_STD__UNIQUE_PTR
 
 
 #ifndef HAVE_STD__WEAK_PTR
+
+#ifdef HAVE_BOOST_BASE
 
 #include <boost/weak_ptr.hpp>
 
@@ -63,10 +78,19 @@ namespace std {
     using boost::weak_ptr;
 }
 
+#else
+
+#error require Boost for std::weak_ptr
+
+#endif // HAVE_BOOST_BASE
+
 #endif // ! HAVE_STD__WEAK_PTR
 
 
 #ifndef HAVE_STD__ENABLE_SHARED_FROM_THIS
+
+#ifdef HAVE_BOOST_BASE
+
 
 #include <boost/enable_shared_from_this.hpp>
 
@@ -78,9 +102,14 @@ namespace std {
 // boost has this
 #define HAVE_STD__WEAK_FROM_THIS
 
-#endif // ! HAVE_STD__ENABLE_SHARED_FROM_THIS
+#else
+
+#error require Boost for std::enable_shared_from_this
 
 #endif // HAVE_BOOST_BASE
+
+
+#endif // ! HAVE_STD__ENABLE_SHARED_FROM_THIS
 
 
 #endif  // ! misFITS_misCONFIG_H
