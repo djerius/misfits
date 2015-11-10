@@ -78,6 +78,17 @@ check_PROGRAMS		+= %D%/read_row
 
 ##############################
 
+check_PROGRAMS		+= %D%/write_row
+
+%C%_write_row_SOURCES	=			\
+			%D%/write_row.cc
+
+%C%_write_row_LDADD	= $(LDADD_%C%_TESTS)
+%C%_write_row_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_write_row_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
 check_PROGRAMS		+= %D%/writeable
 
 %C%_writeable_SOURCES	=			\
