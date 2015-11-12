@@ -51,6 +51,8 @@ namespace misFITS {
 	CFITSIO( int status);
 	const char* what() const  throw () ;
 
+	int status () { return status_; }
+
     private:
 	char error[41];
 	int status_;
