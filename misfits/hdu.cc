@@ -50,8 +50,16 @@ namespace misFITS {
 
     void HDU::refresh() {
 
-	extname = file->read_key<std::string>( "EXTNAME").value;
+	extver = 1;
 
+	try {
+	    extname = file->read_key<std::string>( "EXTNAME" ).value;
+	    extver  = file->read_key<int>( "EXTVER" ).value;
+	}
+	catch ( Exception::CFITSIO& e ) {
+	    if (e.status() != KEY_NO_EXIST)
+		throw e;
+	}
     }
 
 

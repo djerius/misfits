@@ -39,6 +39,7 @@ namespace misFITS {
     public:
 
 	std::string extname;
+	int extver;
 	int hdu_num;
 
 	own_or_observe::ptr<File> file;
