@@ -43,6 +43,8 @@ namespace misFITS {
 
 	own_or_observe::ptr<File> file;
 
+	virtual ~HDU() {}
+
     protected:
 
 
