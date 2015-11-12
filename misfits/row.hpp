@@ -167,7 +167,16 @@ namespace misFITS {
     public:
 
 	bool read();
+	bool read( LONGLONG row ) {
+	    idx( row );
+	    return read();
+	}
+
 	void write();
+	void write( LONGLONG row ) {
+	    idx( row );
+	    write();
+	}
 
 	const ColumnInfo& colinfo( int colnum ) { return table->colinfo( colnum ); }
 	const ColumnInfo& colinfo( const std::string& name ) { return table->colinfo( name ); }
@@ -209,6 +218,10 @@ namespace misFITS {
 	    auto_advance_ = flag;
 	    return auto_advance_;
 	}
+
+	int num_columns() const { return entries.size(); }
+
+	LONGLONG num_rows() const { return table->num_columns() ; }
 
     private :
 	own_or_observe::ptr<Table> table;

@@ -148,6 +148,17 @@ TEST_F( ReadTest, Cursors ) {
     r2.read();
     ASSERT_EQ( 4, r2.idx() );
     EXPECT_EQ( r2.idx(), Icol );
+
+    // read specific rows
+    r1.read( 1 );
+    ASSERT_EQ( 2, r1.idx() );
+    EXPECT_EQ( r1.idx(), Icol );
+
+    r2.read( 3 );
+    ASSERT_EQ( 4, r2.idx() );
+    EXPECT_EQ( r2.idx(), Icol );
+
+
 }
 
 TEST_F( ReadTest, CopyRow ) {

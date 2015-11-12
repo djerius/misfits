@@ -99,3 +99,63 @@ TEST( WriteRow, Copy ) {
 
 }
 
+TEST( WriteRow, NoAdvance ) {
+
+    // open for reading
+    misFITS::File input( TEST_FITS_QFILENAME );
+
+    // open for writing
+    misFITS::FilePtr output( misFITS::open<misFITS::Entity::Memory>() );
+
+    input.copy_hdu( output );
+
+    misFITS::TablePtr otable( output->table() );
+
+    struct Row {
+	int Icol;
+	short Jcol;
+	float Ecol;
+	double Dcol;
+	misFITS::BitSet Xcol;
+    } data;
+
+
+    misFITS::Row irow( input );
+    misFITS::Row orow( otable );
+
+    irow.auto_advance( false );
+    orow.auto_advance( false );
+
+    irow.memblock( &data )
+    	.column<int>( "Icol", offsetof( Row, Icol ) )
+    	.column<short>( "Jcol", offsetof( Row, Jcol ) )
+        .column<float>( "Ecol", offsetof( Row, Ecol ) )
+        .column<double>( "Dcol", offsetof( Row, Dcol ) )
+        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
+	.end_memblock();
+
+    orow.memblock( &data )
+    	.column<int>( "Icol", offsetof( Row, Icol ) )
+    	.column<short>( "Jcol", offsetof( Row, Jcol ) )
+        .column<float>( "Ecol", offsetof( Row, Ecol ) )
+        .column<double>( "Dcol", offsetof( Row, Dcol ) )
+        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
+	.end_memblock();
+
+    LONGLONG nrows = irow.num_rows();
+
+    for ( LONGLONG idx = nrows ; idx ; --idx ) {
+
+	irow.read( idx );
+	ASSERT_EQ( idx, irow.idx() );
+
+	orow.write( idx );
+	ASSERT_EQ( idx, orow.idx() );
+
+    }
+
+    misFITS::Row test( otable );
+    test_fiducial( test );
+
+}
+
