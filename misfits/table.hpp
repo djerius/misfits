@@ -39,7 +39,7 @@ namespace misFITS {
 
     public:
 
-	Table( const std::string& );
+	Table( const std::string&, int extver = 1 );
 	Table( WeakFilePtr file );
 	Table( File& file );
 

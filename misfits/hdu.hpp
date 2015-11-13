@@ -47,11 +47,10 @@ namespace misFITS {
 
     protected:
 
-
 	HDU( File& file);
 	HDU( WeakFilePtr& file);
 	HDU( SharedFilePtr& file);
-	HDU( const std::string& extname);
+	HDU( );
 	void refresh();
 
     };

@@ -48,7 +48,14 @@ namespace misFITS {
 	refresh();
     }
 
-    Table::Table( const std::string& extname ) : HDU( extname ) {
+    Table::Table( const std::string& extname, int extver ) {
+
+	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file->fptr(),
+						     BinaryTable,
+						     0, 0, NULL, NULL, NULL,
+						     extname.c_str(), &status  ) );
+	hdu_num = file->hdu_num();
+
 	refresh();
     }
 
@@ -69,8 +76,6 @@ namespace misFITS {
 	columns.clear();
 	for ( int colnum = 1 ; colnum <= ncols ; colnum++ )
 	    columns.push_back( ColumnInfo( *file(), colnum ) );
-
-
     }
 
 

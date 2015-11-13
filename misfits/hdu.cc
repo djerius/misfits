@@ -39,17 +39,13 @@ namespace misFITS {
 	refresh();
     }
 
-    HDU::HDU( const std::string& extname) {
+    HDU::HDU( ) {
 
 	FilePtr fp( open<Entity::File,  Mode::Create>( "mem://" ) );
 	file.set<own_or_observe::owned>( fp );
 
-	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file->fptr(),
-						     BINARY_TBL,
-						     0, 0, NULL, NULL, NULL,
-						     extname.c_str(), &status  ) );
-	hdu_num = file->hdu_num();
-	refresh();
+	hdu_num = 1;
+
     }
 
     void HDU::refresh() {
