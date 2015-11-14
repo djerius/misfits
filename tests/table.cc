@@ -56,6 +56,7 @@ TEST( TableTest, CreateTable ) {
     misFITS::Table table( "MYEXTENT" );
 
     EXPECT_EQ( "MYEXTENT",  table.extname );
+    EXPECT_EQ( 1,  table.extver );
 
     EXPECT_EQ( 0, table.num_columns() );
 
