@@ -66,7 +66,6 @@ namespace misFITS {
 	void delete_column( int colnum );
 	void delete_column( const std::string& name );
 
-
 	misFITS::Row row();
 
     protected:
