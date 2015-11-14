@@ -244,7 +244,7 @@ namespace misFITS {
 
 	HDU_Type movabs_hdu( int hdu_num ) const;
 	HDU_Type movrel_hdu( int nmove ) const;
-	void movnam_hdu( HDU_Type hdu_type, const std::string&extname, int extver = 0) const;
+	void movnam_hdu( HDU_Type hdu_type, const std::string&extname, int extver = 1) const;
 	int get_num_hdus() const;
 	int hdu_num() const;
 	HDU_Type hdu_type() const;
