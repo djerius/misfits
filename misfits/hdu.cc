@@ -45,21 +45,12 @@ namespace misFITS {
 	file.set<own_or_observe::owned>( fp );
 
 	hdu_num = 1;
-
     }
 
     void HDU::refresh() {
 
-	extver = 1;
-
-	try {
-	    extname = file->read_key<std::string>( "EXTNAME" ).value;
-	    extver  = file->read_key<int>( "EXTVER" ).value;
-	}
-	catch ( Exception::CFITSIO& e ) {
-	    if (e.status() != KEY_NO_EXIST)
-		throw e;
-	}
+	extname = file->read_key<std::string>( "EXTNAME", "" ).value;
+	extver  = file->read_key<int>( "EXTVER", 1 ).value;
     }
 
 }

@@ -348,25 +348,48 @@ namespace misFITS {
 
     }
 
+    //-----------------------------------------
+
+    template< typename T>
+    static Keyword<T>
+    make_keyword( const string& keyname,
+		  const T& value,
+		  const T& default_value,
+		  const string& comment,
+		  int status ) {
+
+	bool defined = status == 0;
+	return Keyword<T>( keyname,
+			   defined ? value : default_value,
+			   comment,
+			   defined
+			   );
+
+    }
+
+#define RETURN_KEYWORD( T, expr )					\
+    do {								\
+	int status = 0;							\
+	expr;								\
+	if (    status							\
+             && status != VALUE_UNDEFINED				\
+	     && status != KEY_NO_EXIST )				\
+	    throw Exception::CFITSIO (status );				\
+	return make_keyword<T>( keyname, value,				\
+				default_value, comment, status );	\
+    } while (0)
+
     Keyword<string>
     File::read_keyword( const string& keyname, const string& default_value ) const {
 
 	char value[FITSCARDLEN] = { '\0' };
 	char comment[FITSCARDLEN] = { '\0' };
 
-	int status = 0;
-
-	if ( fits_read_keyword( fptr(), keyname.c_str(),
-				value, comment, &status )
-	     && status != VALUE_UNDEFINED )
-	    throw Exception::CFITSIO( status );
-
-	bool defined = status != VALUE_UNDEFINED;
-	return Keyword<string>( keyname,
-				defined ? value : default_value,
-				comment,
-				defined
-				);
+	RETURN_KEYWORD
+	    ( string,
+	      fits_read_keyword( fptr(), keyname.c_str(),
+				 value, comment, &status )
+	      );
     }
 
     //-----------------------------------------
@@ -375,21 +398,15 @@ namespace misFITS {
     File::read_keyn( int keynum, const string& default_value ) const {
 
 	char keyname[FITSCARDLEN] = { '\0' };
-	char value[FITSCARDLEN] = { '\0' };
+	char   value[FITSCARDLEN] = { '\0' };
 	char comment[FITSCARDLEN] = { '\0' };
 
-	int status = 0;
+	RETURN_KEYWORD
+	    ( string,
+	      fits_read_keyn( fptr(), keynum,
+			      keyname, value, comment, &status )
+	      );
 
-	if ( fits_read_keyn( fptr(), keynum,
-			     keyname, value, comment, &status )
-	     && status != VALUE_UNDEFINED )
-	    throw Exception::CFITSIO( status );
-
-	bool defined = status != VALUE_UNDEFINED;
-	return Keyword<string>( keyname,
-				defined ? value : default_value,
-				comment,
-				defined );
     }
 
     //-----------------------------------------
@@ -398,26 +415,16 @@ namespace misFITS {
     Keyword<string>
     File::read_key( const string& keyname, const string& default_value ) const {
 
-	char value[FITSCARDLEN] = { '\0' };
+	char   value[FITSCARDLEN] = { '\0' };
 	char comment[FITSCARDLEN] = { '\0' };
 
-	int status = 0;
+	RETURN_KEYWORD
+	    ( string,
+	      fits_read_key( fptr(), SC_STRING,
+			     keyname.c_str(),
+			     &value, comment, &status )
+	      );
 
-	if ( fits_read_key( fptr(),
-			    SC_STRING,
-			    keyname.c_str(),
-			    &value,
-			    comment,
-			    &status )
-	     && status != VALUE_UNDEFINED )
-	    throw Exception::CFITSIO( status );
-
-	bool defined = status != VALUE_UNDEFINED;
-	return Keyword<string>( keyname,
-				defined ? value : default_value,
-				comment,
-				defined
-				);
     }
 
     template<typename T>
@@ -426,19 +433,15 @@ namespace misFITS {
 	T value = default_value;
 	char comment[FITSCARDLEN] = { '\0' };
 
-	int status = 0;
-
-	if ( fits_read_key( fptr(),
-			    StorageCode<T>::type,
-			    keyname.c_str(),
-			    &value,
-			    comment,
-			    &status )
-	     && status != VALUE_UNDEFINED )
-	    throw Exception::CFITSIO( status );
-
-	bool defined = status != VALUE_UNDEFINED;
-	return Keyword<T>( keyname, value, comment, defined );
+	RETURN_KEYWORD
+	    ( T,
+	      fits_read_key( fptr(),
+			     StorageCode<T>::type,
+			     keyname.c_str(),
+			     &value,
+			     comment,
+			     &status )
+	      );
     }
 
 
@@ -447,9 +450,6 @@ namespace misFITS {
 
 
     misFITS_INSTANTIATE_OVER_STORAGE_TYPES(READ_KEY)
-
-
-
 
     //-----------------------------------------
 
