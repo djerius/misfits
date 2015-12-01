@@ -68,24 +68,15 @@ namespace misFITS {
 	static int default_value () { return 0; }
     };
 
-    template <> struct StorageCode<long>           {
-	static const StorageType type = SC_LONG;
-	static long default_value () { return 0; }
-    };
-
-    template <> struct StorageCode<short>          {
-	static const StorageType type = SC_SHORT;
-	static short default_value () { return 0; }
-    };
-
-    template <> struct StorageCode<unsigned char>  {
-	static const StorageType type = SC_BYTE;
-	static unsigned char default_value () { return 0; }
-    };
-
     template <> struct StorageCode<unsigned int>   {
 	static const StorageType type = SC_UINT;
 	static unsigned int default_value () { return 0; }
+    };
+
+
+    template <> struct StorageCode<long>           {
+	static const StorageType type = SC_LONG;
+	static long default_value () { return 0; }
     };
 
     template <> struct StorageCode<unsigned long>  {
@@ -93,9 +84,19 @@ namespace misFITS {
 	static unsigned long default_value () { return 0; }
     };
 
+    template <> struct StorageCode<short>          {
+	static const StorageType type = SC_SHORT;
+	static short default_value () { return 0; }
+    };
+
     template <> struct StorageCode<unsigned short> {
 	static const StorageType type = SC_USHORT;
 	static unsigned short default_value () { return 0; }
+    };
+
+    template <> struct StorageCode<unsigned char>  {
+	static const StorageType type = SC_BYTE;
+	static unsigned char default_value () { return 0; }
     };
 
     template <> struct StorageCode<std::string> {
