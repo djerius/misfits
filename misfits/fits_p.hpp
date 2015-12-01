@@ -3,7 +3,7 @@
 
 #include <boost/preprocessor/seq.hpp>
 
-#define misFITS_STORAGE_TYPES (double)(float)(int)(long)(short)(unsigned char)(unsigned int)(unsigned long)(unsigned short)
+#define misFITS_STORAGE_TYPES (double)(float)(int)(unsigned int)(long)(unsigned long)(short)(unsigned short)(char)(unsigned char)
 
 #define misFITS_INSTANTIATE_OVER_STORAGE_TYPES(EXPR)  BOOST_PP_SEQ_FOR_EACH(EXPR, ~, misFITS_STORAGE_TYPES )
 

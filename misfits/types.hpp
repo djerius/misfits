@@ -94,6 +94,11 @@ namespace misFITS {
 	static unsigned short default_value () { return 0; }
     };
 
+    template <> struct StorageCode<char>  {
+	static const StorageType type = SC_BYTE;
+	static unsigned char default_value () { return 0; }
+    };
+
     template <> struct StorageCode<unsigned char>  {
 	static const StorageType type = SC_BYTE;
 	static unsigned char default_value () { return 0; }
