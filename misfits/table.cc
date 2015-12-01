@@ -112,58 +112,14 @@ namespace misFITS {
 
     Table&
     Table::add( const std::string& ttype,
-		ColumnType typecode,
+		ColumnType column_type,
 		const Extent& extent,
 		int colnum ) {
-
-	LONGLONG repeat;
-	LONGLONG width = 1;
-
-	LONGLONG nelem = extent.nelem();
-
-	switch( typecode ) {
-
-	case CT_BIT:
-	    repeat = nelem * 8;
-	    break;
-
-	case CT_STRING:
-	    repeat = 1;
-	    width = 1;
-	    break;
-
-	default:
-	    repeat = nelem;
-	}
-
-	ostringstream tform;
-	if ( repeat > 1 )
-	    tform << repeat;
-	tform << ColumnCode::code[typecode];
-
-	if ( width > 1 )
-	    tform << width ;
 
 	if ( colnum == 0 )
 	    colnum = num_columns() + 1;
 
-	misFITS_CHECK_CFITSIO_EXPR
-	    (
-	     fits_insert_col(file()->fptr(),
-			     colnum,
-			     const_cast<char*>(ttype.c_str()),
-			     const_cast<char*>(tform.str().c_str()),
-			     &status)
-	     );
-
-	LONGLONG* extentp = const_cast<LONGLONG*>(&(extent()[0]));
-	misFITS_CHECK_CFITSIO_EXPR(
-	fits_write_tdimll( file()->fptr(),
-			   colnum,
-			   extent.naxes(),
-			   extentp,
-			   &status )
-	    );
+	ColumnInfo( ttype, column_type, extent, colnum ).insert( *file() );
 
 	refresh();
 

@@ -21,6 +21,7 @@
 
 #include <numeric>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -148,6 +149,92 @@ namespace misFITS {
 	init( file );
     }
 
+    ColumnInfo::ColumnInfo( const std::string& type, ColumnType column_type_, const std::string& unit,
+			    const Extent& extent_, int colnum_ ) :
+	ttype( type ), tunit( unit), column_type( column_type_), extent( extent_ ), colnum( colnum_ ) {
 
+	// width depends upon field type; this seems to be the only
+	// means to get it from CFITSIO
+	{
+	    char tform_t[2];
+	    tform_t[0] = ColumnCode::code[column_type][0];
+	    tform_t[1] = '\0';
 
+	    misFITS_CHECK_CFITSIO_EXPR
+		( fits_binary_tformll( tform_t, NULL, NULL, &width, &status )
+		  );
+	}
+
+	repeat = nelem_ = extent.nelem();
+
+	switch( column_type ) {
+
+	case CT_BIT:
+	    repeat = nelem_;
+	    nbytes = nelem_ / 8;
+	    if ( nbytes * 8  < nelem_ ) nbytes += 1;
+	    break;
+
+	case CT_STRING:
+	    width = extent[0];
+	    extent.erase(extent.begin());
+	    nelem_ = extent.nelem();
+
+	    // FALL THROUGH
+
+	default:
+	    nbytes = nelem_ * width;
+	}
+
+    }
+
+    void
+    ColumnInfo::insert( const misFITS::File& file ) {
+
+	ostringstream tform;
+	if ( repeat > 1 )
+	    tform << repeat;
+
+	tform << ColumnCode::code[column_type];
+
+	if ( width > 1 )
+	    tform << width;
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_insert_col(file.fptr(),
+			     colnum,
+			     const_cast<char*>(ttype.c_str()),
+			     const_cast<char*>(tform.str().c_str()),
+			     &status)
+	     );
+
+	if ( CT_STRING == column_type ) {
+
+	    Extent t_extent(extent);
+	    t_extent.insert( t_extent.begin(), width );
+
+	    misFITS_CHECK_CFITSIO_EXPR
+		(
+		 fits_write_tdimll( file.fptr(),
+				    colnum,
+				    t_extent.naxes(),
+				    const_cast<LONGLONG*>(&(t_extent[0])),
+				    &status )
+		 );
+
+	}
+	else {
+	    misFITS_CHECK_CFITSIO_EXPR
+		(
+		 fits_write_tdimll( file.fptr(),
+				    colnum,
+				    extent.naxes(),
+				    const_cast<LONGLONG*>(&(extent[0])),
+				    &status )
+		 );
+
+	}
+
+    }
 }
