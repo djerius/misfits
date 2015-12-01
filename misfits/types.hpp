@@ -116,6 +116,8 @@ namespace misFITS {
     template <> struct NativeType<SC_USHORT> { typedef unsigned short  storage_type; };
 
 
+    // these must be listed such that the last entry for a valid
+    // CFITSIO enum is the largest
     enum ColumnType {
 	CT_BIT 	       = TBIT,
 	CT_BYTE        = TBYTE,
@@ -128,7 +130,9 @@ namespace misFITS {
 	CT_FLOAT       = TFLOAT,
 	CT_DOUBLE      = TDOUBLE,
 	CT_COMPLEX     = TCOMPLEX,
-	CT_DBL_COMPLEX = TDBLCOMPLEX
+	CT_DBL_COMPLEX = TDBLCOMPLEX,
+	CT_USHORT,
+	CT_ULONG
     };
 
     class ColumnCode {

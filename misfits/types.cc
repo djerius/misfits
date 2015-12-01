@@ -40,7 +40,8 @@ namespace misFITS {
 	t[CT_DOUBLE]       = "D";
 	t[CT_COMPLEX]      = "C";
 	t[CT_DBL_COMPLEX]  = "M";
-
+	t[CT_USHORT]       = "U";
+	t[CT_ULONG]        = "V";
 	return t;
     }
 
