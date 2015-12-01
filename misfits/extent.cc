@@ -40,68 +40,38 @@ namespace misFITS {
      LONGLONG e8,
      LONGLONG e9 ) {
 
-
-	if ( e9 > 1 ) extent.insert( extent.begin(), e9 );
-	if ( e8 > 1 ) extent.insert( extent.begin(), e8 );
-	if ( e7 > 1 ) extent.insert( extent.begin(), e7 );
-	if ( e6 > 1 ) extent.insert( extent.begin(), e6 );
-	if ( e5 > 1 ) extent.insert( extent.begin(), e5 );
-	if ( e4 > 1 ) extent.insert( extent.begin(), e4 );
-	if ( e3 > 1 ) extent.insert( extent.begin(), e3 );
-	if ( e2 > 1 ) extent.insert( extent.begin(), e2 );
-	if ( e1 > 1 ) extent.insert( extent.begin(), e1 );
-
-	extent.insert( extent.begin(), e0 );
-
-    }
-
-    Extent&
-    Extent::resize(int size ) {
-	extent.resize( size );
-	return *this;
-    }
-
-    Extent&
-    Extent::clear( ) {
-	extent.clear();
-	return *this;
-    }
-
-    Extent&
-    Extent::add( LONGLONG e ) {
-	extent.push_back( e );
-	return *this ;
+	push_back( e0 );
+	if ( e1 > 1 ) push_back( e1 );
+	if ( e2 > 1 ) push_back( e2 );
+	if ( e3 > 1 ) push_back( e3 );
+	if ( e4 > 1 ) push_back( e4 );
+	if ( e5 > 1 ) push_back( e5 );
+	if ( e6 > 1 ) push_back( e6 );
+	if ( e7 > 1 ) push_back( e7 );
+	if ( e8 > 1 ) push_back( e8 );
     }
 
     LONGLONG
     Extent::nelem() const {
-	return std::accumulate( extent.begin(), extent.end(),
+	return std::accumulate( begin(), end(),
 				1,
 				std::multiplies<LONGLONG>()
 				);
     }
 
-
-    int
-    Extent::naxes() const {
-	return extent.size();
-    }
-
-
     bool operator == ( const Extent& a0,
 		       const Extent& b0 ) {
 
-	ExtentT a( a0() );
-	ExtentT b( b0() );
+	Extent a( a0 );
+	Extent b( b0 );
 
-	ExtentT::iterator a_end = remove( a.begin(), a.end(), 1 );
-	ExtentT::iterator b_end = remove( b.begin(), b.end(), 1 );
+	Extent::iterator a_end = remove( a.begin(), a.end(), 1 );
+	Extent::iterator b_end = remove( b.begin(), b.end(), 1 );
 
 	a.resize( a_end - a.begin() );
 	b.resize( b_end - b.begin() );
 
 	return a == b;
     }
-
 
 }

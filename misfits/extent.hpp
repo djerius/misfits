@@ -25,13 +25,20 @@
 #include <misfits/fits.hpp>
 #include <misfits/table.hpp>
 
+#include <vector>
+
 namespace misFITS {
 
-    typedef std::vector<LONGLONG> ExtentT;
+    class Extent : private std::vector<LONGLONG> {
 
-    class Extent {
+	friend class ColumnInfo;
+	friend bool operator == ( const Extent& a0, const Extent& b0 );
+
 
     public:
+
+	using std::vector<LONGLONG>::operator[];
+
 	Extent( LONGLONG e0 = 1,
 		LONGLONG e1 = 1,
 		LONGLONG e2 = 1,
@@ -43,16 +50,9 @@ namespace misFITS {
 		LONGLONG e8 = 1,
 		LONGLONG e9 = 1 );
 
-	Extent& add( LONGLONG e );
-	Extent& clear();
-	Extent& resize( int size);
-
 	LONGLONG nelem() const;
-	int naxes() const;
-	const ExtentT& operator () () const { return extent; }
+	int naxes() const { return static_cast<int>(size()) ; }
 
-    private:
-	ExtentT extent;
     };
 
     bool operator == ( const Extent& a0, const Extent& b0 );
