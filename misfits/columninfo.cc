@@ -42,7 +42,9 @@ namespace misFITS {
 
 	char ttype_t[80];
 	char tunit_t[80];
-	char typechar_t[80];
+
+	if ( file.hdu_type() != BinaryTable )
+	    throw Exception::Assert( "only Binary Tables are supported" );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_bcolparmsll( file.fptr(), colnum,
