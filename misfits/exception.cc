@@ -20,11 +20,28 @@
 // -->8-->8-->8-->8--
 
 #include <misfits/fits.hpp>
+#include <cstring>
 
 namespace misFITS {
 
     Exception::CFITSIO::CFITSIO( int status ) : status_( status ) {
+
 	fits_get_errstatus( status_, error );
+
+	char* ptr = error + std::strlen( error );
+	ptr += strlen( ptr );
+	*ptr = '\n';
+	*(++ptr) = '\0';
+
+	bool more;
+
+	do {
+	    more = fits_read_errmsg( ptr ) ;
+	    ptr += strlen( ptr );
+	    *ptr = '\n';
+	    *(++ptr) = '\0';
+ 	} while ( more );
+
     }
 
     const char*

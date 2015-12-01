@@ -73,7 +73,7 @@ namespace misFITS {
 	int status () { return status_; }
 
     private:
-	char error[41];
+	char error[26*82];
 	int status_;
     };
 
