@@ -48,32 +48,63 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_bcolparmsll( file.fptr(), colnum,
-				    ttype_t, tunit_t, typechar_t,
-				    NULL, NULL, NULL, NULL, NULL, &status )
+				    ttype_t, tunit_t,
+				    NULL, // typechar
+				    NULL, // repeat
+				    NULL, // scale,
+				    NULL, // zero,
+				    NULL, // nulval,
+				    NULL, // tdisp,
+				    &status )
 	      );
 
 	tunit = string( tunit_t );
 	ttype = string( ttype_t );
-	string typechar( typechar_t );
 
 	int typecode;
 
+#if SIZEOF_LONG == SIZEOF_LONGLONG
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_coltypell( file.fptr(), colnum,
+	    ( fits_get_coltypell( file.fptr(),
+				  colnum,
 				  &typecode,
 				  &repeat,
-				  &width,
+				  reinterpret_cast<LONGLONG*>(&width),
 				  &status )
 	      );
+#else
+	// fits_get_coltypell is anomolous in requiring a LONGLONG
+	// width. c.f. CFITSIO internals and other routines with a width parameter
+	LONGLONG twidth;
+	misFITS_CHECK_CFITSIO_EXPR
+	    ( fits_get_coltypell( file.fptr(),
+				  colnum,
+				  &typecode,
+				  &repeat,
+				  &twidth,
+				  &status )
+	      );
+	width = twidth;
+#endif // LONGLONG FUDGE
 
 	column_type = static_cast<ColumnType>(typecode);
 
-	// get cell extents
-	{
-	    int naxis;
-	    misFITS_CHECK_CFITSIO_EXPR
-		( fits_read_tdim( file.fptr(), colnum, 0, &naxis, NULL, &status )
-		  );
+	int naxis;
+	misFITS_CHECK_CFITSIO_EXPR
+	    ( fits_read_tdimll( file.fptr(), colnum, 0, &naxis, NULL, &status )
+	      );
+
+	// handle CFITSIO idiosyncracies with 'A' columns
+	if ( TSTRING == column_type && naxis == 1 ) {
+
+	    extent.resize(2);
+	    extent[0] = width;
+
+	    // N.B. CFITSIO sets width = repeat if no width is specified
+	    extent[1] = repeat / width ;
+
+	}
+	else {
 
 	    extent.resize(naxis);
 	    misFITS_CHECK_CFITSIO_EXPR
@@ -81,23 +112,28 @@ namespace misFITS {
 				    colnum,
 				    naxis,
 				    &naxis,
-				    const_cast<LONGLONG*>(&(extent()[0])),
+				    &extent[0],
 				    &status )
 		  );
 	}
 
-	LONGLONG nelem_ = nelem();
 
-	// turn repeat count in bits into 8bit bytes.
-	switch ( typecode ) {
-
-	case TSTRING:
-	    // FIXME. this is confuuused.
-	    nelem_ = 1;
-	    width = 1;
-	    break;
+	if ( TSTRING == column_type ) {
+	    width = extent[0];
+	    extent.erase(extent.begin());
 	}
+	nelem_ = extent.nelem();
 
+	// the column width for TBIT is reported as 1 (byte), which is
+	// not useful in calculating the true number of bytes in the
+	// column
+	if ( TBIT == column_type ) {
+	    nbytes = nelem_ / 8;
+	    if ( nbytes * 8  < nelem_ ) nbytes += 1;
+	}
+	else {
+	    nbytes = nelem_ * width;
+	}
     }
 
 

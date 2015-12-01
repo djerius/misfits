@@ -34,10 +34,10 @@ namespace misFITS {
 	std::string ttype;
 	std::string tunit;
 	ColumnType  column_type;
-	LONGLONG width;
+	long width;
 	LONGLONG repeat;
 
-	LONGLONG nelem_; // this may be modified for TBIT
+	LONGLONG nbytes;
 
 	// the shape of the data in a cell
 	Extent extent;
@@ -64,10 +64,11 @@ namespace misFITS {
 
 	bool operator != ( const ColumnInfo& col ) const { return ! operator==( col ) ; }
 
-	LONGLONG nelem() const { return extent.nelem(); }
+	LONGLONG nelem() const { return nelem_; }
 
     private:
 	void init( const misFITS::File& file );
+	LONGLONG nelem_; // number of elements written to FITS header. may not be same read/written
 
 
     };
