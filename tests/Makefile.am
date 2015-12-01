@@ -120,3 +120,14 @@ check_PROGRAMS		+= %D%/reopen
 %C%_reopen_LDADD	= $(LDADD_%C%_TESTS)
 %C%_reopen_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
 %C%_reopen_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
+check_PROGRAMS		+= %D%/keywords
+
+%C%_keywords_SOURCES	=			\
+			%D%/keywords.cc
+
+%C%_keywords_LDADD	= $(LDADD_%C%_TESTS)
+%C%_keywords_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_keywords_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)

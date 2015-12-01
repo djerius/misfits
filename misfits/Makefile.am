@@ -14,6 +14,8 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/fits_p.hpp		\
 			%D%/hdu.cc		\
 			%D%/hdu.hpp		\
+			%D%/keyword.cc		\
+			%D%/keyword.hpp		\
 			%D%/row.cc		\
 			%D%/row.hpp		\
 			%D%/table.cc		\

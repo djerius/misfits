@@ -334,6 +334,20 @@ namespace misFITS {
 	return static_cast<HDU_Type>(hdutype);
     }
 
+    // Keywords
+
+    std::pair<int,int>
+    File::get_hdrpos()  {
+
+	int keysexist, keynum;
+	misFITS_CHECK_CFITSIO_EXPR
+	    ( fits_get_hdrpos( fptr(), &keysexist, &keynum, &status )
+	      );
+
+	return std::make_pair( keysexist, keynum );
+
+    }
+
     Keyword<string>
     File::read_keyword( const string& keyname, const string& default_value ) const {
 
@@ -347,13 +361,42 @@ namespace misFITS {
 	     && status != VALUE_UNDEFINED )
 	    throw Exception::CFITSIO( status );
 
+	bool defined = status != VALUE_UNDEFINED;
 	return Keyword<string>( keyname,
-				status == VALUE_UNDEFINED ? default_value : value,
-				comment );
+				defined ? value : default_value,
+				comment,
+				defined
+				);
     }
 
+    //-----------------------------------------
+
+    Keyword<string>
+    File::read_keyn( int keynum, const string& default_value ) const {
+
+	char keyname[FITSCARDLEN] = { '\0' };
+	char value[FITSCARDLEN] = { '\0' };
+	char comment[FITSCARDLEN] = { '\0' };
+
+	int status = 0;
+
+	if ( fits_read_keyn( fptr(), keynum,
+			     keyname, value, comment, &status )
+	     && status != VALUE_UNDEFINED )
+	    throw Exception::CFITSIO( status );
+
+	bool defined = status != VALUE_UNDEFINED;
+	return Keyword<string>( keyname,
+				defined ? value : default_value,
+				comment,
+				defined );
+    }
+
+    //-----------------------------------------
+
     template<>
-    Keyword<string> File::read_key( const string& keyname, const string& default_value ) const {
+    Keyword<string>
+    File::read_key( const string& keyname, const string& default_value ) const {
 
 	char value[FITSCARDLEN] = { '\0' };
 	char comment[FITSCARDLEN] = { '\0' };
@@ -369,12 +412,13 @@ namespace misFITS {
 	     && status != VALUE_UNDEFINED )
 	    throw Exception::CFITSIO( status );
 
+	bool defined = status != VALUE_UNDEFINED;
 	return Keyword<string>( keyname,
-				status == VALUE_UNDEFINED ? default_value : value,
-				comment );
+				defined ? value : default_value,
+				comment,
+				defined
+				);
     }
-
-    //-----------------------------------------
 
     template<typename T>
     Keyword<T> File::read_key( const std::string& keyname, const T& default_value ) const {
@@ -393,7 +437,8 @@ namespace misFITS {
 	     && status != VALUE_UNDEFINED )
 	    throw Exception::CFITSIO( status );
 
-	return Keyword<T>( keyname, value, comment );
+	bool defined = status != VALUE_UNDEFINED;
+	return Keyword<T>( keyname, value, comment, defined );
     }
 
 
@@ -402,6 +447,90 @@ namespace misFITS {
 
 
     misFITS_INSTANTIATE_OVER_STORAGE_TYPES(READ_KEY)
+
+
+
+
+    //-----------------------------------------
+
+    template<>
+    void File::write_key<std::string>( const Keyword<std::string>& kw ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_key( fptr(),
+			     StorageCode<std::string>::type,
+			     kw.keyname.c_str(),
+			     const_cast<char *>(kw.value.c_str()),
+			     kw.comment.c_str(),
+			     &status
+			     )
+	     );
+    }
+
+    template<typename T>
+    void File::write_key( const Keyword<T>& kw ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_key( fptr(),
+			     StorageCode<T>::type,
+			     kw.keyname.c_str(),
+			     const_cast<T*>(&kw.value),
+			     kw.comment.c_str(),
+			     &status
+			     )
+	     );
+
+    }
+
+
+#define WRITE_KEY(r,d,T) \
+    template void File::write_key<T>( const Keyword<T>& kw ) const;
+
+
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(WRITE_KEY)
+
+    //-----------------------------------------
+
+    template<>
+    void File::update_key<std::string>( const Keyword<std::string>& kw ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_update_key( fptr(),
+			      StorageCode<std::string>::type,
+			      kw.keyname.c_str(),
+			      const_cast<char *>(kw.value.c_str()),
+			      kw.comment.c_str(),
+			      &status
+			     )
+	     );
+
+    }
+
+
+    template<typename T>
+    void File::update_key( const Keyword<T>& kw ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_update_key( fptr(),
+			      StorageCode<T>::type,
+			      kw.keyname.c_str(),
+			      const_cast<T*>(&kw.value),
+			      kw.comment.c_str(),
+			      &status
+			     )
+	     );
+
+    }
+
+
+#define UPDATE_KEY(r,d,T) \
+    template void File::update_key<T>( const Keyword<T>& kw ) const;
+
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(UPDATE_KEY)
 
     //-----------------------------------------
     template<typename T>

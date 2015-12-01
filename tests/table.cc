@@ -30,19 +30,6 @@ namespace Entity = misFITS::Entity;
 namespace Mode = misFITS::Mode;
 
 
-class ExistingTable : public ::testing::Test {
-
-protected :
-
-    void SetUp() {
-	gen_fits();
-	file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
-    }
-
-    misFITS::FilePtr file;
-};
-
-
 TEST_F( ExistingTable, MetaData ) {
 
     EXPECT_STREQ( TEST_FITS_QFILENAME, file->file.c_str());

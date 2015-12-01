@@ -25,11 +25,30 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 #include <boost/dynamic_bitset.hpp>
-
 #include <misfits/config.hpp>
+
+// forward declarations
+
+namespace misFITS {
+
+    class File;
+    typedef std::shared_ptr<File> SharedFilePtr;
+    typedef std::weak_ptr<File> WeakFilePtr;
+    typedef SharedFilePtr FilePtr;
+
+    class Table;
+    typedef std::shared_ptr<Table> SharedTablePtr;
+    typedef std::weak_ptr<Table> WeakTablePtr;
+    typedef SharedTablePtr TablePtr;
+
+
+}
+
 #include <misfits/types.hpp>
+#include <misfits/keyword.hpp>
 
 namespace misFITS {
 
@@ -88,18 +107,6 @@ namespace misFITS {
 	struct Create    {};
 	struct CreateOverWrite    {};
     }
-
-    // simple thing to return a keyword
-    template<typename T>
-    struct Keyword {
-	std::string keyname;
-	T value;
-	std::string comment;
-
-	Keyword( const std::string& keyname, const T& value, const std::string& comment ) :
-	    keyname(keyname), value(value), comment(comment ) { }
-    };
-
 
     // map open<Entity::XXX> to fits_open_XXX and fits_create_XXX
     namespace MapCFITSIO {
@@ -252,13 +259,22 @@ namespace misFITS {
 	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
 
 
+	std::pair<int,int> get_hdrpos( );
 
 	Keyword<std::string> read_keyword( const std::string& keyname,
 					   const std::string& default_value = "") const;
 
+	Keyword<std::string> read_keyn( int keynum, const std::string& default_value = "" ) const;
+
 	template<typename T>
 	Keyword<T> read_key( const std::string& keyname,
 			     const T& default_value = StorageCode<T>::default_value() ) const;
+
+	template<typename T>
+	void write_key( const Keyword<T>& kw) const;
+
+	template<typename T>
+	void update_key( const Keyword<T>& kw) const;
 
 
     };

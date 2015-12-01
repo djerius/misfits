@@ -16,10 +16,14 @@ AT_CHECK(writeable,,[ignore])
 
 AT_CLEANUP
 
-
 AT_SETUP([reopen])
 
 AT_CHECK(reopen,,[ignore])
 
 AT_CLEANUP
 
+AT_SETUP([keywords])
+
+AT_CHECK(keywords,,[ignore])
+
+AT_CLEANUP

@@ -77,6 +77,18 @@ gen_fits ( ) {
 	    TEST_FITS_QFILENAME ": couldn't create binary table" );
 
 
+    {
+	double D = 3.14159;
+	char *Ds = "3.14159";
+	die_if(  fits_write_key( fp, TDOUBLE, "PIE", &D, "DOUBLE",  &status ), TEST_FITS_QFILENAME ": couldnt create PIE keyword" );
+	die_if(  fits_write_key( fp, TSTRING, "PIESTR", Ds, "STRING",    &status ), TEST_FITS_QFILENAME ": couldnt create PIESTRING keyword"  );
+    }
+
+    {
+	int extver = 1;
+	die_if(  fits_write_key( fp, TINT, "EXTVER", &extver, "",  &status ), TEST_FITS_QFILENAME ": couldnt create EXTVER keyword" );
+    }
+
     int nbytes = NBITS / 8;
     if ( nbytes * 8 < NBITS ) nbytes++;
 
@@ -113,6 +125,7 @@ gen_fits ( ) {
 	die_if( fits_write_col( fp, TBYTE,   5, i, 1, nbytes, &X[0], &status ),
 		"writing column Xcol" );
     }
+
 
     die_if( fits_close_file( fp, &status ),
 	    TEST_FITS_QFILENAME ": couldn't close file" );

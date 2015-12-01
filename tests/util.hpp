@@ -29,4 +29,20 @@
 void die_if( int status, const char* prefix );
 void gen_fits( );
 
+#include "gtest/gtest.h"
+
+#include <misfits/fits.hpp>
+
+class ExistingTable : public ::testing::Test {
+
+protected :
+
+    void SetUp() {
+	gen_fits();
+	file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
+    }
+
+    misFITS::FilePtr file;
+};
+
 #endif // ! TEST_FITS_UTIL_H

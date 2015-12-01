@@ -99,6 +99,7 @@ namespace misFITS {
     };
 
     template <> struct StorageCode<std::string> {
+	static const StorageType type = SC_STRING;
 	static const char* default_value () { return ""; }
     };
 

@@ -44,6 +44,29 @@ namespace misFITS {
 
 	own_or_observe::ptr<File> file;
 
+	std::pair<int,int> get_hdrpos( ) { return file->get_hdrpos() ; }
+
+	Keyword<std::string> read_keyword( const std::string& keyname,
+					   const std::string& default_value = "") const {
+	    return file->read_keyword( keyname, default_value );
+	}
+
+	template<typename T>
+	Keyword<T> read_key( const std::string& keyname,
+			     const T& default_value = StorageCode<T>::default_value() ) const{
+	    return file->read_key( keyname, default_value );
+	}
+
+	template<typename T>
+	void write_key( const Keyword<T>& kw) const {
+	    return file->write_key( kw );
+	}
+
+	template<typename T>
+	void update_key( const Keyword<T>& kw) const {
+	    return file->update_key( kw );
+	}
+
 	virtual ~HDU() {}
 
     protected:
