@@ -38,8 +38,8 @@ TEST_F( ExistingTable, read ) {
     ASSERT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIE" ).value );
     ASSERT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIESTR" ).value );
 
-    ASSERT_FLOAT_EQ( 3.14159, file->read_key<float>( "PIE" ).value );
-    ASSERT_FLOAT_EQ( 3.14159, file->read_key<float>( "PIESTR" ).value );
+    ASSERT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIE" ).value );
+    ASSERT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIESTR" ).value );
 
     ASSERT_EQ( 3, file->read_key<int>( "PIE" ).value );
     ASSERT_EQ( 3, file->read_key<int>( "PIESTR" ).value );
