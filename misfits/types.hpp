@@ -27,7 +27,7 @@
 #include <string>
 #include <map>
 
-#include <cfitsio/fitsio.h>
+#include <fitsio.h>
 
 namespace misFITS {
 

@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#include <cfitsio/fitsio.h>
+#include <fitsio.h>
 
 #include "misfits/fits.hpp"
 #include "misfits/table.hpp"

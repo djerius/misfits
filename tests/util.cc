@@ -26,7 +26,7 @@
 
 #include <misfits/config.hpp>
 #include <boost/filesystem.hpp>
-#include <cfitsio/fitsio.h>
+#include <fitsio.h>
 
 using namespace std;
 

@@ -22,7 +22,7 @@
 #include <string>
 #include <iostream>
 
-#include <cfitsio/fitsio.h>
+#include <fitsio.h>
 
 #include <misfits/fits.hpp>
 #include <misfits/fits_p.hpp>

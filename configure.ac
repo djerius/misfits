@@ -128,7 +128,7 @@ AM_SUBST_NOTMAKE([PKGCONFIG_REQUIRES])
 AC_CHECK_SIZEOF([long])
 CPPFLAGS_SAVE=$CPPFLAGS
 CPPFLAGS=$MISFITS_CPPFLAGS
-AC_CHECK_SIZEOF([LONGLONG],[],[#include <cfitsio/fitsio.h>])
+AC_CHECK_SIZEOF([LONGLONG],[],[#include <fitsio.h>])
 CPPFLAGS=$CPPFLAGS_SAVE
 
 #---------------------------------------------------------
