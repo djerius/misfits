@@ -49,6 +49,7 @@ namespace misFITS {
 	if ( e6 > 1 ) push_back( e6 );
 	if ( e7 > 1 ) push_back( e7 );
 	if ( e8 > 1 ) push_back( e8 );
+	if ( e9 > 1 ) push_back( e9 );
     }
 
     LONGLONG
