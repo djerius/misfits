@@ -36,98 +36,187 @@ m4_include(prog_help.ac)
 #---------------------------------------------------------
 # Checks for typedefs, structures, and compiler characteristics.
 
+BOOST_REQUIRE
+BOOST_FILESYSTEM
+# shouldn't this be done for me?
+BOOST_FILESYSTEM_LIBS="$BOOST_FILESYSTEM_LIBS $BOOST_SYSTEM_LIBS"
 
-USE_BOOST=0
 STDCXX_CPPFLAGS=
-AC_CHECK_HEADERS([memory],
-	[
-	 AC_CHECK_TYPES( [uint8_t],
-			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_UINT8_T"],
-			 [USE_BOOST=1],
-			 [[#include <cstdint>]],
-	 )
-	 AC_CHECK_TYPES( [std__shared_ptr],
-			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__SHARED_PTR"],
-			 [USE_BOOST=1],
-			 [[#include <memory>
-			   typedef std::shared_ptr<int> std__shared_ptr;
-			   ]],
-	 )
-	 AC_CHECK_TYPES( [std__unique_ptr],
-			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__UNIQUE_PTR"],
-			 [USE_BOOST=1],
-			 [[#include <memory>
-			   typedef std::unique_ptr<int> std__unique_ptr;
-			   ]],
-         )
-	 AC_CHECK_TYPES( [std__weak_ptr],
-			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__WEAK_PTR"],
-			 [USE_BOOST=1],
-			 [[#include <memory>
-			   typedef std::weak_ptr<int> std__weak_ptr;
-			   ]],
-         )
-	 AC_CHECK_TYPES( [std__enable_shared_from_this],
-			 [STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__ENABLE_SHARED_FROM_THIS"],
-			 [USE_BOOST=1],
-			 [[#include <memory>
-			   typedef std::enable_shared_from_this<int> std__enable_shared_from_this;
-			 ]]
-	 )
-	 AC_MSG_CHECKING([for weak_from_this])
-	 AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
-			   [[#include <memory>
-			     class foo : public std::enable_shared_from_this<foo> {
-				std::weak_ptr<foo> get() { return weak_from_this() ; }
-			     };]],
-			   [[ int main( void ) { foo boo; return 0; } ]]
-			  )],
-			  [AC_MSG_RESULT([yes])
-			   STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_STD__WEAK_FROM_THIS"
-			  ],
-			  [AC_MSG_RESULT([no])]
-        )
-	]
+
+AC_CHECK_TYPES(
+    [uint8_t],
+    [UINT8_T=-DHAVE_STD__UINT8_T],
+    [
+     BOOST_FIND_HEADER(
+	 [boost/cstdint.hpp],
+	 [AC_MSG_ERROR([Cannot find support for uint8_t (either from compiler or Boost); cannot continue])],
+	 [UINT8_T=-DHAVE_BOOST__UINT8_T
+	  USE_BOOST_STDCXX=1
+	 ]
+     )
+    ],
+    [[#include <cstdint>]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $UINT8_T"
+
+
+AC_CHECK_TYPES(
+   [std__shared_ptr],
+   [SHARED_PTR=-DHAVE_STD__SHARED_PTR],
+   [
+     BOOST_FIND_HEADER(
+	 [boost/shared_ptr.hpp],
+	 [AC_MSG_ERROR([Cannot find support for shared_ptr (either from compiler or Boost); cannot continue])],
+	 [SHARED_PTR=-DHAVE_BOOST__SHARED_PTR
+	  USE_BOST=1
+         ]
+     )
+   ],
+   [[#include <memory>
+     typedef std::shared_ptr<int> std__shared_ptr;
+   ]],
+ )
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $SHARED_PTR"
+
+AC_CHECK_TYPES(
+    [std__weak_ptr],
+    [WEAK_PTR=-DHAVE_STD__WEAK_PTR],
+    [
+      BOOST_FIND_HEADER(
+	  [boost/weak_ptr.hpp],
+	  [AC_MSG_ERROR([Cannot find support for weak_ptr (either from compiler or Boost); cannot continue])],
+	  [WEAK_PTR=-DHAVE_BOOST__WEAK_PTR
+	   USE_BOOST_STDCXX=1
+	  ]
+      )
+    ],
+    [[#include <memory>
+      typedef std::weak_ptr<int> std__weak_ptr;
+      ]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $WEAK_PTR"
+
+AC_CHECK_TYPES(
+    [std__unique_ptr],
+    [UNIQUE_PTR=-DHAVE_STD__UNIQUE_PTR],
+    [
+      BOOST_FIND_HEADER(
+	  [boost/move/unique_ptr.hpp],
+	  [AC_MSG_ERROR([Cannot find support for unique_ptr (either from compiler or Boost); cannot continue])],
+	  [UNIQUE_PTR=-DHAVE_BOOST__UNIQUE_PTR
+	   USE_BOOST_STDCXX=1
+	  ]
+      )
+    ],
+    [[#include <memory>
+      typedef std::unique_ptr<int> std__unique_ptr;
+      ]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $UNIQUE_PTR"
+
+AC_CHECK_TYPES(
+    [std__enable_shared_from_this],
+    [ENABLE_SHARED_FROM_THIS=-DHAVE_STD__ENABLE_SHARED_FROM_THIS],
+    [
+      BOOST_FIND_HEADER(
+	  [boost/enable_shared_from_this.hpp],
+	  [AC_MSG_ERROR([Cannot find support for enable_shared_from_this (either from compiler or Boost); cannot continue])],
+	  [ENABLE_SHARED_FROM_THIS=-DHAVE_BOOST__ENABLE_SHARED_FROM_THIS
+	   USE_BOOST_STDCXX=1
+	  ]
+      )
+    ],
+    [[#include <memory>
+      typedef std::enable_shared_from_this<int> std__enable_shared_from_this;
+    ]]
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $ENABLE_SHARED_FROM_THIS"
+
+
+# available in Boost 1.58, but we can work around it if it's not available
+AC_MSG_NOTICE([checking for weak_from_this])
+AC_MSG_CHECKING([for std::weak_from_this])
+AC_COMPILE_IFELSE(
+    [
+      dnl might be in the standard ...
+      AC_LANG_PROGRAM(
+        [[#include <memory>
+	    class foo : public std::enable_shared_from_this<foo> {
+	       std::weak_ptr<foo> get() { return weak_from_this() ; }
+	    };]],
+	[[foo boo; return 0;]]
+      )
+    ],
+    [AC_MSG_RESULT([yes])
+     WEAK_FROM_THIS=-DHAVE_STD__WEAK_FROM_THIS
+    ],
+    [AC_MSG_RESULT([no])
+     dnl look for boost version only if we're not using the system enable_shared_from_this
+     AS_IF(
+         [test "$ENABLE_SHARED_FROM_THIS" != -DHAVE_STD__ENABLE_SHARED_FROM_THIS ],
+	 [
+	   AC_MSG_NOTICE([checking for boost::weak_from_this])
+	   BOOST_FIND_HEADER(
+	       [boost/enable_shared_from_this.hpp],
+	       [AC_MSG_RESULT([weak_from_this not found])],
+	       [
+		 CPPFLAGS_SAVE=$CPPFLAGS
+		 CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+		 AC_COMPILE_IFELSE(
+		     [
+		       AC_LANG_PROGRAM(
+			   [[#include <boost/enable_shared_from_this.hpp>
+			    class foo : public boost::enable_shared_from_this<foo> {
+			       boost::weak_ptr<foo> get() { return weak_from_this() ; }
+			    };]],
+			  [[foo boo; return 0; ]]
+		       )
+		     ],
+		     [AC_MSG_RESULT([found boost::weak_from_this])
+		      WEAK_FROM_THIS=-DHAVE_BOOST__WEAK_FROM_THIS
+		      USE_BOOST_STDCXX=1
+		     ],
+		     [AC_MSG_RESULT([didn't find boost::weak_from_this])]
+		 )
+		 CPPFLAGS=$CPPFLAGS_SAVE
+	       ]
+	    )
+         ]
+     )
+  ]
 )
 
-# this doesn't seem to work on OSX clang 7.0.0?
-AX_CXX_HAVE_REF()
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $WEAK_FROM_THIS"
+
+
+
+test "x$USE_BOOST_STDCXX" = 1 \
+     && STDCXX_CPPFLAGS="$BOOST_CPPFLAGS $STDCXX_CPPFLAGS"
 
 AX_AM_OVERRIDE_FINALIZE
 
-PKGCONFIG_REQUIRES="own_or_observe_ptr cfitsio boost_filesystem"
+AC_SUBST([PKGCONFIG_REQUIRES],["own_or_observe_ptr cfitsio"])
+AM_SUBST_NOTMAKE([PKGCONFIG_REQUIRES])
 
-AS_IF( [test $USE_BOOST = 1],
-       [ PKGCONFIG_REQUIRES="$PKGCONFIG_REQUIRES boost_base"
-         # technically we don't know that we have Boost until after
-         # PKG_CHECK_MODULES is called, but since we can't do anything
-         # without Boost, there's no harm in putting this here
-         STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_BOOST_BASE"
-       ],
-       [
-         # for now, need boost for bind and ref; can't quite get the
-         # code to work with clang 7.0.0's implementation
-         PKGCONFIG_REQUIRES="$PKGCONFIG_REQUIRES boost_base"
-         STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS -DHAVE_BOOST_BASE"
-       ]
-)
-
-# Use pkg-config to check for libraries.
-#e.g. PKG_CHECK_MODULES([raygen],[Exception >= 1.0.2])
 PKG_CHECK_MODULES([MISFITS],[$PKGCONFIG_REQUIRES])
 
-MISFITS_CPPFLAGS="$STDCXX_CPPFLAGS $MISFITS_CFLAGS"
-AC_SUBST([MISFITS_CPPFLAGS])
+AC_SUBST([PACKAGE_CPPFLAGS],["$STDCXX_CPPFLAGS $BOOST_CPPFLAGS $MISFITS_CFLAGS"])
+AC_SUBST([PACKAGE_LDFLAGS],["$BOOST_FILESYSTEM_LDFLAGS $MISFITS_LDFLAGS"])
+AC_SUBST([PACKAGE_LIBS],["$BOOST_FILESYSTEM_LIBS $MISFITS_LIBS"])
+
 
 AC_SUBST([PKGCONFIG_CPPFLAGS],[$STDCXX_CPPFLAGS])
 AM_SUBST_NOTMAKE([PKGCONFIG_CPPFLAGS])
 
-AC_SUBST([PKGCONFIG_REQUIRES])
-AM_SUBST_NOTMAKE([PKGCONFIG_REQUIRES])
+AC_SUBST([PKGCONFIG_LDFLAGS],[$BOOST_FILESYSTEM_LDFLAGS])
+AM_SUBST_NOTMAKE([PKGCONFIG_LDFLAGS])
+
+AC_SUBST([PKGCONFIG_LIBS],[$BOOST_FILESYSTEM_LIBS])
+AM_SUBST_NOTMAKE([PKGCONFIG_LIBS])
 
 AC_CHECK_SIZEOF([long])
 CPPFLAGS_SAVE=$CPPFLAGS
-CPPFLAGS=$MISFITS_CPPFLAGS
+CPPFLAGS=$PACKAGE_CPPFLAGS
 AC_CHECK_SIZEOF([LONGLONG],[],[#include <fitsio.h>])
 
 AS_IF([test "$ac_cv_sizeof_LONGLONG" = 0],

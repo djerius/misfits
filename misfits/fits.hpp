@@ -35,13 +35,13 @@
 namespace misFITS {
 
     class File;
-    typedef std::shared_ptr<File> SharedFilePtr;
-    typedef std::weak_ptr<File> WeakFilePtr;
+    typedef shared_ptr<File> SharedFilePtr;
+    typedef weak_ptr<File> WeakFilePtr;
     typedef SharedFilePtr FilePtr;
 
     class Table;
-    typedef std::shared_ptr<Table> SharedTablePtr;
-    typedef std::weak_ptr<Table> WeakTablePtr;
+    typedef shared_ptr<Table> SharedTablePtr;
+    typedef weak_ptr<Table> WeakTablePtr;
     typedef SharedTablePtr TablePtr;
 
 
@@ -129,13 +129,13 @@ namespace misFITS {
 
 
     class File;
-    typedef std::shared_ptr<File> SharedFilePtr;
-    typedef std::weak_ptr<File> WeakFilePtr;
+    typedef shared_ptr<File> SharedFilePtr;
+    typedef weak_ptr<File> WeakFilePtr;
     typedef SharedFilePtr FilePtr;
 
     class Table;
-    typedef std::shared_ptr<Table> SharedTablePtr;
-    typedef std::weak_ptr<Table> WeakTablePtr;
+    typedef shared_ptr<Table> SharedTablePtr;
+    typedef weak_ptr<Table> WeakTablePtr;
     typedef SharedTablePtr TablePtr;
 
     //
@@ -147,7 +147,7 @@ namespace misFITS {
     template<Entity::Type Entity> FilePtr open( );
     template<Entity::Type Entity, class Mode> FilePtr open( const std::string& file );
 
-    class File : public std::enable_shared_from_this<File> {
+    class File : public enable_shared_from_this<File> {
 
     private:
 
@@ -156,7 +156,7 @@ namespace misFITS {
         // members	 //
         ///////////////////
 
-	typedef std::unique_ptr<fitsfile,void(*)(fitsfile*)> FitsPtr;
+	typedef unique_ptr<fitsfile,void(*)(fitsfile*)> FitsPtr;
 	FitsPtr fitsptr;
 
 	/////////////////////////

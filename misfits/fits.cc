@@ -253,7 +253,7 @@ namespace misFITS {
 	    // valid pointer (e.g. it's on the heap)
             return TablePtr( sp.get() ? new Table( *this ) : new Table( WeakFilePtr(sp) ) );
 
-        } catch ( const std::bad_weak_ptr& e  ) {
+        } catch ( const bad_weak_ptr& e  ) {
 
 	    // shared_from_this didn't like things, probably because
 	    // this object is on the stack

@@ -185,7 +185,7 @@ namespace misFITS {
 	Row& column( const std::string& column_name, T* base ) {
 
 	    const misFITS::ColumnInfo& ci = table->colinfo( column_name );
-	    entries.push_back( std::make_shared< Entry::Column<T> >( ci, base ) );
+	    entries.push_back( make_shared< Entry::Column<T> >( ci, base ) );
 	    return *this;
 	}
 
@@ -227,7 +227,7 @@ namespace misFITS {
 	own_or_observe::ptr<Table> table;
 
 	void init ();
-	void push_back( std::shared_ptr<Entry::ColumnBase> col ) {
+	void push_back( shared_ptr<Entry::ColumnBase> col ) {
 	    entries.push_back( col );
 	}
 
@@ -235,7 +235,7 @@ namespace misFITS {
 	bool auto_advance_;
 	// if the row object is copied, don't want two objects
 	// managing the same column entries
-	std::vector< std::shared_ptr<Entry::ColumnBase> > entries;
+	std::vector< shared_ptr<Entry::ColumnBase> > entries;
     };
 
 
@@ -245,7 +245,7 @@ namespace misFITS {
 	template< class T >
 	MemBlockDSL<ReturnClass>& MemBlockDSL<ReturnClass>::column( const std::string& column_name, size_t offset ) {
 	    const misFITS::ColumnInfo& ci ( row_->colinfo( column_name ) );
-	    row_->push_back( std::make_shared< Entry::Column<T> >( ci, reinterpret_cast<T*>(static_cast<char*>(base_) + offset )) ) ;
+	    row_->push_back( make_shared< Entry::Column<T> >( ci, reinterpret_cast<T*>(static_cast<char*>(base_) + offset )) ) ;
 	    return *this;
 	}
     }

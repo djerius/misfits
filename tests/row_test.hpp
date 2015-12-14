@@ -63,7 +63,7 @@ struct read_row {
 
 };
 
-class ReadRowTest : public ::testing::TestWithParam< std::shared_ptr<read_row> > {};
+class ReadRowTest : public ::testing::TestWithParam< misFITS::shared_ptr<read_row> > {};
 
 
 TEST_P( ReadRowTest, ReadRow ) {

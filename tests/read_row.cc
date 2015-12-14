@@ -99,9 +99,9 @@ struct from_row_file : public read_row, public generate_fits {
 INSTANTIATE_TEST_CASE_P( ReadRow,
 			 ReadRowTest,
 			 ::testing::Values(
-					   std::shared_ptr<read_row>( new from_table_row( TEST_FITS_QFILENAME ) ),
-					   std::shared_ptr<read_row>( new from_row_table( TEST_FITS_QFILENAME ) ),
-					   std::shared_ptr<read_row>( new from_row_file(  TEST_FITS_QFILENAME ) )
+					   misFITS::shared_ptr<read_row>( new from_table_row( TEST_FITS_QFILENAME ) ),
+					   misFITS::shared_ptr<read_row>( new from_row_table( TEST_FITS_QFILENAME ) ),
+					   misFITS::shared_ptr<read_row>( new from_row_file(  TEST_FITS_QFILENAME ) )
 					   )
 			 );
 

@@ -31,8 +31,9 @@ MAINTAINERCLEANFILES	+= \
 			mkinstalldirs
 
 
-AM_CPPFLAGS		+= $(MISFITS_CPPFLAGS) -I$(top_srcdir)
-LDADD                   = $(MISFITS_LIBS)
+AM_CPPFLAGS		+= $(PACKAGE_CPPFLAGS) -I$(top_srcdir)
+AM_LDFLAGS		= $(PACKAGE_LDFLAGS)
+LDADD                   =  $(PACKAGE_LIBS)
 
 # include %D%/docs/Makefile.am
 include %D%/misfits/Makefile.am

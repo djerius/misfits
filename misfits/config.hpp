@@ -26,123 +26,99 @@
 
 #include <memory>
 
-#ifndef HAVE_STD__SHARED_PTR
+#ifdef HAVE_STD__SHARED_PTR
 
-#ifdef HAVE_BOOST_BASE
+    namespace misFITS {
+	using std::shared_ptr;
+	using std::make_shared;
+    }
 
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#elif HAVE_BOOST__SHARED_PTR
 
-namespace std {
-    using boost::shared_ptr;
-    using boost::make_shared;
-}
+    #include <boost/shared_ptr.hpp>
+    #include <boost/make_shared.hpp>
 
-#define HAVE_STD__SHARED_PTR
+    namespace misFITS {
+	using boost::shared_ptr;
+	using boost::make_shared;
+    }
 
-#else
+#endif
 
-#error require Boost for std::shared_ptr
+#ifdef HAVE_STD__UNIQUE_PTR
 
-#endif // HAVE_BOOST_BASE
+    namespace misFITS {
+	using std::unique_ptr;
+	using std::make_shared;
+    }
 
-#endif	// ! HAVE_STD__SHARED_PTR
+#elif HAVE_BOOST__UNIQUE_PTR
 
+    #include <boost/move/unique_ptr.hpp>
 
-#ifndef HAVE_STD__UNIQUE_PTR
+    namespace misFITS {
+	using boost::movelib::unique_ptr;
+    }
 
-#ifdef HAVE_BOOST_BASE
-
-#include <boost/move/unique_ptr.hpp>
-
-namespace std {
-    using boost::movelib::unique_ptr;
-}
-
-#else
-
-#error require Boost for std::unique_ptr
-
-#endif // HAVE_BOOST_BASE
-
-#endif	// ! HAVE_STD__UNIQUE_PTR
+#endif
 
 
-#ifndef HAVE_STD__WEAK_PTR
+#ifdef HAVE_STD__WEAK_PTR
 
-#ifdef HAVE_BOOST_BASE
+    namespace misFITS {
+	using std::weak_ptr;
+	using std::bad_weak_ptr;
+    }
 
-#include <boost/weak_ptr.hpp>
+#elif HAVE_BOOST__WEAK_PTR
 
-namespace std {
-    using boost::weak_ptr;
-}
+    #include <boost/weak_ptr.hpp>
 
-#else
+    namespace misFITS {
+	using boost::weak_ptr;
+	using boost::bad_weak_ptr;
+    }
 
-#error require Boost for std::weak_ptr
-
-#endif // HAVE_BOOST_BASE
-
-#endif // ! HAVE_STD__WEAK_PTR
-
-
-#ifndef HAVE_STD__ENABLE_SHARED_FROM_THIS
-
-#ifdef HAVE_BOOST_BASE
+#endif
 
 
-#include <boost/enable_shared_from_this.hpp>
+#ifdef HAVE_STD__ENABLE_SHARED_FROM_THIS
 
-namespace std {
-    using boost::enable_shared_from_this;
-}
+    namespace misFITS {
+	using std::enable_shared_from_this;
+    }
 
-#define HAVE_STD__ENABLE_SHARED_FROM_THIS
-// boost has this
-#define HAVE_STD__WEAK_FROM_THIS
+#elif HAVE_BOOST__ENABLE_SHARED_FROM_THIS
 
-#else
+    #include <boost/enable_shared_from_this.hpp>
 
-#error require Boost for std::enable_shared_from_this
+    namespace misFITS {
+	using boost::enable_shared_from_this;
+    }
 
-#endif // HAVE_BOOST_BASE
+#endif
 
-
-#endif // ! HAVE_STD__ENABLE_SHARED_FROM_THIS
-
-
-#ifndef HAVE_UINT8_T
-
-#ifdef HAVE_BOOST_BASE
-
-#include <boost/cstdint.hpp>
-
-namespace misFITS {
-
-    using boost::uint8_t;
-
-}
-
-#define HAVE_UINT8_T
-
-#else
-
-#error require Boost for uint8_t
-
-#endif // HAVE_BOOST_BASE
-
-#else
+#ifdef HAVE_STD__UINT8_T
 
 #include <cstdint>
 
-namespace misFITS {
+    namespace misFITS {
 
-    using std::uint8_t;
+	using std::uint8_t;
 
-}
+    }
 
-#endif // HAVE_UINT8_T
+#elif HAVE_BOOST__UINT8_T
+
+    #include <boost/cstdint.hpp>
+
+    namespace misFITS {
+
+	using boost::uint8_t;
+
+    }
+
+#endif
 
 
 #endif  // ! misFITS_misCONFIG_H
