@@ -51,7 +51,6 @@ namespace misFITS {
 	// initialize from the CHDU in a fits file
 	ColumnInfo( const misFITS::File& file, const std::string& name );
 	ColumnInfo( const misFITS::File& file, int colnum );
-	ColumnInfo( const std::string& type, ColumnType column_type_, const Extent& extent_, int colnum_ );
 
 	void insert( const misFITS::File& file );
 

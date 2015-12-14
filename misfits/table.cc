@@ -119,7 +119,7 @@ namespace misFITS {
 	if ( colnum == 0 )
 	    colnum = num_columns() + 1;
 
-	ColumnInfo( ttype, column_type, extent, colnum ).insert( *file() );
+	ColumnInfo( ttype, column_type, "", extent, colnum ).insert( *file() );
 
 	refresh();
 
