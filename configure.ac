@@ -129,6 +129,10 @@ AC_CHECK_SIZEOF([long])
 CPPFLAGS_SAVE=$CPPFLAGS
 CPPFLAGS=$MISFITS_CPPFLAGS
 AC_CHECK_SIZEOF([LONGLONG],[],[#include <fitsio.h>])
+
+AS_IF([test "$ac_cv_sizeof_LONGLONG" = 0],
+      [AC_MSG_ERROR([Unable to determine size of CFITSIO LONGLONG type])])
+
 CPPFLAGS=$CPPFLAGS_SAVE
 
 #---------------------------------------------------------
