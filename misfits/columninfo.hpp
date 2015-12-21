@@ -22,7 +22,10 @@
 #ifndef misFITS_COLUMNINFO_H
 #define misFITS_COLUMNINFO_H
 
-#include <misfits/table.hpp>
+#include <fitsio.h>
+
+#include <misfits/fits.hpp>
+#include <misfits/extent.hpp>
 
 namespace misFITS {
 

@@ -25,7 +25,6 @@
 #include <string>
 #include <vector>
 
-#include <misfits/types.hpp>
 #include <misfits/fits.hpp>
 #include <misfits/hdu.hpp>
 #include <misfits/extent.hpp>

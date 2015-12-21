@@ -22,8 +22,8 @@
 #ifndef misFITS_EXTENT_H
 #define misFITS_EXTENT_H
 
+#include <fitsio.h>
 #include <misfits/fits.hpp>
-#include <misfits/table.hpp>
 
 #include <vector>
 

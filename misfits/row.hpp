@@ -29,6 +29,7 @@
 
 #include <own_or_observe_ptr.hpp>
 #include <misfits/types.hpp>
+#include <misfits/table.hpp>
 
 namespace misFITS {
 

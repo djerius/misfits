@@ -19,11 +19,12 @@
 //
 // -->8-->8-->8-->8--
 
-#include <misfits/table.hpp>
-
 #include <numeric>
 #include <algorithm>
 #include <functional>
+
+#include <misfits/extent.hpp>
+
 
 namespace misFITS {
 
