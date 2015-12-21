@@ -33,10 +33,10 @@ using namespace std;
 namespace misFITS {
 
     bool ColumnInfo::operator == (const ColumnInfo& col ) const {
-	    return
-		col.ttype  == ttype &&
-		col.extent == col.extent;
-	}
+	return
+	    col.ttype  == ttype &&
+	    col.extent == col.extent;
+    }
 
     void
     ColumnInfo::init( const File& file ) {
@@ -95,7 +95,7 @@ namespace misFITS {
 	    ( fits_read_tdimll( file.fptr(), colnum, 0, &naxis, NULL, &status )
 	      );
 
-	// handle CFITSIO idiosyncracies with 'A' columns
+	// handle CFITSIO idiosyncracies with 'A' columns. see tests/cfitsio.cc
 	if ( TSTRING == column_type && naxis == 1 ) {
 
 	    extent.resize(2);
@@ -119,10 +119,10 @@ namespace misFITS {
 	}
 
 
-	if ( TSTRING == column_type ) {
-	    width = extent[0];
-	    extent.erase(extent.begin());
-	}
+	if ( TSTRING == column_type )
+	    width = 1;
+
+
 	nelem_ = extent.nelem();
 
 	// the column width for TBIT is reported as 1 (byte), which is
@@ -154,7 +154,9 @@ namespace misFITS {
 	ttype( type ), tunit( unit), column_type( column_type_), extent( extent_ ), colnum( colnum_ ) {
 
 	// width depends upon field type; this seems to be the only
-	// means to get it from CFITSIO
+	// means to get it from CFITSIO. note that for strings, width
+	// will be the number of charactes in a string, not the width
+	// of the storage type
 	{
 	    char tform_t[2];
 	    tform_t[0] = ColumnCode::code[column_type][0];
@@ -170,17 +172,22 @@ namespace misFITS {
 	switch( column_type ) {
 
 	case CT_BIT:
-	    repeat = nelem_;
+	    // Bit fields are special.  The repeat count is the number
+	    // of bits, not the number of bytes used to encode
+	    // the bits.
 	    nbytes = nelem_ / 8;
 	    if ( nbytes * 8  < nelem_ ) nbytes += 1;
 	    break;
 
 	case CT_STRING:
-	    width = extent[0];
-	    extent.erase(extent.begin());
-	    nelem_ = extent.nelem();
+	    // strings are special.  FITS treats them as
+	    // multi-dimensionalcharacter arrays, where TDIM[0] is
+	    // the base number of characters in each "string".
 
-	    // FALL THROUGH
+	    width = 1;
+	    nbytes = repeat;
+	    nelem_ = extent.nelem() / width;
+	    break;
 
 	default:
 	    nbytes = nelem_ * width;
@@ -197,9 +204,6 @@ namespace misFITS {
 
 	tform << ColumnCode::code[column_type];
 
-	if ( width > 1 )
-	    tform << width;
-
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_insert_col(file.fptr(),
@@ -211,15 +215,12 @@ namespace misFITS {
 
 	if ( CT_STRING == column_type ) {
 
-	    Extent t_extent(extent);
-	    t_extent.insert( t_extent.begin(), width );
-
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
 		 fits_write_tdimll( file.fptr(),
 				    colnum,
-				    t_extent.naxes(),
-				    const_cast<LONGLONG*>(&(t_extent[0])),
+				    extent.naxes(),
+				    const_cast<LONGLONG*>(&(extent[0])),
 				    &status )
 		 );
 
