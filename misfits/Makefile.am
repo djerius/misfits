@@ -29,6 +29,7 @@ nobase_include_HEADERS	+= 			\
 			%D%/extent.hpp		\
 			%D%/fits.hpp		\
 			%D%/hdu.hpp		\
+			%D%/keyword.hpp		\
 			%D%/row.hpp		\
 			%D%/table.hpp		\
 			%D%/types.hpp
