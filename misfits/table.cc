@@ -111,6 +111,21 @@ namespace misFITS {
     }
 
     Table&
+    Table::add( const ColumnInfo& ci) {
+
+	ColumnInfo copy = ci;
+
+	if ( copy.colnum == 0 )
+	    copy.colnum = num_columns() + 1;
+
+	copy.insert( *file() );
+
+	refresh();
+
+	return *this;
+    }
+
+    Table&
     Table::add( const std::string& ttype,
 		ColumnType column_type,
 		const std::string& tunit,

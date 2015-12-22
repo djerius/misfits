@@ -69,21 +69,30 @@ TEST( TableTest, CreateTable ) {
     EXPECT_EQ( "col2", table.colinfo(2).ttype );
     EXPECT_EQ( "col3", table.colinfo(3).ttype );
 
+    misFITS::ColumnInfo c3( table.colinfo(3) );
+    c3.ttype = "col3a";
+    table.add( c3 );
+    EXPECT_EQ( 4, table.num_columns() );
+    EXPECT_EQ( "col3a", table.colinfo(3).ttype );
+    EXPECT_EQ( "col3", table.colinfo(4).ttype );
+
+
     misFITS::FilePtr file( misFITS::open<Entity::Memory>() );
     table.copy( file );
 
 
     misFITS::Table table2( file );
 
-    EXPECT_EQ( 3, table2.num_columns() );
+    EXPECT_EQ( 4, table2.num_columns() );
     EXPECT_EQ( "col1", table2.colinfo(1).ttype );
     EXPECT_EQ( "col2", table2.colinfo(2).ttype );
-    EXPECT_EQ( "col3", table2.colinfo(3).ttype );
+    EXPECT_EQ( "col3a", table2.colinfo(3).ttype );
+    EXPECT_EQ( "col3", table2.colinfo(4).ttype );
 
     table2.add( "col4", misFITS::CT_DOUBLE, "", 1, 0 );
 
-    EXPECT_EQ( 3, table.num_columns() );
-    EXPECT_EQ( 4, table2.num_columns() );
+    EXPECT_EQ( 4, table.num_columns() );
+    EXPECT_EQ( 5, table2.num_columns() );
 
 }
 
