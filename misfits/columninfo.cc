@@ -135,14 +135,15 @@ namespace misFITS {
     }
 
 
-    ColumnInfo::ColumnInfo( const File& file, const std::string& ttype ) {
+
+    ColumnInfo::ColumnInfo( const File& file, const std::string& ttype, LONGLONG offset ) : offset( offset ) {
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_colnum( file.fptr(), 0, const_cast<char*>(ttype.c_str()), &colnum, &status )
 	      );
 	init( file );
     }
 
-    ColumnInfo::ColumnInfo( const File& file, int colnum ) : colnum( colnum ) {
+    ColumnInfo::ColumnInfo( const File& file, int colnum, LONGLONG offset ) : colnum( colnum ), offset( offset ) {
 	init( file );
     }
 

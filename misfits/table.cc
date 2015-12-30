@@ -61,7 +61,6 @@ namespace misFITS {
 	refresh();
     }
 
-
     void
     Table::refresh( ) {
 
@@ -76,8 +75,12 @@ namespace misFITS {
 
 	int ncols = num_columns();
 	columns.clear();
-	for ( int colnum = 1 ; colnum <= ncols ; colnum++ )
-	    columns.push_back( ColumnInfo( *file(), colnum ) );
+
+	LONGLONG offset = 1;
+	for ( int colnum = 1 ; colnum <= ncols ; colnum++ ) {
+	    columns.push_back( ColumnInfo( *file(), colnum, offset ) );
+	    offset += columns[colnum-1].nbytes;
+	}
     }
 
 

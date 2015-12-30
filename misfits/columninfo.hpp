@@ -38,6 +38,10 @@ namespace misFITS {
 	std::string tunit;
 	ColumnType  column_type;
 
+	// offset of first byte from start of row. for use in directly
+	// accessing raw data.  This is *not* initialized in the constructor for
+	// this column
+	LONGLONG offset;
 	LONGLONG nbytes;
 
 	// the shape of the data in a cell
@@ -49,9 +53,10 @@ namespace misFITS {
 	ColumnInfo( const std::string& name, ColumnType column_type,
 		    const std::string& unit, const Extent& extent, int colnum = 0);
 
-	// initialize from the CHDU in a fits file
-	ColumnInfo( const misFITS::File& file, const std::string& name );
-	ColumnInfo( const misFITS::File& file, int colnum );
+	// initialize from the CHDU in a fits file. requires byte offset into table storage for each column to handle
+	// string ('A') columns.
+	ColumnInfo( const misFITS::File& file, const std::string& name, LONGLONG offset );
+	ColumnInfo( const misFITS::File& file, int colnum, LONGLONG offset );
 
 	void insert( const misFITS::File& file );
 
