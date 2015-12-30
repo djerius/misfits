@@ -20,6 +20,8 @@
 // -->8-->8-->8-->8--
 
 #include <iostream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -32,26 +34,34 @@ using namespace std;
 
 #include "row_utils.hpp"
 
+#include "fiducial_data.hpp"
+
+using namespace misFITS_Test;
+
 void
 test_fiducial( misFITS::Row &row ) {
 
-#define NROWS 20
-#define NBITS 23
-#define NBYTES 3
+    Fiducial::Data fid;
+    fid.normalize_data();
+
+    #define NBYTES 3
+    if ( NBYTES != fid.nbytes )
+	throw misFITS::Exception::Assert( "internal error: NBYTES != fid.nbytes" );
+
     struct A {
-	int Icol;
-	short Jcol;
+	int I1;
+	short J1;
     };
 
     struct B {
-	float Ecol;
-	double Dcol;
+	float E1;
+	double D1;
     };
 
     struct C {
-	misFITS::BitSet Xcol_bitset;
-	misFITS::byte_t Xcol_array[NBYTES];
-	vector<misFITS::byte_t> Xcol_vector;
+	misFITS::BitSet X1_bitset;
+	misFITS::byte_t X1_array[NBYTES];
+	vector<misFITS::byte_t> X1_vector;
     };
 
     struct Row {
@@ -60,84 +70,114 @@ test_fiducial( misFITS::Row &row ) {
 	struct C c;
     } storage;
 
-    int Icol;
-    short Jcol;
-    float Ecol;
-    double Dcol;
-    misFITS::BitSet Xcol_bitset;
-    misFITS::byte_t Xcol_array[NBYTES];
-    vector<misFITS::byte_t> Xcol_vector;
+    int I1;
+    short J1;
+    float E1;
+    double D1;
+    misFITS::BitSet X1_bitset;
 
+    misFITS::byte_t X1_array[NBYTES];
+    vector<misFITS::byte_t> X1_vector;
+
+    struct  {
+	string str;
+	vector<string> vec;
+    } As[6];
 
     row
-    	.column( "Icol", &Icol )
-    	.column( "Jcol", &Jcol )
-        .column( "Ecol", &Ecol )
-        .column( "Dcol", &Dcol )
-	.column( "Xcol", &Xcol_bitset )
-	.column( "Xcol", Xcol_array )
-	.column( "Xcol", &Xcol_vector )
+    	.column( "I1", &I1 )
+    	.column( "J1", &J1 )
+        .column( "E1", &E1 )
+        .column( "D1", &D1 )
+	.column( "X1", &X1_bitset )
+	.column( "X1", X1_array )
+	.column( "X1", &X1_vector )
+
 
     	.memblock( &storage)
 	  .memblock( offsetof( Row, a ) )
-	    .column<int>( "Icol", offsetof( A, Icol ) )
-	    .column<short>( "Jcol", offsetof( A, Jcol ) )
+	    .column<int>( "I1", offsetof( A, I1 ) )
+	    .column<short>( "J1", offsetof( A, J1 ) )
 	  .end_memblock()
 
 	  .memblock( offsetof( Row, b ) )
-	    .column<float>( "Ecol", offsetof( B, Ecol ) )
-	    .column<double>( "Dcol", offsetof( B, Dcol ) )
+	    .column<float>( "E1", offsetof( B, E1 ) )
+	    .column<double>( "D1", offsetof( B, D1 ) )
 	  .end_memblock()
 
 	  .memblock( offsetof( Row, c ) )
-	    .column<misFITS::BitSet>(  "Xcol", offsetof( C, Xcol_bitset ) )
-	    .column< misFITS::byte_t > ( "Xcol", offsetof( C, Xcol_array ) )
-	    .column< vector<misFITS::byte_t> > ( "Xcol", offsetof( C, Xcol_vector ) )
+	    .column<misFITS::BitSet>(  "X1", offsetof( C, X1_bitset ) )
+	    .column< misFITS::byte_t > ( "X1", offsetof( C, X1_array ) )
+	    .column< vector<misFITS::byte_t> > ( "X1", offsetof( C, X1_vector ) )
 	  .end_memblock()
 	.end_memblock()
     	;
 
+    for ( int ia = 0 ; ia < 6 ; ++ia ) {
+
+	ostringstream name;
+	name << "A" << ia+1;
+
+	row
+	    .column( name.str(), &As[ia].str )
+	    .column( name.str(), &As[ia].vec )
+	    ;
+    }
+
 
     while( row.read() ) {
 
-    	int i = row.idx() - 1;
+	SCOPED_TRACE( row.idx() - 1 );
 
-    	double D = 1.0 / i;
-    	float  E = 2.0 / i;
-    	short  I = i + 1;
-    	int    J = i + 2;
+	// row.idx() returns next row to be read
+	LONGLONG zidx = row.idx() - 2;
 
-    	ASSERT_EQ( I, Icol );
-    	ASSERT_EQ( I, storage.a.Icol );
+    	LONGLONG i = row.idx() - 1;
 
-    	ASSERT_EQ( J, Jcol );
-    	ASSERT_EQ( J, storage.a.Jcol );
+    	EXPECT_EQ( fid.i1.data[zidx], I1 );
+    	EXPECT_EQ( fid.i1.data[zidx], storage.a.I1 );
 
-    	ASSERT_FLOAT_EQ( E, Ecol );
-    	ASSERT_FLOAT_EQ( E, storage.b.Ecol );
+    	EXPECT_EQ( fid.j1.data[zidx], J1 );
+    	EXPECT_EQ( fid.j1.data[zidx], storage.a.J1 );
 
-    	ASSERT_DOUBLE_EQ( D, Dcol );
-    	ASSERT_DOUBLE_EQ( D, storage.b.Dcol );
+    	EXPECT_FLOAT_EQ( fid.e1.data[zidx], E1 );
+    	EXPECT_FLOAT_EQ( fid.e1.data[zidx], storage.b.E1 );
 
-	ASSERT_TRUE( Xcol_bitset[NBITS - i] );
-	ASSERT_TRUE( storage.c.Xcol_bitset[NBITS - i] );
+    	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], D1 );
+    	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], storage.b.D1 );
 
-	int byte = (i - 1) / 8;
-	int shift = ( 8 - (i - byte * 8) );
+	EXPECT_TRUE( X1_bitset[Fiducial::Data::nbits - i] );
+	EXPECT_TRUE( storage.c.X1_bitset[Fiducial::Data::nbits - i] );
 
-	for( int ibyt = 0 ; ibyt < NBYTES ; ++ibyt ) {
+	EXPECT_EQ( fid.x1.data[zidx], X1_vector );
+	EXPECT_EQ( fid.x1.data[zidx], storage.c.X1_vector );
 
-	    misFITS::byte_t value = ibyt == byte ? 1 << shift : 0;
+	vector<misFITS::byte_t> X1( X1_array, X1_array + fid.nbytes  );
+	EXPECT_EQ( fid.x1.data[zidx], X1 );
 
-	    ASSERT_EQ( value, Xcol_array[ibyt] );
-	    ASSERT_EQ( value, Xcol_vector[ibyt] );
+	X1.assign( storage.c.X1_array, storage.c.X1_array + fid.nbytes );
+	EXPECT_EQ( fid.x1.data[zidx], X1 );
 
-	    ASSERT_EQ( value, storage.c.Xcol_array[ibyt] );
-	    ASSERT_EQ( value, storage.c.Xcol_vector[ibyt] );
-	}
+	EXPECT_EQ( fid.a1.data[zidx], As[0].str );
+	EXPECT_EQ( fid.a1.data[zidx], As[0].vec[0] );
+
+	EXPECT_EQ( fid.a1.data[zidx], As[1].str );
+	EXPECT_EQ( fid.a2.data[zidx], As[1].vec );
+
+	EXPECT_EQ( fid.a1.data[zidx], As[2].str );
+	EXPECT_EQ( fid.a3.data[zidx], As[2].vec );
+
+	EXPECT_EQ( fid.a4.data[zidx], As[3].str );
+	EXPECT_EQ( fid.a4.data[zidx], As[3].vec[0] );
+
+	EXPECT_EQ( fid.a4.data[zidx], As[4].str );
+	EXPECT_EQ( fid.a5.data[zidx], As[4].vec );
+
+	EXPECT_EQ( fid.a4.data[zidx], As[5].str );
+	EXPECT_EQ( fid.a6.data[zidx], As[5].vec );
 
     }
 
-    ASSERT_EQ( 21, row.idx() );
+    ASSERT_EQ( fid.nrows + 1, row.idx() );
 }
 

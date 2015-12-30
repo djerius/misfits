@@ -26,13 +26,20 @@
 #include "misfits/fits.hpp"
 #include "misfits/table.hpp"
 
+#include "fiducial_data.hpp"
+
 namespace Entity = misFITS::Entity;
 namespace Mode = misFITS::Mode;
+
+using namespace misFITS_Test;
 
 
 TEST( FITSFileTest, DeleteColumn ) {
 
     gen_fits();
+
+    Fiducial::Data fid;
+    fid.normalize_data();
 
     {
 	misFITS::FilePtr file( misFITS::open<Entity::Data,Mode::ReadWrite>( TEST_FITS_QFILENAME ));
@@ -41,12 +48,13 @@ TEST( FITSFileTest, DeleteColumn ) {
 
 	misFITS::Table table( file );
 
-	ASSERT_EQ( 5, table.num_columns() );
+	ASSERT_EQ( fid.columns.size(), table.num_columns() );
 
-	table.delete_column( "Ecol" );
+	table.delete_column( "E1" );
 
-	EXPECT_EQ( 4, table.num_columns() );
-	ASSERT_EQ( 3, table.colinfo( "Dcol" ).colnum );
+	EXPECT_EQ( fid.columns.size() - 1, table.num_columns() );
+
+	ASSERT_FALSE( table.exists_column( "E1" ) );
     }
 
     // make sure changes were flushed and the file was closed
@@ -55,8 +63,8 @@ TEST( FITSFileTest, DeleteColumn ) {
 
 	misFITS::TablePtr table( file.table() );
 
-	EXPECT_EQ( 4, table->num_columns() );
-	ASSERT_EQ( 3, table->colinfo( "Dcol" ).colnum );
+	EXPECT_EQ( fid.columns.size() - 1, table->num_columns() );
+	ASSERT_FALSE( table->exists_column( "E1" ) );
     }
 
 }

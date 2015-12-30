@@ -117,47 +117,47 @@ TEST_F( ReadTest, Cursors ) {
 
     misFITS::Row r1( table );
 
-    int Icol;
+    int i1;
 
-    r1.column( "Icol", &Icol );
+    r1.column( "I1", &i1 );
 
     r1.read();
     ASSERT_EQ( 2, r1.idx() );
-    EXPECT_EQ( r1.idx(), Icol );
+    EXPECT_EQ( r1.idx(), i1 );
 
     r1.read();
     ASSERT_EQ( 3, r1.idx() );
-    EXPECT_EQ( r1.idx(), Icol );
+    EXPECT_EQ( r1.idx(), i1 );
 
     misFITS::Row r2( table );
 
-    r2.column( "Icol", &Icol );
+    r2.column( "I1", &i1 );
 
     r2.read();
     ASSERT_EQ( 2, r2.idx() );
-    EXPECT_EQ( r2.idx(), Icol );
+    EXPECT_EQ( r2.idx(), i1 );
 
     r2.read();
     ASSERT_EQ( 3, r2.idx() );
-    EXPECT_EQ( r2.idx(), Icol );
+    EXPECT_EQ( r2.idx(), i1 );
 
     r1.read();
     r1.read();
     ASSERT_EQ( 5, r1.idx() );
-    EXPECT_EQ( r1.idx(), Icol );
+    EXPECT_EQ( r1.idx(), i1 );
 
     r2.read();
     ASSERT_EQ( 4, r2.idx() );
-    EXPECT_EQ( r2.idx(), Icol );
+    EXPECT_EQ( r2.idx(), i1 );
 
     // read specific rows
     r1.read( 1 );
     ASSERT_EQ( 2, r1.idx() );
-    EXPECT_EQ( r1.idx(), Icol );
+    EXPECT_EQ( r1.idx(), i1 );
 
     r2.read( 3 );
     ASSERT_EQ( 4, r2.idx() );
-    EXPECT_EQ( r2.idx(), Icol );
+    EXPECT_EQ( r2.idx(), i1 );
 
 
 }
@@ -170,35 +170,35 @@ TEST_F( ReadTest, CopyRow ) {
 
     misFITS::Row r1( table );
 
-    int Icol;
+    int i1;
 
-    r1.column( "Icol", &Icol );
+    r1.column( "I1", &i1 );
 
     r1.read();
     ASSERT_EQ( 2, r1.idx() );
-    EXPECT_EQ( r1.idx(), Icol );
+    EXPECT_EQ( r1.idx(), i1 );
 
     r1.read();
     ASSERT_EQ( 3, r1.idx() );
-    EXPECT_EQ( r1.idx(), Icol );
+    EXPECT_EQ( r1.idx(), i1 );
 
     misFITS::Row r2( r1 );
     ASSERT_EQ( 3, r2.idx() );
 
     r2.read();
     ASSERT_EQ( 4, r2.idx() );
-    EXPECT_EQ( r2.idx(), Icol );
+    EXPECT_EQ( r2.idx(), i1 );
 
     r2.read();
     ASSERT_EQ( 5, r2.idx() );
-    EXPECT_EQ( r2.idx(), Icol );
+    EXPECT_EQ( r2.idx(), i1 );
 
     r1.read();
     r1.read();
     ASSERT_EQ( 5, r1.idx() );
-    EXPECT_EQ( r1.idx(), Icol );
+    EXPECT_EQ( r1.idx(), i1 );
 
     r2.read();
     ASSERT_EQ( 6, r2.idx() );
-    EXPECT_EQ( r2.idx(), Icol );
+    EXPECT_EQ( r2.idx(), i1 );
 }

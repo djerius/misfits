@@ -64,11 +64,11 @@ TEST( WriteRow, Copy ) {
     misFITS::TablePtr otable( output->table() );
 
     struct Row {
-	int Icol;
-	short Jcol;
-	float Ecol;
-	double Dcol;
-	misFITS::BitSet Xcol;
+	int I1;
+	short J1;
+	float E1;
+	double D1;
+	misFITS::BitSet X1;
     } data;
 
 
@@ -76,19 +76,19 @@ TEST( WriteRow, Copy ) {
     misFITS::Row orow( otable );
 
     irow.memblock( &data )
-    	.column<int>( "Icol", offsetof( Row, Icol ) )
-    	.column<short>( "Jcol", offsetof( Row, Jcol ) )
-        .column<float>( "Ecol", offsetof( Row, Ecol ) )
-        .column<double>( "Dcol", offsetof( Row, Dcol ) )
-        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
+    	.column<int>( "I1", offsetof( Row, I1 ) )
+    	.column<short>( "J1", offsetof( Row, J1 ) )
+        .column<float>( "E1", offsetof( Row, E1 ) )
+        .column<double>( "D1", offsetof( Row, D1 ) )
+        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
 	.end_memblock();
 
     orow.memblock( &data )
-    	.column<int>( "Icol", offsetof( Row, Icol ) )
-    	.column<short>( "Jcol", offsetof( Row, Jcol ) )
-        .column<float>( "Ecol", offsetof( Row, Ecol ) )
-        .column<double>( "Dcol", offsetof( Row, Dcol ) )
-        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
+    	.column<int>( "I1", offsetof( Row, I1 ) )
+    	.column<short>( "J1", offsetof( Row, J1 ) )
+        .column<float>( "E1", offsetof( Row, E1 ) )
+        .column<double>( "D1", offsetof( Row, D1 ) )
+        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
 	.end_memblock();
 
     while( irow.read() )
@@ -112,11 +112,11 @@ TEST( WriteRow, NoAdvance ) {
     misFITS::TablePtr otable( output->table() );
 
     struct Row {
-	int Icol;
-	short Jcol;
-	float Ecol;
-	double Dcol;
-	misFITS::BitSet Xcol;
+	int I1;
+	short J1;
+	float E1;
+	double D1;
+	misFITS::BitSet X1;
     } data;
 
 
@@ -127,19 +127,19 @@ TEST( WriteRow, NoAdvance ) {
     orow.auto_advance( false );
 
     irow.memblock( &data )
-    	.column<int>( "Icol", offsetof( Row, Icol ) )
-    	.column<short>( "Jcol", offsetof( Row, Jcol ) )
-        .column<float>( "Ecol", offsetof( Row, Ecol ) )
-        .column<double>( "Dcol", offsetof( Row, Dcol ) )
-        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
+    	.column<int>( "I1", offsetof( Row, I1 ) )
+    	.column<short>( "J1", offsetof( Row, J1 ) )
+        .column<float>( "E1", offsetof( Row, E1 ) )
+        .column<double>( "D1", offsetof( Row, D1 ) )
+        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
 	.end_memblock();
 
     orow.memblock( &data )
-    	.column<int>( "Icol", offsetof( Row, Icol ) )
-    	.column<short>( "Jcol", offsetof( Row, Jcol ) )
-        .column<float>( "Ecol", offsetof( Row, Ecol ) )
-        .column<double>( "Dcol", offsetof( Row, Dcol ) )
-        .column<misFITS::BitSet>( "Xcol", offsetof( Row, Xcol ) )
+    	.column<int>( "I1", offsetof( Row, I1 ) )
+    	.column<short>( "J1", offsetof( Row, J1 ) )
+        .column<float>( "E1", offsetof( Row, E1 ) )
+        .column<double>( "D1", offsetof( Row, D1 ) )
+        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
 	.end_memblock();
 
     LONGLONG nrows = irow.num_rows();

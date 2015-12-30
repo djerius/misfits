@@ -21,14 +21,15 @@
 
 #include "gtest/gtest.h"
 
-#include "util.hpp"
-
 #include "misfits/fits.hpp"
 #include "misfits/table.hpp"
 
 namespace Entity = misFITS::Entity;
 namespace Mode = misFITS::Mode;
 
+#include "fiducial_data.hpp"
+
+using namespace misFITS_Test;
 
 TEST_F( ExistingTable, MetaData ) {
 
@@ -36,19 +37,20 @@ TEST_F( ExistingTable, MetaData ) {
 
     misFITS::Table table( file );
 
-    ASSERT_EQ( 5, table.num_columns() );
+    Fiducial::Data data;
 
-    ASSERT_TRUE( table.exists_column( "Icol" ) );
-    ASSERT_TRUE( table.exists_column( "Jcol" ) );
-    ASSERT_TRUE( table.exists_column( "Ecol" ) );
-    ASSERT_TRUE( table.exists_column( "Dcol" ) );
-    ASSERT_TRUE( table.exists_column( "Xcol" ) );
+    ASSERT_EQ( data.columns.size(), table.num_columns() );
 
-    ASSERT_EQ( 1, table.colinfo( "Icol" ).colnum );
-    ASSERT_EQ( 2, table.colinfo( "Jcol" ).colnum );
-    ASSERT_EQ( 3, table.colinfo( "Ecol" ).colnum );
-    ASSERT_EQ( 4, table.colinfo( "Dcol" ).colnum );
-    ASSERT_EQ( 5, table.colinfo( "Xcol" ).colnum );
+    Fiducial::Data::Cols::const_iterator col( data.columns.begin() );
+    Fiducial::Data::Cols::const_iterator end( data.columns.end() );
+
+    for ( ; col < end ; ++ col ) {
+
+	SCOPED_TRACE( (*col)->ttype );
+	ASSERT_TRUE( table.exists_column( (*col)->ttype ) );
+	ASSERT_EQ( (*col)->colnum, table.colinfo( (*col)->ttype ).colnum );
+
+    }
 }
 
 TEST( TableTest, CreateTable ) {
