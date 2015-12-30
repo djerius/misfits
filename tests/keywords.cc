@@ -32,20 +32,20 @@ namespace Mode = misFITS::Mode;
 
 TEST_F( ExistingTable, read ) {
 
-    ASSERT_EQ( "stuff", file->read_key<std::string>( "EXTNAME" ).value );
-    ASSERT_EQ( 1, file->read_key<int>( "EXTVER" ).value );
+    EXPECT_EQ( "stuff", file->read_key<std::string>( "EXTNAME" ).value );
+    EXPECT_EQ( 1, file->read_key<int>( "EXTVER" ).value );
 
-    ASSERT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIE" ).value );
-    ASSERT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIESTR" ).value );
+    EXPECT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIE" ).value );
+    EXPECT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIESTR" ).value );
 
-    ASSERT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIE" ).value );
-    ASSERT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIESTR" ).value );
+    EXPECT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIE" ).value );
+    EXPECT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIESTR" ).value );
 
-    ASSERT_EQ( 3, file->read_key<int>( "PIE" ).value );
-    ASSERT_EQ( 3, file->read_key<int>( "PIESTR" ).value );
+    EXPECT_EQ( 3, file->read_key<int>( "PIE" ).value );
+    EXPECT_EQ( 3, file->read_key<int>( "PIESTR" ).value );
 
-    ASSERT_EQ( "3.14159", file->read_key<std::string>( "PIE" ).value );
-    ASSERT_EQ( "3.14159", file->read_key<std::string>( "PIESTR" ).value );
+    EXPECT_EQ( "3.14159", file->read_key<std::string>( "PIE" ).value );
+    EXPECT_EQ( "3.14159", file->read_key<std::string>( "PIESTR" ).value );
 
 }
 
@@ -54,13 +54,13 @@ TEST( Keywords, write ) {
 
     misFITS::Table table( "MYEXTENT" );
 
-    ASSERT_EQ( "MYEXTENT", table.read_key<std::string>( "EXTNAME" ).value );
-    ASSERT_EQ( 1, table.read_key<int>( "EXTVER" ).value );
+    EXPECT_EQ( "MYEXTENT", table.read_key<std::string>( "EXTNAME" ).value );
+    EXPECT_EQ( 1, table.read_key<int>( "EXTVER" ).value );
 
     table.write_key( misFITS::Keyword<double>( "PIE", 3.14159 ) );
-    ASSERT_DOUBLE_EQ( 3.14159, table.read_key<double>( "PIE" ).value );
+    EXPECT_DOUBLE_EQ( 3.14159, table.read_key<double>( "PIE" ).value );
 
     table.update_key( misFITS::Keyword<std::string>( "PIE", "Apple" ) );
-    ASSERT_EQ( "Apple", table.read_key<std::string>( "PIE" ).value );
+    EXPECT_EQ( "Apple", table.read_key<std::string>( "PIE" ).value );
 
 }
