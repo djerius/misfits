@@ -44,9 +44,10 @@ struct read_row {
     misFITS::FilePtr file_;
     std::string file_name_;
     bool init;
+    std::string name_;
 
-    read_row( std::string file_name ) : file_name_( file_name ), init( false ) {}
-    read_row( misFITS::FilePtr file ) : file_ ( file ), init( true ) {}
+    read_row( const std::string& name, const std::string& file_name ) : file_name_( file_name ), init( false ), name_(name) {}
+    read_row( const std::string& name, misFITS::FilePtr file ) : file_ ( file ), init( true ), name_(name) {}
 
     misFITS::FilePtr file() {
 
@@ -70,6 +71,7 @@ TEST_P( ReadRowTest, ReadRow ) {
 
     misFITS::Row row = GetParam()->row();
 
+    SCOPED_TRACE( GetParam()->name_ );
     test_fiducial( row  );
 }
 

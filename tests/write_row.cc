@@ -40,7 +40,7 @@ using namespace std;
 struct from_fileptr : public read_row {
 
     from_fileptr( misFITS::FilePtr& fp  ) :
-	read_row( fp )
+	read_row( "from_fileptr", fp )
     {}
 
     misFITS::Row

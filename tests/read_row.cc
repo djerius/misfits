@@ -47,7 +47,7 @@ struct from_table_row : public read_row, public generate_fits {
     bool init;
 
     from_table_row( std::string file_name ) :
-	read_row( file_name ),
+	read_row( "from_table_row", file_name ),
 	init( false )
     {}
 
@@ -67,7 +67,7 @@ struct from_row_table : public read_row, public generate_fits {
     bool init;
 
     from_row_table( std::string file_name ) :
-	read_row( file_name ),
+	read_row( "from_row_table", file_name ),
 	init( false )
     {}
 
@@ -80,12 +80,13 @@ struct from_row_table : public read_row, public generate_fits {
 	}
 	return misFITS::Row( table_ );
     }
+
 };
 
 struct from_row_file : public read_row, public generate_fits {
 
     from_row_file( std::string file_name ) :
-	read_row( file_name )
+	read_row( "from_row_file", file_name )
     {}
 
     misFITS::Row
