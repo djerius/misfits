@@ -24,7 +24,6 @@
 
 #include <string>
 #include <iostream>
-#include <stdexcept>
 #include <utility>
 
 #include <boost/dynamic_bitset.hpp>
@@ -44,46 +43,20 @@ namespace misFITS {
     typedef weak_ptr<Table> WeakTablePtr;
     typedef SharedTablePtr TablePtr;
 
-
 }
 
 #include <misfits/types.hpp>
 #include <misfits/keyword.hpp>
+#include <misfits/exception.hpp>
 
 namespace misFITS {
-
-
-    class Exception : public std::exception {
-
-    public:
-	class CFITSIO;
-	class Assert : public std::runtime_error {
-	public:
-	    Assert( const char* what_arg ) : runtime_error( what_arg ) { }
-	};
-
-    };
-
-    class Exception::CFITSIO : public Exception {
-
-    public:
-	CFITSIO( int status);
-	const char* what() const  throw () ;
-
-	int status () { return status_; }
-
-    private:
-	char error[26*82];
-	int status_;
-    };
-
 
 #define misFITS_CHECK_CFITSIO_EXPR( expr )	\
     do {					\
 	int status = 0;				\
 	expr;					\
 	if ( status )				\
-	    throw Exception::CFITSIO (status );	\
+	    throw misFITS::Exception::CFITSIO (status );	\
     } while (0)
 
 

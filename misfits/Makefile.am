@@ -8,6 +8,7 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/columninfo.hpp	\
 			%D%/extent.cc		\
 			%D%/exception.cc	\
+			%D%/exception.hpp	\
 			%D%/extent.hpp		\
 			%D%/fits.cc		\
 			%D%/fits.hpp		\
@@ -26,6 +27,7 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 nobase_include_HEADERS	+= 			\
 			%D%/config.hpp		\
 			%D%/columninfo.hpp	\
+			%D%/exception.hpp	\
 			%D%/extent.hpp		\
 			%D%/fits.hpp		\
 			%D%/hdu.hpp		\
