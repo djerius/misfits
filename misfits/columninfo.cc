@@ -63,6 +63,8 @@ namespace misFITS {
 	ttype = string( ttype_t );
 
 	int typecode;
+	long width;
+	LONGLONG repeat;
 
 #if SIZEOF_LONG == SIZEOF_LONGLONG
 	misFITS_CHECK_CFITSIO_EXPR
@@ -103,7 +105,6 @@ namespace misFITS {
 
 	    // N.B. CFITSIO sets width = repeat if no width is specified
 	    extent[1] = repeat / width ;
-
 	}
 	else {
 
@@ -119,11 +120,7 @@ namespace misFITS {
 	}
 
 
-	if ( TSTRING == column_type )
-	    width = 1;
-
-
-	nelem_ = extent.nelem();
+	LONGLONG nelem_ = extent.nelem();
 
 	// the column width for TBIT is reported as 1 (byte), which is
 	// not useful in calculating the true number of bytes in the
@@ -133,7 +130,7 @@ namespace misFITS {
 	    if ( nbytes * 8  < nelem_ ) nbytes += 1;
 	}
 	else {
-	    nbytes = nelem_ * width;
+	    nbytes = nelem_ * ( TSTRING == column_type ? 1 : width );
 	}
     }
 
@@ -153,6 +150,8 @@ namespace misFITS {
 			    const Extent& extent_, int colnum_ ) :
 	ttype( type ), tunit( unit), column_type( column_type_), extent( extent_ ), colnum( colnum_ ) {
 
+	long width;
+
 	// width depends upon field type; this seems to be the only
 	// means to get it from CFITSIO. note that for strings, width
 	// will be the number of charactes in a string, not the width
@@ -167,7 +166,7 @@ namespace misFITS {
 		  );
 	}
 
-	repeat = nelem_ = extent.nelem();
+	LONGLONG nelem = extent.nelem();
 
 	switch( column_type ) {
 
@@ -175,22 +174,19 @@ namespace misFITS {
 	    // Bit fields are special.  The repeat count is the number
 	    // of bits, not the number of bytes used to encode
 	    // the bits.
-	    nbytes = nelem_ / 8;
-	    if ( nbytes * 8  < nelem_ ) nbytes += 1;
+	    nbytes = nelem / 8;
+	    if ( nbytes * 8  < nelem ) nbytes += 1;
 	    break;
 
 	case CT_STRING:
 	    // strings are special.  FITS treats them as
 	    // multi-dimensionalcharacter arrays, where TDIM[0] is
 	    // the base number of characters in each "string".
-
-	    width = 1;
-	    nbytes = repeat;
-	    nelem_ = extent.nelem() / width;
+	    nbytes = nelem;
 	    break;
 
 	default:
-	    nbytes = nelem_ * width;
+	    nbytes = nelem * width;
 	}
 
     }
@@ -199,8 +195,8 @@ namespace misFITS {
     ColumnInfo::insert( const misFITS::File& file ) {
 
 	ostringstream tform;
-	if ( repeat > 1 )
-	    tform << repeat;
+	if ( extent.nelem() > 1 )
+	    tform << extent.nelem();
 
 	tform << ColumnCode::code[column_type];
 

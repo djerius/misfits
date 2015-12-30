@@ -37,8 +37,6 @@ namespace misFITS {
 	std::string ttype;
 	std::string tunit;
 	ColumnType  column_type;
-	long width;
-	LONGLONG repeat;
 
 	LONGLONG nbytes;
 
@@ -61,12 +59,11 @@ namespace misFITS {
 
 	bool operator != ( const ColumnInfo& col ) const { return ! operator==( col ) ; }
 
-	LONGLONG nelem() const { return nelem_; }
+	// number of elements written to FITS header. may not be same read/written
+	LONGLONG nelem() const { return extent.nelem(); }
 
     private:
 	void init( const misFITS::File& file );
-	LONGLONG nelem_; // number of elements written to FITS header. may not be same read/written
-
 
     };
 
