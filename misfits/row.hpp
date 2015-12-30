@@ -100,7 +100,6 @@ namespace misFITS {
 	template<>
 	class Column< BitSet > : public ColumnBase {
 
-
 	public:
 
 	    Column( const ColumnInfo& info, BitSet* base );
@@ -122,9 +121,64 @@ namespace misFITS {
 	};
 
 
+	template<>
+	class Column<std::string>: public ColumnBase {
+
+	public:
+
+	    Column( const ColumnInfo& info, std::string* base );
+	    virtual ~Column() { };
+
+	    void read(  const File& file, LONGLONG firstrow );
+	    void write( const File& file, LONGLONG firstrow );
+
+	private:
+
+	    // for compatibility with C++ < 11, use intermediate
+	    // buffer.  in C++11, consecutive characters in
+	    // std::string are defined to be contiguous, and we can
+	    // read directly into the string. see stackoverflow.com/questions/25169915
+	    std::vector<char> buffer;
+
+	    std::string* base_;
+	    int colnum_;
+	    LONGLONG nelem_;
+	    LONGLONG offset;
+	    LONGLONG nbytes;
+
+	};
+
+	template<>
+	class Column< std::vector<std::string> >: public ColumnBase {
+
+	public:
+
+	    Column( const ColumnInfo& info, std::vector<std::string>* base );
+	    virtual ~Column() { };
+
+	    void read(  const File& file, LONGLONG firstrow );
+	    void write( const File& file, LONGLONG firstrow );
+
+
+	private:
+	    // for compatibility with C++ < 11, use intermediate
+	    // buffer.  in C++11, consecutive characters in
+	    // std::string are defined to be contiguous, and we can
+	    // read directly into the string. see stackoverflow.com/questions/25169915
+
+	    std::vector<char> buffer;
+	    int colnum_;
+	    LONGLONG nelem_;
+	    LONGLONG offset;
+	    LONGLONG nbytes;
+	    LONGLONG width;
+
+	    std::vector<std::string>* base_;
+	};
+
+
 	template<> Column<byte_t>::Column( const ColumnInfo& info, byte_t* base );
 	template<> Column< std::vector<byte_t> >::Column( const ColumnInfo& info, std::vector<byte_t>* base );
-
 
 	///////////////////
         // MemBlocks	 //

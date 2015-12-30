@@ -177,6 +177,7 @@ namespace misFITS {
 	friend class HDU;
 	friend class Table;
 	friend class ColumnInfo;
+	template< typename T> friend class Entry::Column;
 
 	inline fitsfile* fptr() const {
 	    return fitsptr.get();

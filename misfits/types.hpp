@@ -25,6 +25,7 @@
 #define misFITS_TYPES_H
 
 #include <string>
+#include <vector>
 #include <map>
 
 #include <fitsio.h>
@@ -107,6 +108,10 @@ namespace misFITS {
     template <> struct StorageCode<std::string> {
 	static const StorageType type = SC_STRING;
 	static const char* default_value () { return ""; }
+    };
+
+    template <> struct StorageCode< std::vector<std::string> > {
+	static const StorageType type = SC_STRING;
     };
 
     template <StorageType T> struct NativeType;
