@@ -1,0 +1,72 @@
+// --8<--8<--8<--8<--
+//
+// Copyright (C) 2015 Smithsonian Astrophysical Observatory
+//
+// This file is part of misfits
+//
+// misfits is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or (at
+// your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// -->8-->8-->8-->8--
+
+#ifndef TEST_misFITS_FIDUCIAL_DATA_H
+#define TEST_misFITS_FIDUCIAL_DATA_H
+
+#include <string>
+#include <vector>
+
+#include "fiducial.hpp"
+
+namespace misFITS_Test {
+
+
+  namespace Fiducial {
+
+      struct Data {
+
+	  static const int nrows;
+	  static const int nbits;
+	  static int nbytes;
+
+	  Column<TSHORT , short>		i1;
+	  Column<TINT   , int>			j1;
+	  Column<TFLOAT , float>		e1;
+	  Column<TDOUBLE, double>		d1;
+	  Column<TBYTE  , std::vector<misFITS::byte_t> >	x1; // we're writing bits as a string of bytes
+
+	  Column<TSTRING, std::string>		a1;
+	  Column<TSTRING, std::vector<std::string> >	a2;
+	  Column<TSTRING, std::vector<std::string> >	a3;
+
+	  Column<TSTRING, std::string>		a4;
+	  Column<TSTRING, std::vector<std::string> >	a5;
+	  Column<TSTRING, std::vector<std::string> >	a6;
+
+
+	  typedef std::vector<ColumnBase*> Cols;
+	  Cols columns;
+
+	  Data();
+
+	  void  insert_columns( TestFitsPtr& );
+	  void  write( TestFitsPtr& ) const;
+	  void  normalize_data( );
+
+	  static std::string Xform();
+      };
+
+  }
+
+}
+
+#endif // ! TEST_misFITS_FIDUCIAL_DATA_H

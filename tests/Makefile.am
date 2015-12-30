@@ -35,6 +35,10 @@ noinst_LTLIBRARIES	+= %D%/libtest_utils.la
 %C%_libtest_utils_la_SOURCES  =			\
 			%D%/columns.hpp		\
 			%D%/columns.cc		\
+			%D%/fiducial.hpp	\
+			%D%/fiducial.cc		\
+			%D%/fiducial_data.hpp	\
+			%D%/fiducial_data.cc	\
 			%D%/util.hpp		\
 			%D%/util.cc		\
 			%D%/row_test.hpp	\
@@ -48,9 +52,9 @@ LDADD_%C%_TESTS		=					\
 			$(LDADD_%C%)				\
 			$(top_builddir)/misfits/libmisfits.la
 
-CPPFLAGS_%C%_TESTS	=						\
-			$(CPPFLAGS_%C%)					\
-			-I$(top_srcdir)					\
+CPPFLAGS_%C%_TESTS	=			\
+			$(CPPFLAGS_%C%)		\
+			-I$(top_srcdir)		\
 			-I$(top_builddir)
 
 CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
