@@ -37,12 +37,24 @@ class ExistingTable : public ::testing::Test {
 
 protected :
 
-    void SetUp() {
-	gen_fits();
-	file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
-    }
+  void SetUp() {
+    gen_fits();
+    file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
+  }
 
-    misFITS::FilePtr file;
+  misFITS::FilePtr file;
 };
+
+namespace misFITS_Test {
+
+
+    typedef misFITS::unique_ptr<fitsfile,void(*)(fitsfile*)> TestFitsPtr;
+
+    void closeTestFitsPtr( fitsfile* fitsptr );
+
+}
+
+
+
 
 #endif // ! TEST_FITS_UTIL_H

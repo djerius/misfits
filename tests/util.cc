@@ -32,6 +32,15 @@ using namespace std;
 
 #include "util.hpp"
 
+namespace misFITS_Test {
+
+    void
+    closeTestFitsPtr( fitsfile* fitsptr ) {
+	misFITS_CHECK_CFITSIO_EXPR( fits_close_file( fitsptr, &status ) );
+    }
+
+}
+
 void
 die_if( int status, const char* prefix ) {
 

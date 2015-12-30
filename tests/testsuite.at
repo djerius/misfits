@@ -1,5 +1,11 @@
 AT_BANNER([FITS])
 
+AT_SETUP([cfitsio])
+
+AT_CHECK(cfitsio,,[ignore])
+
+AT_CLEANUP
+
 AT_SETUP([tables])
 
 AT_CHECK(table,,[ignore])

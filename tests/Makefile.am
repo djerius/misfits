@@ -33,6 +33,8 @@ noinst_LTLIBRARIES	+= %D%/libtest_utils.la
 			$(CXXFLAGS_%C%)
 
 %C%_libtest_utils_la_SOURCES  =			\
+			%D%/columns.hpp		\
+			%D%/columns.cc		\
 			%D%/util.hpp		\
 			%D%/util.cc		\
 			%D%/row_test.hpp	\
@@ -131,3 +133,14 @@ check_PROGRAMS		+= %D%/keywords
 %C%_keywords_LDADD	= $(LDADD_%C%_TESTS)
 %C%_keywords_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
 %C%_keywords_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
+check_PROGRAMS		+= %D%/cfitsio
+
+%C%_cfitsio_SOURCES	=			\
+			%D%/cfitsio.cc
+
+%C%_cfitsio_LDADD	= $(LDADD_%C%_TESTS)
+%C%_cfitsio_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_cfitsio_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
