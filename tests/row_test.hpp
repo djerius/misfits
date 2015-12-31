@@ -31,14 +31,6 @@
 #include "util.hpp"
 #include "row_utils.hpp"
 
-struct generate_fits {
-
-    generate_fits() {
-	gen_fits();
-    }
-
-};
-
 struct read_row {
 
     misFITS::FilePtr file_;
@@ -64,15 +56,19 @@ struct read_row {
 
 };
 
-class ReadRowTest : public ::testing::TestWithParam< misFITS::shared_ptr<read_row> > {};
+typedef misFITS::shared_ptr<read_row> CreateTObj();
 
+class ReadRowTest : public GenFits, public ::testing::WithParamInterface< CreateTObj* > {
 
-TEST_P( ReadRowTest, ReadRow ) {
+protected:
+    void SetUp() {
+	GenFits::SetUp();
+	tobj = (*GetParam())();
+    }
 
-    misFITS::Row row = GetParam()->row();
+    misFITS::shared_ptr<read_row> tobj;
 
-    SCOPED_TRACE( GetParam()->name_ );
-    test_fiducial( row  );
-}
+};
+
 
 #endif // ! ROW_TEST_H

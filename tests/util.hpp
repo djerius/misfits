@@ -26,23 +26,26 @@
 #define quote(s) squote(s)
 #define TEST_FITS_QFILENAME quote(TEST_FITS_FILENAME)
 
-void die_if( int status, const char* prefix );
-void gen_fits( );
-
 #include "gtest/gtest.h"
-
 #include <misfits/fits.hpp>
 
-class ExistingTable : public ::testing::Test {
+void die_if( int status, const char* prefix );
+void gen_fits( const std::string& = TEST_FITS_QFILENAME );
 
-protected :
+class GenFits : public ::testing::Test {
 
-  void SetUp() {
-    gen_fits();
-    file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
-  }
+protected:
+    void SetUp();
+    void TearDown();
+};
 
-  misFITS::FilePtr file;
+class FiducialTableFptr : public GenFits {
+
+protected:
+
+    void SetUp();
+    void TearDown();
+    misFITS::FilePtr file;
 };
 
 namespace misFITS_Test {

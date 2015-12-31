@@ -30,7 +30,7 @@ namespace Entity = misFITS::Entity;
 namespace Mode = misFITS::Mode;
 
 
-TEST_F( ExistingTable, read ) {
+TEST_F( FiducialTableFptr, read ) {
 
     EXPECT_EQ( "stuff", file->read_key<std::string>( "EXTNAME" ).value );
     EXPECT_EQ( 1, file->read_key<int>( "EXTVER" ).value );

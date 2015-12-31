@@ -32,16 +32,9 @@ using namespace std;
 #include "row_test.hpp"
 #include "util.hpp"
 
+using misFITS::shared_ptr;
 
-class ReadTest : public ::testing::Test {
-
-public:
-    void SetUp() {
-      gen_fits();
-    }
-};
-
-struct from_table_row : public read_row, public generate_fits {
+struct from_table_row : public read_row {
 
     misFITS::TablePtr table_;
     bool init;
@@ -59,9 +52,15 @@ struct from_table_row : public read_row, public generate_fits {
 	}
 	return table_->row();
     }
+
+    static
+    shared_ptr<read_row> create () {
+	return misFITS::shared_ptr<read_row>( new from_table_row( TEST_FITS_QFILENAME ) );
+    }
+
 };
 
-struct from_row_table : public read_row, public generate_fits {
+struct from_row_table : public read_row {
 
     misFITS::TablePtr table_;
     bool init;
@@ -81,9 +80,14 @@ struct from_row_table : public read_row, public generate_fits {
 	return misFITS::Row( table_ );
     }
 
+    static
+    shared_ptr<read_row> create () {
+	return misFITS::shared_ptr<read_row>( new from_row_table( TEST_FITS_QFILENAME ) );
+    }
+
 };
 
-struct from_row_file : public read_row, public generate_fits {
+struct from_row_file : public read_row {
 
     from_row_file( std::string file_name ) :
 	read_row( "from_row_file", file_name )
@@ -93,19 +97,28 @@ struct from_row_file : public read_row, public generate_fits {
     row () {
     	return misFITS::Row( *file() );
     }
+
+    static
+    shared_ptr<read_row> create () {
+	return misFITS::shared_ptr<read_row>( new from_row_file( TEST_FITS_QFILENAME ) );
+    }
+
 };
+
 
 
 
 INSTANTIATE_TEST_CASE_P( ReadRow,
 			 ReadRowTest,
 			 ::testing::Values(
-					   misFITS::shared_ptr<read_row>( new from_table_row( TEST_FITS_QFILENAME ) ),
-					   misFITS::shared_ptr<read_row>( new from_row_table( TEST_FITS_QFILENAME ) ),
-					   misFITS::shared_ptr<read_row>( new from_row_file(  TEST_FITS_QFILENAME ) )
+					   from_table_row::create,
+					   from_row_table::create,
+					   from_row_file::create
 					   )
 			 );
 
+
+class ReadTest : public GenFits {};
 
 
 TEST_F( ReadTest, Cursors ) {

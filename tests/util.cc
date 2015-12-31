@@ -48,6 +48,29 @@ die_if( int status, const char* prefix ) {
     exit(EXIT_FAILURE);
 }
 
+void
+GenFits::SetUp() {
+    gen_fits( TEST_FITS_QFILENAME );
+}
+
+void
+GenFits::TearDown() {
+    boost::filesystem::remove( TEST_FITS_QFILENAME);
+}
+
+void
+FiducialTableFptr::SetUp() {
+    GenFits::SetUp();
+    file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
+}
+
+void
+FiducialTableFptr::TearDown() {
+    file.reset();
+    GenFits::TearDown();
+}
+
+
 
 namespace misFITS_Test {
 
@@ -93,13 +116,13 @@ namespace misFITS_Test {
 }
 
 void
-gen_fits ( ) {
+gen_fits ( const std::string& file ) {
 
     using namespace misFITS_Test;
 
     Fiducial::Data data;
 
-    TestFitsPtr fpp( createFits( TEST_FITS_QFILENAME ) );
+    TestFitsPtr fpp( createFits( file ) );
 
     data.insert_columns( fpp );
     data.write( fpp );

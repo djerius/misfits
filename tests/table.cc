@@ -31,7 +31,7 @@ namespace Mode = misFITS::Mode;
 
 using namespace misFITS_Test;
 
-TEST_F( ExistingTable, MetaData ) {
+TEST_F( FiducialTableFptr, MetaData ) {
 
     EXPECT_STREQ( TEST_FITS_QFILENAME, file->file.c_str());
 

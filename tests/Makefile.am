@@ -8,7 +8,7 @@ AUTOTEST_PATH           += :$(abs_builddir)/%D%
 
 TEST_FITS_FILENAME      = file.fits
 
-LDADD_%C% 		= $(MISFITS_LIBS) $(LDADD) $(LDADD_GTEST) %D%/libtest_utils.la
+LDADD_%C% 		= $(MISFITS_LIBS) $(LDADD)  %D%/libtest_utils.la $(LDADD_GTEST)
 
 CPPFLAGS_%C%		=						\
 			-I %D%						\
@@ -41,9 +41,20 @@ noinst_LTLIBRARIES	+= %D%/libtest_utils.la
 			%D%/fiducial_data.cc	\
 			%D%/util.hpp		\
 			%D%/util.cc		\
-			%D%/row_test.hpp	\
 			%D%/row_utils.hpp	\
 			%D%/row_utils.cc
+
+##############################
+
+# these must be explicitly linked into test programs so that they
+# register tests properly.  simply adding them to libtest_utils won't
+# work, as they use startup code to register things, and aren't called
+# by name
+
+%C%_row_test_SOURCES =				\
+			%D%/row_test.hpp	\
+			%D%/row_test.cc
+
 
 
 ##############################
@@ -76,7 +87,8 @@ check_PROGRAMS		+= %D%/gen_fits
 check_PROGRAMS		+= %D%/read_row
 
 %C%_read_row_SOURCES	=			\
-			%D%/read_row.cc
+			%D%/read_row.cc		\
+			$(%C%_row_test_SOURCES)
 
 %C%_read_row_LDADD	= $(LDADD_%C%_TESTS)
 %C%_read_row_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
@@ -87,7 +99,8 @@ check_PROGRAMS		+= %D%/read_row
 check_PROGRAMS		+= %D%/write_row
 
 %C%_write_row_SOURCES	=			\
-			%D%/write_row.cc
+			%D%/write_row.cc	\
+			$(%C%_row_test_SOURCES)
 
 %C%_write_row_LDADD	= $(LDADD_%C%_TESTS)
 %C%_write_row_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)

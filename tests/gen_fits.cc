@@ -3,7 +3,7 @@
 
 int main( void ) {
 
-    gen_fits();
+    gen_fits( TEST_FITS_QFILENAME );
 
     return 0;
 
