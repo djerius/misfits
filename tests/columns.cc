@@ -46,7 +46,6 @@ namespace misFITS_Test {
   Columns::create( std::string filename ) {
 
     fitsfile *fp;
-    int status = 0;
 
     filename.insert( 0, "!" );
 

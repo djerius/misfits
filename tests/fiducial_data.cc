@@ -93,7 +93,7 @@ namespace misFITS_Test {
 	    for ( int i = 1 ; i <= nrows ; i++ ) {
 
 		d1.push_back( 1.0 / i );
-		e1.push_back( 2.0 / i );
+		e1.push_back( 2.0f / i );
 		i1.push_back( i + 1 );
 		j1.push_back( i + 2 );
 		x1.data.resize(i);
