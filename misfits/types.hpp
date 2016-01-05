@@ -129,22 +129,29 @@ namespace misFITS {
 
     // these must be listed such that the last entry for a valid
     // CFITSIO enum is the largest
-    enum ColumnType {
-	CT_BIT 	       = TBIT,
-	CT_BYTE        = TBYTE,
-	CT_LOGICAL     = TLOGICAL,
-	CT_STRING      = TSTRING,
-	CT_SHORT       = TSHORT,
-	CT_LONG        = TINT32BIT,
-	CT_INT32BIT    = TINT32BIT,
-	CT_LONGLONG    = TLONGLONG,
-	CT_FLOAT       = TFLOAT,
-	CT_DOUBLE      = TDOUBLE,
-	CT_COMPLEX     = TCOMPLEX,
-	CT_DBL_COMPLEX = TDBLCOMPLEX,
-	CT_USHORT,
-	CT_ULONG
-    };
+
+    namespace ColumnTypes {
+
+	enum ColumnType {
+	    CT_BIT 	   = TBIT,
+	    CT_BYTE        = TBYTE,
+	    CT_LOGICAL     = TLOGICAL,
+	    CT_STRING      = TSTRING,
+	    CT_SHORT       = TSHORT,
+	    CT_LONG        = TINT32BIT,
+	    CT_INT32BIT    = TINT32BIT,
+	    CT_LONGLONG    = TLONGLONG,
+	    CT_FLOAT       = TFLOAT,
+	    CT_DOUBLE      = TDOUBLE,
+	    CT_COMPLEX     = TCOMPLEX,
+	    CT_DBL_COMPLEX = TDBLCOMPLEX,
+	    CT_USHORT,
+	    CT_ULONG
+	};
+
+    }
+
+    using namespace ColumnTypes;
 
     class ColumnCode {
 
