@@ -55,7 +55,8 @@ namespace misFITS {
 
 	Table& add( const std::string& ttype,
 		    ColumnType typecode,
-		    const Extent& extent = 1,
+		    const std::string& tunit = "",
+		    const Extent& extent = Extent(1),
 		    int colnum = 0);
 
 	int num_columns() const;

@@ -113,13 +113,14 @@ namespace misFITS {
     Table&
     Table::add( const std::string& ttype,
 		ColumnType column_type,
+		const std::string& tunit,
 		const Extent& extent,
 		int colnum ) {
 
 	if ( colnum == 0 )
 	    colnum = num_columns() + 1;
 
-	ColumnInfo( ttype, column_type, "", extent, colnum ).insert( *file() );
+	ColumnInfo( ttype, column_type, tunit, extent, colnum ).insert( *file() );
 
 	refresh();
 

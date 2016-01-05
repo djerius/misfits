@@ -60,9 +60,9 @@ TEST( TableTest, CreateTable ) {
 
     EXPECT_EQ( 0, table.num_columns() );
 
-    table.add( "col2", misFITS::CT_DOUBLE, 1 );
-    table.add( "col1", misFITS::CT_DOUBLE, 1, 1 );
-    table.add( "col3", misFITS::CT_DOUBLE, 1, 0 );
+    table.add( "col2", misFITS::CT_DOUBLE, "", 1 );
+    table.add( "col1", misFITS::CT_DOUBLE, "", 1, 1 );
+    table.add( "col3", misFITS::CT_DOUBLE, "", 1, 0 );
 
     EXPECT_EQ( 3, table.num_columns() );
     EXPECT_EQ( "col1", table.colinfo(1).ttype );
@@ -80,7 +80,7 @@ TEST( TableTest, CreateTable ) {
     EXPECT_EQ( "col2", table2.colinfo(2).ttype );
     EXPECT_EQ( "col3", table2.colinfo(3).ttype );
 
-    table2.add( "col4", misFITS::CT_DOUBLE, 1, 0 );
+    table2.add( "col4", misFITS::CT_DOUBLE, "", 1, 0 );
 
     EXPECT_EQ( 3, table.num_columns() );
     EXPECT_EQ( 4, table2.num_columns() );
