@@ -7,5 +7,5 @@ Name: misfits
 Description: FITS C++ interface
 Version: @VERSION@
 Requires: @PKGCONFIG_REQUIRES@
-Libs: -L${libdir} -lmisfits @PKGCONFIG_LDFLAGS@
+Libs: -L${libdir} -lmisfits @PKGCONFIG_LDFLAGS@ @PKGCONFIG_LIBS@
 Cflags: -I${includedir} @PKGCONFIG_CPPFLAGS@
