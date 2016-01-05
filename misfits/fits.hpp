@@ -226,7 +226,7 @@ namespace misFITS {
 	template< typename T>
 	void read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
 	template< typename T>
-	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
+	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const T* data ) const;
 
 
 	std::pair<int,int> get_hdrpos( );

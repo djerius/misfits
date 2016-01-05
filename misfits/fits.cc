@@ -557,7 +557,7 @@ namespace misFITS {
     //-----------------------------------------
 
     template<typename T>
-    void File::write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const {
+    void File::write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -566,14 +566,13 @@ namespace misFITS {
 			     colnum,
 			     firstrow, firstelem,
 			     nelem,
-			     data, &status)
+			     const_cast<T*>(data), &status)
 	     );
 
     }
 
 #define WRITE_COL(r,d,T) \
-    template void File::write_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const;
+    template void File::write_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const;
 
     misFITS_INSTANTIATE_OVER_STORAGE_TYPES(WRITE_COL)
-
 }
