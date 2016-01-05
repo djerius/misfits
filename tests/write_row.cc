@@ -20,6 +20,7 @@
 // -->8-->8-->8-->8--
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -34,7 +35,11 @@ using namespace std;
 #include <misfits/table.hpp>
 #include <misfits/row.hpp>
 
+#include "fiducial_data.hpp"
 #include "row_test.hpp"
+
+using namespace misFITS;
+using namespace misFITS_Test;
 
 
 struct from_fileptr : public read_row {
@@ -49,113 +54,93 @@ struct from_fileptr : public read_row {
     }
 };
 
-
-TEST( WriteRow, Copy ) {
-
-
-    // open for reading
-    misFITS::File input( TEST_FITS_QFILENAME );
-
-    // open for writing
-    misFITS::FilePtr output( misFITS::open<misFITS::Entity::Memory>() );
-
-    input.copy_hdu( output );
-
-    misFITS::TablePtr otable( output->table() );
-
-    struct Row {
-	int I1;
-	short J1;
-	float E1;
-	double D1;
-	misFITS::BitSet X1;
-    } data;
+class WriteTest : public GenFits {};
 
 
-    misFITS::Row irow( input );
-    misFITS::Row orow( otable );
+TEST_F( WriteTest, Create ) {
 
-    irow.memblock( &data )
-    	.column<int>( "I1", offsetof( Row, I1 ) )
-    	.column<short>( "J1", offsetof( Row, J1 ) )
-        .column<float>( "E1", offsetof( Row, E1 ) )
-        .column<double>( "D1", offsetof( Row, D1 ) )
-        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
-	.end_memblock();
-
-    orow.memblock( &data )
-    	.column<int>( "I1", offsetof( Row, I1 ) )
-    	.column<short>( "J1", offsetof( Row, J1 ) )
-        .column<float>( "E1", offsetof( Row, E1 ) )
-        .column<double>( "D1", offsetof( Row, D1 ) )
-        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
-	.end_memblock();
-
-    while( irow.read() )
-	orow.write();
-
-    misFITS::Row test( otable );
-    test_fiducial( test );
-
-}
-
-TEST( WriteRow, NoAdvance ) {
-
-    // open for reading
-    misFITS::File input( TEST_FITS_QFILENAME );
+    Fiducial::Data fid;
 
     // open for writing
     misFITS::FilePtr output( misFITS::open<misFITS::Entity::Memory>() );
 
-    input.copy_hdu( output );
+    misFITS::Table ttable( "stuff" );
 
-    misFITS::TablePtr otable( output->table() );
+    {
+	using namespace misFITS;
 
-    struct Row {
-	int I1;
-	short J1;
-	float E1;
-	double D1;
-	misFITS::BitSet X1;
-    } data;
-
-
-    misFITS::Row irow( input );
-    misFITS::Row orow( otable );
-
-    irow.auto_advance( false );
-    orow.auto_advance( false );
-
-    irow.memblock( &data )
-    	.column<int>( "I1", offsetof( Row, I1 ) )
-    	.column<short>( "J1", offsetof( Row, J1 ) )
-        .column<float>( "E1", offsetof( Row, E1 ) )
-        .column<double>( "D1", offsetof( Row, D1 ) )
-        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
-	.end_memblock();
-
-    orow.memblock( &data )
-    	.column<int>( "I1", offsetof( Row, I1 ) )
-    	.column<short>( "J1", offsetof( Row, J1 ) )
-        .column<float>( "E1", offsetof( Row, E1 ) )
-        .column<double>( "D1", offsetof( Row, D1 ) )
-        .column<misFITS::BitSet>( "X1", offsetof( Row, X1 ) )
-	.end_memblock();
-
-    LONGLONG nrows = irow.num_rows();
-
-    for ( LONGLONG idx = nrows ; idx ; --idx ) {
-
-	irow.read( idx );
-	ASSERT_EQ( idx, irow.idx() );
-
-	orow.write( idx );
-	ASSERT_EQ( idx, orow.idx() );
+	ttable
+	    .add( "I1", CT_LONG	    )
+	    .add( "J1", CT_LONGLONG )
+	    .add( "E1", CT_FLOAT    )
+	    .add( "D1", CT_DOUBLE   )
+	    .add( "X1", CT_BIT	   , "", Extent( Fiducial::Data::nbits ) )
+	    .add( "A1", CT_STRING  , "", Extent( 60 ) )
+	    .add( "A2", CT_STRING  , "", Extent( 12, 5 ) )
+	    .add( "A3", CT_STRING  , "", Extent( 12, 5 ) )
+	    .add( "A4", CT_STRING  , "", Extent( 60 ) )
+	    .add( "A5", CT_STRING  , "", Extent( 12, 5 ) )
+	    .add( "A6", CT_STRING  , "", Extent( 12, 5 ) )
+	    ;
 
     }
 
+    misFITS::TablePtr otable( ttable.copy( output ) );
+
+    struct Row {
+	int I1;
+	short J1;
+	float E1;
+	double D1;
+	misFITS::BitSet X1;
+	string A1;
+	vector<string> A2;
+	vector<string> A3;
+
+	string A4;
+	vector<string> A5;
+	vector<string> A6;
+
+    } data;
+
+
+    misFITS::Row orow( otable );
+
+    orow
+    	.column( "I1", &data.I1 )
+    	.column( "J1", &data.J1 )
+        .column( "E1", &data.E1 )
+        .column( "D1", &data.D1 )
+        .column( "X1", &data.X1 )
+        .column( "A1", &data.A1 )
+        .column( "A2", &data.A2 )
+        .column( "A3", &data.A3 )
+        .column( "A4", &data.A4 )
+        .column( "A5", &data.A5 )
+        .column( "A6", &data.A6 )
+	;
+
+
+    for( int row = 0 ; row < fid.nrows ; ++row ) {
+
+	data.I1 = fid.i1.data[row];
+	data.J1 = fid.j1.data[row];
+	data.E1 = fid.e1.data[row];
+	data.D1 = fid.d1.data[row];
+	data.X1 = fid.x2.data[row];
+
+	data.A1 = fid.a1.data[row];
+	data.A2 = fid.a2.data[row];
+	data.A3 = fid.a3.data[row];
+	data.A4 = fid.a4.data[row];
+	data.A5 = fid.a5.data[row];
+	data.A6 = fid.a6.data[row];
+
+	orow.write();
+    }
+
+
     misFITS::Row test( otable );
     test_fiducial( test );
 
 }
-
