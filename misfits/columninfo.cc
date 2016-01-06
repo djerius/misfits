@@ -98,7 +98,7 @@ namespace misFITS {
 	      );
 
 	// handle CFITSIO idiosyncracies with 'A' columns. see tests/cfitsio.cc
-	if ( TSTRING == column_type && naxis == 1 ) {
+	if ( ColumnType::String == column_type && naxis == 1 ) {
 
 	    extent.resize(2);
 	    extent[0] = width;
@@ -125,12 +125,12 @@ namespace misFITS {
 	// the column width for TBIT is reported as 1 (byte), which is
 	// not useful in calculating the true number of bytes in the
 	// column
-	if ( TBIT == column_type ) {
+	if ( ColumnType::Bit == column_type ) {
 	    nbytes = nelem_ / 8;
 	    if ( nbytes * 8  < nelem_ ) nbytes += 1;
 	}
 	else {
-	    nbytes = nelem_ * ( TSTRING == column_type ? 1 : width );
+	    nbytes = nelem_ * ( ColumnType::String == column_type ? 1 : width );
 	}
     }
 
@@ -169,9 +169,9 @@ namespace misFITS {
 
 	LONGLONG nelem = extent.nelem();
 
-	switch( column_type ) {
+	switch( boost::native_value(column_type) ) {
 
-	case CT_BIT:
+	case ColumnType::Bit:
 	    // Bit fields are special.  The repeat count is the number
 	    // of bits, not the number of bytes used to encode
 	    // the bits.
@@ -179,7 +179,7 @@ namespace misFITS {
 	    if ( nbytes * 8  < nelem ) nbytes += 1;
 	    break;
 
-	case CT_STRING:
+	case ColumnType::String:
 	    // strings are special.  FITS treats them as
 	    // multi-dimensionalcharacter arrays, where TDIM[0] is
 	    // the base number of characters in each "string".
@@ -210,7 +210,7 @@ namespace misFITS {
 			     &status)
 	     );
 
-	if ( CT_STRING == column_type ) {
+	if ( ColumnType::String == column_type ) {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(

@@ -218,7 +218,7 @@ namespace misFITS {
 	int get_num_hdus() const;
 	int hdu_num() const;
 	HDU_Type hdu_type() const;
-	void copy_file ( FilePtr& outfile, int previous, int current, int following ) const;
+	void copy_file ( FilePtr& outfile, int previous = 1, int current = 1, int following = 1) const;
 	void copy_hdu ( FilePtr& outfile, int morekeys = 0 ) const;
 	void copy_header ( FilePtr& outfile ) const;
 	HDU_Type delete_hdu ( ) const;

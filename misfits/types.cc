@@ -28,20 +28,20 @@ namespace misFITS {
     create_columncode() {
 
 	ColumnCode::Map t;
-	t[CT_BIT] 	   = "X";
-	t[CT_BYTE]         = "B";
-	t[CT_LOGICAL]      = "L";
-	t[CT_STRING]       = "A";
-	t[CT_SHORT]        = "I";
-	t[CT_INT32BIT]     = "J";
-	t[CT_LONG]         = "J";
-	t[CT_LONGLONG]     = "K";
-	t[CT_FLOAT]        = "E";
-	t[CT_DOUBLE]       = "D";
-	t[CT_COMPLEX]      = "C";
-	t[CT_DBL_COMPLEX]  = "M";
-	t[CT_USHORT]       = "U";
-	t[CT_ULONG]        = "V";
+	t[ColumnType::Bit] 	     = "X";
+	t[ColumnType::Byte]          = "B";
+	t[ColumnType::Logical]       = "L";
+	t[ColumnType::String]        = "A";
+	t[ColumnType::Short]         = "I";
+	t[ColumnType::Int32bit]      = "J";
+	t[ColumnType::Long]          = "J";
+	t[ColumnType::LongLong]      = "K";
+	t[ColumnType::Float]         = "E";
+	t[ColumnType::Double]        = "D";
+	t[ColumnType::Complex]       = "C";
+	t[ColumnType::DoubleComplex] = "M";
+	t[ColumnType::UnsignedShort] = "U";
+	t[ColumnType::UnsignedLong]  = "V";
 	return t;
     }
 

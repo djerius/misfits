@@ -70,17 +70,17 @@ TEST_F( WriteTest, Create ) {
 	using namespace misFITS;
 
 	ttable
-	    .add( "I1", CT_LONG	    )
-	    .add( "J1", CT_LONGLONG )
-	    .add( "E1", CT_FLOAT    )
-	    .add( "D1", CT_DOUBLE   )
-	    .add( "X1", CT_BIT	   , "", Extent( Fiducial::Data::nbits ) )
-	    .add( "A1", CT_STRING  , "", Extent( 60 ) )
-	    .add( "A2", CT_STRING  , "", Extent( 12, 5 ) )
-	    .add( "A3", CT_STRING  , "", Extent( 12, 5 ) )
-	    .add( "A4", CT_STRING  , "", Extent( 60 ) )
-	    .add( "A5", CT_STRING  , "", Extent( 12, 5 ) )
-	    .add( "A6", CT_STRING  , "", Extent( 12, 5 ) )
+	    .add( "I1", ColumnType::Long     )
+	    .add( "J1", ColumnType::LongLong )
+	    .add( "E1", ColumnType::Float    )
+	    .add( "D1", ColumnType::Double   )
+	    .add( "X1", ColumnType::Bit	    , "", Extent( Fiducial::Data::nbits ) )
+	    .add( "A1", ColumnType::String  , "", Extent( 60 ) )
+	    .add( "A2", ColumnType::String  , "", Extent( 12, 5 ) )
+	    .add( "A3", ColumnType::String  , "", Extent( 12, 5 ) )
+	    .add( "A4", ColumnType::String  , "", Extent( 60 ) )
+	    .add( "A5", ColumnType::String  , "", Extent( 12, 5 ) )
+	    .add( "A6", ColumnType::String  , "", Extent( 12, 5 ) )
 	    ;
 
     }

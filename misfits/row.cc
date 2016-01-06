@@ -48,7 +48,7 @@ namespace misFITS {
 	    colnum_( info.colnum ),
 	    nelem_( info.nelem() ) {
 
-	    if ( CT_BIT != info.column_type )
+	    if ( ColumnType::Bit != info.column_type )
 		throw( Exception::Assert( "can't use an misFITS::BitSet object with a non bit FITS column" ) );
 
 	    base_->resize( nelem_ );
@@ -86,7 +86,7 @@ namespace misFITS {
 	    nelem_( info.nelem() ) {
 
 	    // if reading bits, nelem_ is the number of 8 bit bytes
-	    if ( CT_BIT == info.column_type ) {
+	    if ( ColumnType::Bit == info.column_type ) {
 		nelem_ /= 8;
 		if ( nelem_ * 8 < info.nelem() ) ++nelem_;
 	    }
@@ -99,7 +99,7 @@ namespace misFITS {
 	    nelem_( info.nelem() ) {
 
 	    // if reading bits, nelem_ is the number of 8 bit bytes
-	    if ( CT_BIT == info.column_type ) {
+	    if ( ColumnType::Bit == info.column_type ) {
 		nelem_ /= 8;
 		if ( nelem_ * 8 < info.nelem() ) ++nelem_;
 	    }
@@ -119,7 +119,7 @@ namespace misFITS {
 	    nbytes( info.nbytes )
 	{
 
-	    if ( CT_STRING != info.column_type )
+	    if ( ColumnType::String != info.column_type )
 		throw Exception::Assert( "a std::string destination can only be used with a FITS 'A' column type" );
 
 	    buffer.resize( nbytes );
@@ -170,7 +170,7 @@ namespace misFITS {
 	    nbytes( info.nbytes ),
 	    width( info.extent[0] ) {
 
-	    if ( CT_STRING != info.column_type )
+	    if ( ColumnType::String != info.column_type )
 		throw Exception::Assert( "a vector<std::string> destination can only be used with a FITS 'A' column type" );
 
 	    buffer.resize( nbytes );

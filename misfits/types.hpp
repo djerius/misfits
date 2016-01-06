@@ -28,6 +28,9 @@
 #include <vector>
 #include <map>
 
+#include <boost/core/scoped_enum.hpp>
+
+
 #include <fitsio.h>
 
 namespace misFITS {
@@ -130,33 +133,30 @@ namespace misFITS {
     // these must be listed such that the last entry for a valid
     // CFITSIO enum is the largest
 
-    namespace ColumnTypes {
 
-	enum ColumnType {
-	    CT_BIT 	   = TBIT,
-	    CT_BYTE        = TBYTE,
-	    CT_LOGICAL     = TLOGICAL,
-	    CT_STRING      = TSTRING,
-	    CT_SHORT       = TSHORT,
-	    CT_LONG        = TINT32BIT,
-	    CT_INT32BIT    = TINT32BIT,
-	    CT_LONGLONG    = TLONGLONG,
-	    CT_FLOAT       = TFLOAT,
-	    CT_DOUBLE      = TDOUBLE,
-	    CT_COMPLEX     = TCOMPLEX,
-	    CT_DBL_COMPLEX = TDBLCOMPLEX,
-	    CT_USHORT,
-	    CT_ULONG
-	};
-
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( ColumnType )
+    {
+	    Bit 	  = TBIT,
+	    Byte          = TBYTE,
+	    Logical       = TLOGICAL,
+	    String        = TSTRING,
+	    Short         = TSHORT,
+	    Long          = TINT32BIT,
+	    Int32bit      = TINT32BIT,
+	    LongLong      = TLONGLONG,
+	    Float         = TFLOAT,
+	    Double        = TDOUBLE,
+	    Complex       = TCOMPLEX,
+	    DoubleComplex = TDBLCOMPLEX,
+	    UnsignedShort,
+	    UnsignedLong
     }
-
-    using namespace ColumnTypes;
+    BOOST_SCOPED_ENUM_DECLARE_END( ColumnType)
 
     class ColumnCode {
 
     public:
-	typedef std::map<char,const char*> Map;
+	typedef std::map<ColumnType,const char*> Map;
 	static Map code;
 
     };
