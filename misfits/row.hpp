@@ -162,6 +162,8 @@ namespace misFITS {
 
 
 	private:
+	    std::vector<std::string>* base_;
+
 	    // for compatibility with C++ < 11, use intermediate
 	    // buffer.  in C++11, consecutive characters in
 	    // std::string are defined to be contiguous, and we can
@@ -174,7 +176,6 @@ namespace misFITS {
 	    LONGLONG nbytes;
 	    LONGLONG width;
 
-	    std::vector<std::string>* base_;
 	};
 
 

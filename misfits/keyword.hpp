@@ -21,10 +21,10 @@ namespace misFITS {
     class KeywordIterator : public std::iterator <std::forward_iterator_tag, Keyword<std::string>, void >{
 
     private:
+	FilePtr fp_;
 	int keynum_;
 	int hdu_num_;
 	int nkeys;
-	FilePtr fp_;
 	const Keyword<std::string> current();
 
     public:

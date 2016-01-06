@@ -143,7 +143,7 @@ namespace misFITS {
 	init( file );
     }
 
-    ColumnInfo::ColumnInfo( const File& file, int colnum, LONGLONG offset ) : colnum( colnum ), offset( offset ) {
+    ColumnInfo::ColumnInfo( const File& file, int colnum, LONGLONG offset ) : offset( offset ), colnum( colnum ) {
 	init( file );
     }
 

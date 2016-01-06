@@ -20,7 +20,7 @@ namespace misFITS {
     }
 
     KeywordIterator::KeywordIterator( FilePtr fp, int hdu_num, int keynum ) :
-	keynum_(keynum), fp_(fp), hdu_num_( hdu_num == 0 ? fp->hdu_num() : hdu_num ) {
+	keynum_(keynum), fp_(fp), hdu_num_( hdu_num == 0 ? fp_->hdu_num() : hdu_num ) {
 
 	int chdu = fp_->hdu_num();
 
