@@ -223,7 +223,7 @@ namespace misFITS {
 	int get_num_hdus() const;
 	int hdu_num() const;
 	HDU_Type hdu_type() const;
-	void copy ( FilePtr& outfile, boost::underlying_type<FileCopy>::type what, int morekeys = 0 ) const;
+	void copy ( FilePtr& outfile, FileCopy::Flag what, int morekeys = 0 ) const;
 
 	HDU_Type delete_hdu ( ) const;
 

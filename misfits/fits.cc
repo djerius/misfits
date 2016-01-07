@@ -325,7 +325,7 @@ namespace misFITS {
     }
 
     void
-    File::copy ( FilePtr& outfile, boost::underlying_type<FileCopy>::type what, int morekeys ) const {
+    File::copy ( FilePtr& outfile, FileCopy::Flag what, int morekeys ) const {
 
 	if ( what  == FileCopy::CurrentHeader ) {
 	    misFITS_CHECK_CFITSIO_EXPR( fits_copy_header( fptr(), outfile->fptr(), &status ) );

@@ -27,7 +27,6 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/types.hpp
 
 nobase_include_HEADERS	+=				\
-			%D%/bitmask_operators.hpp	\
 			%D%/bitset.hpp			\
 			%D%/config.hpp			\
 			%D%/columninfo.hpp		\

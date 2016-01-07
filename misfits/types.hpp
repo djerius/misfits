@@ -29,7 +29,6 @@
 #include <map>
 
 #include <boost/core/scoped_enum.hpp>
-#include "bitmask_operators.hpp"
 
 #include <fitsio.h>
 
@@ -171,22 +170,17 @@ namespace misFITS {
     };
 
 
-    BOOST_SCOPED_ENUM_DECLARE_BEGIN( FileCopy )
-    {
-	PreviousHDU   = 1,
-	CurrentHDU    = 2,
-	FollowingHDU  = 4,
-        AllHDU        = PreviousHDU | CurrentHDU | FollowingHDU,
-        CurrentHeader = 8
-    }
-    BOOST_SCOPED_ENUM_DECLARE_END( FileCopy )
-
+    struct FileCopy {
+	enum Flag
+	    {
+		PreviousHDU   = 1,
+		CurrentHDU    = 2,
+		FollowingHDU  = 4,
+		AllHDU        = PreviousHDU | CurrentHDU | FollowingHDU,
+		CurrentHeader = 8
+	    };
+    };
 
 }
-
-    template<>
-    struct enable_bitmask_operators<BOOST_SCOPED_ENUM_NATIVE(misFITS::FileCopy)> {
-	    static const bool enable=true;
-    };
 
 #endif // ! misFITS_TYPES_H
