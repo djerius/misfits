@@ -29,7 +29,7 @@
 #include <map>
 
 #include <boost/core/scoped_enum.hpp>
-
+#include "bitmask_operators.hpp"
 
 #include <fitsio.h>
 
@@ -49,11 +49,14 @@ namespace misFITS {
 	SC_UNDEF       = 0
     };
 
-    enum HDU_Type {
-	Image = IMAGE_HDU,
-	AsciiTable = ASCII_TBL,
-	BinaryTable =  BINARY_TBL
-    };
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( HDU_Type )
+    {
+	Image 	    = IMAGE_HDU,
+	AsciiTable  = ASCII_TBL,
+	BinaryTable = BINARY_TBL,
+	Any         = ANY_HDU
+    }
+    BOOST_SCOPED_ENUM_DECLARE_END( HDU_Type)
 
 
     template <typename T> struct StorageCode;
@@ -162,7 +165,21 @@ namespace misFITS {
     };
 
 
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( CopyHDU )
+    {
+	Previous = 1,
+	Current = 2,
+	Following = 4,
+	All = Previous | Current | Following
+    }
+    BOOST_SCOPED_ENUM_DECLARE_END( CopyHDU )
+
 
 }
+
+    template<>
+    struct enable_bitmask_operators<BOOST_SCOPED_ENUM_NATIVE(misFITS::CopyHDU)> {
+	    static const bool enable=true;
+    };
 
 #endif // ! misFITS_TYPES_H

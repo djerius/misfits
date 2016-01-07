@@ -44,7 +44,7 @@ namespace misFITS {
 	char ttype_t[80];
 	char tunit_t[80];
 
-	if ( file.hdu_type() != BinaryTable )
+	if ( file.hdu_type() != HDU_Type::BinaryTable )
 	    throw Exception::Assert( "only Binary Tables are supported" );
 
 	misFITS_CHECK_CFITSIO_EXPR

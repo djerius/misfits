@@ -286,7 +286,10 @@ namespace misFITS {
 
     void
     File::movnam_hdu( HDU_Type hdu_type, const std::string& extname, int extver) const {
-	misFITS_CHECK_CFITSIO_EXPR( fits_movnam_hdu( fptr(), hdu_type, const_cast<char*>(extname.c_str()), extver, &status ) );
+	misFITS_CHECK_CFITSIO_EXPR( fits_movnam_hdu( fptr(),
+						     boost::native_value(hdu_type),
+						     const_cast<char*>(extname.c_str()),
+						     extver, &status ) );
     }
 
     int
@@ -312,8 +315,12 @@ namespace misFITS {
     }
 
     void
-    File::copy_file ( FilePtr& outfile, int previous, int current, int following ) const {
-	misFITS_CHECK_CFITSIO_EXPR( fits_copy_file( fptr(), outfile->fptr(), previous, current, following, &status ) );
+    File::copy_file ( FilePtr& outfile, boost::underlying_type<CopyHDU>::type which_hdus ) const {
+	misFITS_CHECK_CFITSIO_EXPR( fits_copy_file( fptr(), outfile->fptr(),
+						    which_hdus & CopyHDU::Previous,
+						    which_hdus & CopyHDU::Current,
+						    which_hdus & CopyHDU::Following,
+						    &status ) );
 
     }
 
