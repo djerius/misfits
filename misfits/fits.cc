@@ -295,7 +295,7 @@ namespace misFITS {
     }
 
     void
-    File::movnam_hdu( HDU_Type hdu_type, const std::string& extname, int extver) const {
+    File::move_to( const std::string& extname, int extver, HDU_Type hdu_type ) const {
 	misFITS_CHECK_CFITSIO_EXPR( fits_movnam_hdu( fptr(),
 						     boost::native_value(hdu_type),
 						     const_cast<char*>(extname.c_str()),
