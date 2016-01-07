@@ -182,6 +182,8 @@ namespace misFITS {
 	// helper for reopening files
 	void reopen( const File& );
 
+	TablePtr add_( const Table* );
+
     public:
 
 	////////////////////
@@ -206,6 +208,7 @@ namespace misFITS {
         //////////////////////////
 	TablePtr table();
 	TablePtr add( const Table& table );
+	TablePtr add( const TablePtr& table );
 
 
 	/////////////////////////////
