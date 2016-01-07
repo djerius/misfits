@@ -25,6 +25,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/core/scoped_enum.hpp>
+
 #include <misfits/fits.hpp>
 #include <misfits/hdu.hpp>
 #include <misfits/extent.hpp>
@@ -33,6 +35,12 @@
 namespace misFITS {
 
     class Row;
+
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( TableCopy )
+    {
+	HDU, Header
+    }
+    BOOST_SCOPED_ENUM_DECLARE_END( TableCopy )
 
     class Table : public HDU {
 
@@ -45,11 +53,8 @@ namespace misFITS {
 	const ColumnInfo& colinfo( int colnum );
 	const ColumnInfo& colinfo( const std::string& name );
 
-	// copy table header to other file
-	TablePtr copy_header( FilePtr& file_ ) const;
-
 	// copy table to other file
-	TablePtr copy( FilePtr& file, int morekeys = 0 ) const;
+	TablePtr copy( FilePtr& file, const TableCopy& what, int morekeys = 0 ) const;
 
 	Table& add( const ColumnInfo& );
 
@@ -78,6 +83,7 @@ namespace misFITS {
 	std::vector<ColumnInfo> columns;
 
     };
+
 
 }
 

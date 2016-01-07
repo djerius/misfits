@@ -85,7 +85,7 @@ TEST_F( WriteTest, Create ) {
 
     }
 
-    misFITS::TablePtr otable( ttable.copy( output ) );
+    misFITS::TablePtr otable( ttable.copy( output, TableCopy::Header ) );
 
     struct Row {
 	int I1;

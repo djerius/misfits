@@ -165,20 +165,21 @@ namespace misFITS {
     };
 
 
-    BOOST_SCOPED_ENUM_DECLARE_BEGIN( CopyHDU )
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( FileCopy )
     {
-	Previous = 1,
-	Current = 2,
-	Following = 4,
-	All = Previous | Current | Following
+	PreviousHDU   = 1,
+	CurrentHDU    = 2,
+	FollowingHDU  = 4,
+        AllHDU        = PreviousHDU | CurrentHDU | FollowingHDU,
+        CurrentHeader = 8
     }
-    BOOST_SCOPED_ENUM_DECLARE_END( CopyHDU )
+    BOOST_SCOPED_ENUM_DECLARE_END( FileCopy )
 
 
 }
 
     template<>
-    struct enable_bitmask_operators<BOOST_SCOPED_ENUM_NATIVE(misFITS::CopyHDU)> {
+    struct enable_bitmask_operators<BOOST_SCOPED_ENUM_NATIVE(misFITS::FileCopy)> {
 	    static const bool enable=true;
     };
 

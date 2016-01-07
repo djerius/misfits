@@ -221,7 +221,7 @@ namespace misFITS {
 	    in.file->movabs_hdu( in.hdu_num );
 
 	    SharedFilePtr fptr( in.file() );
-	    copy_hdu( fptr );
+	    copy( fptr, FileCopy::CurrentHDU );
 	} catch ( ... ) {
 
 	    in.file->movabs_hdu( in_chdu );
@@ -325,24 +325,28 @@ namespace misFITS {
     }
 
     void
-    File::copy_file ( FilePtr& outfile, boost::underlying_type<CopyHDU>::type which_hdus ) const {
-	misFITS_CHECK_CFITSIO_EXPR( fits_copy_file( fptr(), outfile->fptr(),
-						    which_hdus & CopyHDU::Previous,
-						    which_hdus & CopyHDU::Current,
-						    which_hdus & CopyHDU::Following,
-						    &status ) );
+    File::copy ( FilePtr& outfile, boost::underlying_type<FileCopy>::type what, int morekeys ) const {
 
-    }
+	if ( what  == FileCopy::CurrentHeader ) {
+	    misFITS_CHECK_CFITSIO_EXPR( fits_copy_header( fptr(), outfile->fptr(), &status ) );
+	}
+	else if ( what == FileCopy::CurrentHDU ) {
+	    misFITS_CHECK_CFITSIO_EXPR( fits_copy_hdu( fptr(), outfile->fptr(), morekeys, &status ) );
+	}
+	else {
 
-    void
-    File::copy_hdu ( FilePtr& outfile, int morekeys ) const {
+	    misFITS_CHECK_CFITSIO_EXPR
+		(
+		 fits_copy_file( fptr(), outfile->fptr(),
+				 what & FileCopy::PreviousHDU,
+				 what & FileCopy::CurrentHDU,
+				 what & FileCopy::FollowingHDU,
+				 &status ) );
+	}
+
 	misFITS_CHECK_CFITSIO_EXPR( fits_copy_hdu( fptr(), outfile->fptr(), morekeys, &status ) );
     }
 
-    void
-    File::copy_header ( FilePtr& outfile ) const {
-	misFITS_CHECK_CFITSIO_EXPR( fits_copy_header( fptr(), outfile->fptr(), &status ) );
-    }
 
     HDU_Type
     File::delete_hdu ( ) const {

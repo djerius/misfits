@@ -202,35 +202,28 @@ namespace misFITS {
     ///////////////////////////
 
 
-    // copy table header to other file
-    TablePtr
-    Table::copy_header( misFITS::FilePtr& ofile ) const {
-
-	// FIXME: this should be undone with a scope guard.
-	int current_hdu = file()->hdu_num();
-
-	try {
-	    file()->movabs_hdu( hdu_num );
-	    file()->copy_header( ofile );
-	}
-	catch ( ... ) {
-	    file()->movabs_hdu( current_hdu );
-	}
-
-	file()->movabs_hdu( current_hdu );
-	    return TablePtr( new Table( ofile ) );
-    }
-
     // copy table to other file
     TablePtr
-    Table::copy( misFITS::FilePtr& ofile, int morekeys ) const {
+    Table::copy( misFITS::FilePtr& ofile, const TableCopy& what, int morekeys ) const {
 
 	// FIXME: this should be undone with a scope guard.
 	int current_hdu = file()->hdu_num();
 
 	try {
 	    file()->movabs_hdu( hdu_num );
-	    file()->copy_hdu( ofile, morekeys );
+
+	    switch( boost::native_value( what ) ) {
+
+	    case TableCopy::HDU :
+		file()->copy( ofile, FileCopy::CurrentHeader );
+		break;
+
+	    case TableCopy::Header :
+		file()->copy( ofile, FileCopy::CurrentHDU, morekeys );
+		break;
+
+	    }
+
 	}
 	catch (...) {
 	    file()->movabs_hdu( current_hdu );

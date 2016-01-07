@@ -81,7 +81,7 @@ TEST( TableTest, CreateTable ) {
 
 
     misFITS::FilePtr file( misFITS::open<Entity::Memory>() );
-    table.copy( file );
+    table.copy( file, misFITS::TableCopy::HDU );
 
 
     misFITS::Table table2( file );
