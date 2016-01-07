@@ -38,6 +38,11 @@ namespace misFITS {
 
 	//-----------------------------------------
 
+	// FITS bits are left justified in the bytes, with
+	// unused bits set to zero at the end.  e.g., if the
+	// format is 5X, it is stored in the 8 bit byte as
+	// XXXXX000.
+
 	Column<BitSet>::Column( const ColumnInfo& info, BitSet* base ) :
 	    base_( base ),
 	    colnum_( info.colnum ),
@@ -46,14 +51,7 @@ namespace misFITS {
 	    if ( CT_BIT != info.column_type )
 		throw( Exception::Assert( "can't use an misFITS::BitSet object with a non bit FITS column" ) );
 
-	    // FITS bits are left justified in the bytes, with
-	    // unused bits set to zero at the end.  e.g., if the
-	    // format is 5X, it is stored in the 8 bit byte as
-	    // XXXXX000. Preallocate enough bits for the total number of bytes
-	    // so that the value can be left shifted before being output
 	    base_->resize( nelem_ );
-	    nbits_ = base_->num_blocks() * BitSet::bits_per_block;
-	    base_->resize( nbits_ );
 	    nbytes_ = base_->num_blocks();
 	    buffer.resize( nbytes_ );
 	}
@@ -63,15 +61,15 @@ namespace misFITS {
 
 	    file.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 
-	    boost::from_block_range(buffer.rbegin(), buffer.rend(), *base_ );
-	    (*base_) >>= nbits_ - nelem_;
+	    boost::from_block_range(bitset_input_iterator( buffer.begin() ),
+				    bitset_input_iterator( buffer.end(), false ),
+				    *base_ );
 	}
 
 	void
 	Column<BitSet>::write( const File& file, LONGLONG firstrow ) {
 
-	    (*base_) <<= nbits_ - nelem_;
-	    boost::to_block_range(*base_, buffer.rbegin());
+	    boost::to_block_range(*base_, bitset_output_iterator( buffer.begin()) );
 
 	    file.write_col( colnum_, firstrow, 1, nbytes_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 	}

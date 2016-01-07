@@ -146,8 +146,8 @@ test_fiducial( misFITS::Row &row ) {
     	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], D1 );
     	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], storage.b.D1 );
 
-	EXPECT_TRUE( X1_bitset[Fiducial::Data::nbits - i] );
-	EXPECT_TRUE( storage.c.X1_bitset[Fiducial::Data::nbits - i] );
+	EXPECT_EQ( fid.x2.data[zidx], X1_bitset );
+	EXPECT_EQ( fid.x2.data[zidx], storage.c.X1_bitset );
 
 	EXPECT_EQ( fid.x1.data[zidx], X1_vector );
 	EXPECT_EQ( fid.x1.data[zidx], storage.c.X1_vector );

@@ -48,6 +48,7 @@ namespace misFITS_Test {
 	    e1( "E1" , "E"    	      	      ),
 	    d1( "D1" , "D"    	      	      ),
 	    x1( "X1" , Xform() 	      	      ),
+	    x2( "X2" , Xform() 	      	      ),
 
 	    a1( "A1" , "60A"                  ),
 	    a2( "A2" , "60A12"  	      ),
@@ -106,6 +107,10 @@ namespace misFITS_Test {
 		int byte = (i - 1) / 8;
 		int shift = ( 8 - (i - byte * 8) );
 		x1.data[i-1][byte] |= 1<<shift;
+
+		x2.data.resize(i);
+		x2.data[i-1].resize( nbits );
+		x2.data[i-1][i-1] = true;
 
 		// right justify with leading zeroes
 		{

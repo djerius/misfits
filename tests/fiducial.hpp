@@ -134,18 +134,6 @@ namespace misFITS_Test {
 		    if ( drow.size() != Parent::nelem )
 			throw misFITS::Exception::Assert( "data for vector cell has incorrect length" );
 
-		    // std::cerr << Parent::colnum << ": " << row << ": ";
-
-		    // std::cerr.setf( std::ios::hex, std::ios::basefield );
-		    // std::cerr.setf( std::ios::showbase );
-
-		    // for ( int idx = 0 ; idx < Parent::nelem ; ++idx )
-		    // 	std::cerr << '>' << static_cast<unsigned int>(drow[idx]) << '<';
-		    // std::cerr << std::endl;
-
-		    // std::cerr.setf( std::ios::dec, std::ios::basefield );
-		    // std::cerr.unsetf( std::ios::showbase );
-
 		    misFITS_CHECK_CFITSIO_EXPR
 			(
 			 fits_write_col( fpp.get(), storage_type, Parent::colnum, row, 1, Parent::nelem, const_cast<T*>(&drow[0]), &status )

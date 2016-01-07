@@ -42,7 +42,12 @@ namespace misFITS_Test {
 	  Column<TINT   , int>			j1;
 	  Column<TFLOAT , float>		e1;
 	  Column<TDOUBLE, double>		d1;
-	  Column<TBYTE  , std::vector<misFITS::byte_t> >	x1; // we're writing bits as a string of bytes
+
+	  // we're writing bits as a string of bytes
+	  Column<TBYTE  , std::vector<misFITS::byte_t> >	x1;
+
+	  // this doesn't get written; it's just there for comparison
+	  Column<TBIT   , misFITS::BitSet>      x2;
 
 	  Column<TSTRING, std::string>		a1;
 	  Column<TSTRING, std::vector<std::string> >	a2;

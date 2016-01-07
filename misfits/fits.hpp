@@ -26,7 +26,6 @@
 #include <iostream>
 #include <utility>
 
-#include <boost/dynamic_bitset.hpp>
 #include <misfits/config.hpp>
 
 // forward declarations
@@ -48,6 +47,7 @@ namespace misFITS {
 #include <misfits/types.hpp>
 #include <misfits/keyword.hpp>
 #include <misfits/exception.hpp>
+#include <misfits/bitset.hpp>
 
 namespace misFITS {
 
@@ -110,10 +110,6 @@ namespace misFITS {
     typedef shared_ptr<Table> SharedTablePtr;
     typedef weak_ptr<Table> WeakTablePtr;
     typedef SharedTablePtr TablePtr;
-
-    //
-    typedef uint8_t byte_t;
-    typedef boost::dynamic_bitset<byte_t> BitSet;
 
 
     // predeclare "factory" open function

@@ -114,7 +114,8 @@ namespace misFITS {
 	    int colnum_;
 	    LONGLONG nelem_;
 
-	    BitSet::size_type nbits_;
+	    // number of bytes required to store the bits. cached for
+	    // speed
 	    BitSet::size_type nbytes_;
 
 	    std::vector<BitSet::block_type> buffer;
