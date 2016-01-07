@@ -62,7 +62,7 @@ namespace misFITS {
 	    file.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 
 	    boost::from_block_range(bitset_input_iterator( buffer.begin() ),
-				    bitset_input_iterator( buffer.end(), false ),
+				    bitset_input_iterator( buffer.end() ),
 				    *base_ );
 	}
 

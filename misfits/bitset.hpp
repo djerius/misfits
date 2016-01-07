@@ -50,14 +50,11 @@ namespace misFITS {
 
     public:
 
-	explicit BitSet_input_iterator( Iterator& iter, bool cache = true ) : iter_( iter ) {
-	    if ( cache )
-		cache_ = reverse_bits( *iter_ );
-	};
+	explicit BitSet_input_iterator( Iterator& iter ) : iter_( iter ) {};
 
-	byte_t operator* ()         { return cache_; }
-	BitSet_input_iterator& operator++ ()        { iter_++;      cache_ = reverse_bits( *iter_ ); return *this; }
-	BitSet_input_iterator& operator++ (int inc) { iter_+= inc ; cache_ = reverse_bits( *iter_ ); return *this; }
+	byte_t operator* ()                         { return reverse_bits( *iter_ ); }
+	BitSet_input_iterator& operator++ ()        { iter_++;      return *this; }
+	BitSet_input_iterator& operator++ (int inc) { iter_+= inc ; return *this; }
 
 	bool operator == ( const BitSet_input_iterator& other ) const {
 	    return iter_ == other.iter_;
@@ -71,8 +68,8 @@ namespace misFITS {
 
     template<typename Iterator>
     BitSet_input_iterator<Iterator>
-    bitset_input_iterator( Iterator iter, bool cache = true ) {
-	return BitSet_input_iterator<Iterator>( iter, cache  );
+    bitset_input_iterator( Iterator iter ) {
+	return BitSet_input_iterator<Iterator>( iter );
     }
 
 }
