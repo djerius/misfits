@@ -41,6 +41,7 @@ namespace misFITS {
 	SC_FLOAT       = TFLOAT,
 	SC_INT         = TINT,
 	SC_LONG        = TLONG,
+	SC_LONGLONG    = TLONGLONG,
 	SC_SHORT       = TSHORT,
 	SC_STRING      = TSTRING,
 	SC_UINT        = TUINT,
@@ -89,6 +90,11 @@ namespace misFITS {
     template <> struct StorageCode<unsigned long>  {
 	static const StorageType type = SC_ULONG;
 	static unsigned long default_value () { return 0; }
+    };
+
+    template <> struct StorageCode<LONGLONG>           {
+	static const StorageType type = SC_LONGLONG;
+	static long default_value () { return 0; }
     };
 
     template <> struct StorageCode<short>          {
