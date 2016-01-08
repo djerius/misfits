@@ -99,7 +99,7 @@ namespace misFITS {
 	file = ofile.file;
 	fitsptr = FitsPtr_( fptr  );
 
-	movabs_hdu( ofile.hdu_num() );
+	move_to( ofile.hdu_num() );
     }
 
     File::File( const File& ofile ) : enable_shared_from_this<File>(), fitsptr( FitsPtr_(NULL) ) {
@@ -245,19 +245,19 @@ namespace misFITS {
 	int in_chdu = in.file->hdu_num();
 
 	try {
-	    in.file->movabs_hdu( in.hdu_num );
+	    in.file->move_to( in.hdu_num );
 
 	    SharedFilePtr fptr( in.file() );
 	    copy( fptr, FileCopy::CurrentHDU );
 	} catch ( ... ) {
 
-	    in.file->movabs_hdu( in_chdu );
+	    in.file->move_to( in_chdu );
 
 	    throw;
 
 	}
 
-	in.file->movabs_hdu( in_chdu );
+	in.file->move_to( in_chdu );
 
 	return table();
     }
@@ -308,16 +308,16 @@ namespace misFITS {
 
 
     HDU_Type
-    File::movabs_hdu( int hdu_num ) const {
+    File::move_by( int nmove ) const {
 	int hdu_type;
-	misFITS_CHECK_CFITSIO_EXPR( fits_movabs_hdu( fptr(), hdu_num, &hdu_type, &status ) );
+	misFITS_CHECK_CFITSIO_EXPR( fits_movrel_hdu( fptr(), nmove, &hdu_type, &status ) );
 	return static_cast<HDU_Type>(hdu_type);
     }
 
     HDU_Type
-    File::movrel_hdu( int nmove ) const {
+    File::move_to( int hdu_num ) const {
 	int hdu_type;
-	misFITS_CHECK_CFITSIO_EXPR( fits_movrel_hdu( fptr(), nmove, &hdu_type, &status ) );
+	misFITS_CHECK_CFITSIO_EXPR( fits_movabs_hdu( fptr(), hdu_num, &hdu_type, &status ) );
 	return static_cast<HDU_Type>(hdu_type);
     }
 

@@ -8,13 +8,13 @@ namespace misFITS {
 	int chdu = fp_->hdu_num();
 
 	try {
-	    fp_->movabs_hdu( hdu_num_ );
+	    fp_->move_to( hdu_num_ );
 	    const Keyword<std::string>& kw = fp_->read_keyn( keynum_, "" );
-	    fp_->movabs_hdu( chdu );
+	    fp_->move_to( chdu );
 	    return kw;
 	}
 	catch (...) {
-	    fp_->movabs_hdu( chdu );
+	    fp_->move_to( chdu );
 	    throw;
 	}
     }
@@ -25,12 +25,12 @@ namespace misFITS {
 	int chdu = fp_->hdu_num();
 
 	try {
-	    fp_->movabs_hdu( hdu_num_ );
+	    fp_->move_to( hdu_num_ );
 	    nkeys =  fp_->get_hdrpos().first;
-	    fp_->movabs_hdu( chdu );
+	    fp_->move_to( chdu );
 	}
 	catch (...) {
-	    fp_->movabs_hdu( chdu );
+	    fp_->move_to( chdu );
 	    throw;
 	}
 

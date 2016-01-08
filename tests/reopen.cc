@@ -48,7 +48,7 @@ TEST( FITSReopen, Table ) {
 
     // move to another HDU in file
     int hdu_num = file.hdu_num();
-    file.movabs_hdu( 1 );
+    file.move_to( 1 );
 
     // we'd better not be at the last one, it should have been a
     // table.

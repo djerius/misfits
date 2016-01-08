@@ -64,7 +64,7 @@ namespace misFITS {
     void
     Table::refresh( ) {
 
-	file()->movabs_hdu( hdu_num );
+	file()->move_to( hdu_num );
 
 	// make sure we're really at a table
 	int type = boost::native_value( file()->hdu_type() );
@@ -210,7 +210,7 @@ namespace misFITS {
 	int current_hdu = file()->hdu_num();
 
 	try {
-	    file()->movabs_hdu( hdu_num );
+	    file()->move_to( hdu_num );
 
 	    switch( boost::native_value( what ) ) {
 
@@ -226,11 +226,11 @@ namespace misFITS {
 
 	}
 	catch (...) {
-	    file()->movabs_hdu( current_hdu );
+	    file()->move_to( current_hdu );
 	    throw;
 	}
 
-	file()->movabs_hdu( current_hdu );
+	file()->move_to( current_hdu );
 	return TablePtr( new Table( ofile ) );
     }
 
