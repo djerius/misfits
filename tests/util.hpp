@@ -55,6 +55,13 @@ namespace misFITS_Test {
 
     void closeTestFitsPtr( fitsfile* fitsptr );
 
+    TestFitsPtr  createFitsFile( const std::string& filename );
+
+    void
+    createFitsTable( TestFitsPtr& fpp, const std::string& name, int extver = 1);
+
+    void writeFidData( TestFitsPtr& fpp, const std::string& name, int extver = 1 );
+
 }
 
 

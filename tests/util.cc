@@ -80,13 +80,24 @@ namespace misFITS_Test {
     }
 
 
-    TestFitsPtr createFits( const std::string& filename ) {
+    TestFitsPtr
+    createFitsFile( const std::string& filename ) {
 
 	fitsfile* fp;
 	std::string wfile( filename );
 	wfile.insert( 0, "!" );
 
 	misFITS_CHECK_CFITSIO_EXPR( fits_create_file( &fp, const_cast<char*>(wfile.c_str()), &status) );
+
+
+	return TestFitsPtr( fp, closeTestFitsPtr );
+    }
+
+
+    void
+    createFitsTable( TestFitsPtr& fpp, const std::string& name, int extver) {
+
+	fitsfile* fp = fpp.get();
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -103,15 +114,20 @@ namespace misFITS_Test {
 	     fits_write_key( fp, TDOUBLE, "PIE", &D, "DOUBLE",    &status );
 	     fits_write_key( fp, TSTRING, "PIESTR", Ds, "STRING", &status );
 
-	     int extver = 1;
 	     fits_write_key( fp, TINT, "EXTVER", &extver, "",  &status );
 	     );
-
-
-
-	return TestFitsPtr( fp, closeTestFitsPtr );
     }
 
+
+
+    void writeFidData( TestFitsPtr& fpp, const std::string& name, int extver ) {
+
+	Fiducial::Data data;
+
+	createFitsTable( fpp, name, extver );
+	data.insert_columns( fpp );
+	data.write( fpp );
+    }
 
 }
 
@@ -120,12 +136,9 @@ gen_fits ( const std::string& file ) {
 
     using namespace misFITS_Test;
 
-    Fiducial::Data data;
+    TestFitsPtr fpp( createFitsFile( file ) );
 
-    TestFitsPtr fpp( createFits( file ) );
+    writeFidData( fpp, "stuff" );
 
-    data.insert_columns( fpp );
-    data.write( fpp );
-    data.normalize_data();
 
 }
