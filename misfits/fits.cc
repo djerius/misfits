@@ -28,6 +28,7 @@
 #include <misfits/fits_p.hpp>
 #include <misfits/table.hpp>
 
+#include <boost/core/null_deleter.hpp>
 #include <boost/preprocessor/seq/elem.hpp>
 
 using namespace std;
@@ -62,6 +63,32 @@ namespace misFITS {
     File::File( const std::string& file_, fitsfile* fitsfile_ ) :
 	fitsptr( FitsPtr_( fitsfile_ ) ), file(file_) {}
 
+
+    FilePtr
+    File::fileptr() {
+
+	SharedFilePtr sp;
+
+        try {
+	     sp = shared_from_this();
+
+        } catch ( const bad_weak_ptr& e  ) {
+
+	    // shared_from_this didn't like things, probably because
+	    // this object is on the stack
+	    sp.reset(); // just in case
+
+	} catch ( ... ) {
+
+	    throw;
+	}
+
+
+	// if we survived, make sure sp has a valid pointer (e.g. it's
+	// on the heap)
+	return sp.get() ? sp : FilePtr( this, boost::null_deleter() ) ;
+
+    }
 
     void
     File::reopen( const File& ofile ) {

@@ -134,6 +134,10 @@ namespace misFITS {
 
 	File& operator=( const File& );
 
+	// return a shared ptr to the current object
+	FilePtr fileptr();
+
+
 	////////////////////
         // methods	  //
         ////////////////////
