@@ -303,7 +303,7 @@ namespace misFITS {
     }
 
     int
-    File::get_num_hdus() const {
+    File::num_hdus() const {
 	int hdu_nums;
 	misFITS_CHECK_CFITSIO_EXPR( fits_get_num_hdus( fptr(), &hdu_nums, &status ) );
 	return hdu_nums;

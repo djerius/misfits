@@ -220,7 +220,7 @@ namespace misFITS {
 
 	void move_to( const std::string&extname, int extver = 1, HDU_Type hdu_type = HDU_Type::Any ) const;
 
-	int get_num_hdus() const;
+	int num_hdus() const;
 	int hdu_num() const;
 	HDU_Type hdu_type() const;
 	void copy ( FilePtr& outfile, FileCopy::Flag what, int morekeys = 0 ) const;
