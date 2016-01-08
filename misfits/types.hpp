@@ -173,11 +173,11 @@ namespace misFITS {
     struct FileCopy {
 	enum Flag
 	    {
-		PreviousHDU   = 1,
-		CurrentHDU    = 2,
-		FollowingHDU  = 4,
-		AllHDU        = PreviousHDU | CurrentHDU | FollowingHDU,
-		CurrentHeader = 8
+		PreviousHDUs   = 1,
+		CurrentHDU     = 2,
+		FollowingHDUs  = 4,
+		AllHDUs        = PreviousHDUs | CurrentHDU | FollowingHDUs,
+		CurrentHeader  = 8
 	    };
     };
 

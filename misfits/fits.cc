@@ -338,9 +338,9 @@ namespace misFITS {
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
 		 fits_copy_file( fptr(), outfile->fptr(),
-				 what & FileCopy::PreviousHDU,
+				 what & FileCopy::PreviousHDUs,
 				 what & FileCopy::CurrentHDU,
-				 what & FileCopy::FollowingHDU,
+				 what & FileCopy::FollowingHDUs,
 				 &status ) );
 	}
 
