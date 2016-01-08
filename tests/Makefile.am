@@ -73,6 +73,17 @@ CXXFLAGS_%C%_TESTS	= $(CXXFLAGS_%C%)
 
 ##############################
 
+check_PROGRAMS		+= %D%/file
+
+%C%_file_SOURCES	=			\
+			%D%/file.cc
+
+%C%_file_LDADD		= $(LDADD_%C%_TESTS)
+%C%_file_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_file_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
 check_PROGRAMS		+= %D%/gen_fits
 
 %C%_gen_fits_SOURCES	=			\

@@ -344,7 +344,6 @@ namespace misFITS {
 				 &status ) );
 	}
 
-	misFITS_CHECK_CFITSIO_EXPR( fits_copy_hdu( fptr(), outfile->fptr(), morekeys, &status ) );
     }
 
 

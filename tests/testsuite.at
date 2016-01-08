@@ -6,6 +6,13 @@ AT_CHECK(cfitsio,,[ignore])
 
 AT_CLEANUP
 
+AT_SETUP([Files])
+
+AT_CHECK(file,,[ignore])
+
+AT_CLEANUP
+
+
 AT_SETUP([tables])
 
 AT_CHECK(table,,[ignore])
