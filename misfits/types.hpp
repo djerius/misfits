@@ -181,6 +181,13 @@ namespace misFITS {
 	    };
     };
 
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( OpenMode )
+    {
+	ReadOnly = READONLY,
+        ReadWrite = READWRITE
+    }
+    BOOST_SCOPED_ENUM_DECLARE_END( OpenMode )
+
 }
 
 #endif // ! misFITS_TYPES_H

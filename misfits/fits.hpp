@@ -75,10 +75,10 @@ namespace misFITS {
 
     // ditto, but some should have actual values, so make 'em a struct.
     namespace Mode {
-	struct ReadOnly  { static int mode() { return READONLY ; } };
-	struct ReadWrite { static int mode() { return READWRITE ; } };
-	struct Create    {};
-	struct CreateOverWrite    {};
+	struct ReadOnly  { static int mode() { return OpenMode::ReadOnly ; } };
+	struct ReadWrite { static int mode() { return OpenMode::ReadWrite ; } };
+	struct Create  : public ReadWrite  { };
+	struct CreateOverWrite : public ReadWrite  {};
     }
 
     // map open<Entity::XXX> to fits_open_XXX and fits_create_XXX
@@ -127,6 +127,7 @@ namespace misFITS {
 
 	typedef unique_ptr<fitsfile,void(*)(fitsfile*)> FitsPtr;
 	FitsPtr fitsptr;
+	int mode;
 
 	/////////////////////////
         // constructors	       //
@@ -149,7 +150,7 @@ namespace misFITS {
 	//
 	// these will only be available to File::open
 
-	File( const std::string& file_, fitsfile* fitsfile_ );
+	File( const std::string& file_, fitsfile* fitsfile_, int mode );
 
 	static FitsPtr FitsPtr_( fitsfile* fitsptr );
 

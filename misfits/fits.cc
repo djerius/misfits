@@ -57,12 +57,13 @@ namespace misFITS {
     // default: open at first data HDU in read only mode
     File::File( const std::string& file ) : fitsptr( FitsPtr_( NULL ) ), file( file ) {
 	fitsfile* fptr = Open::open<Entity::Data,Mode::ReadOnly>( file.c_str() );
+	mode = OpenMode::ReadOnly;
 	fitsptr = FitsPtr_( fptr  );
     }
 
 
-    File::File( const std::string& file_, fitsfile* fitsfile_ ) :
-	fitsptr( FitsPtr_( fitsfile_ ) ), file(file_) {}
+    File::File( const std::string& file_, fitsfile* fitsfile_, int mode_ ) :
+	fitsptr( FitsPtr_( fitsfile_ ) ), mode( mode_ ), file(file_) {}
 
 
     File::~File () {
@@ -115,6 +116,7 @@ namespace misFITS {
 	misFITS_CHECK_CFITSIO_EXPR( fits_reopen_file( ofile.fptr(), &fptr, &status ) );
 
 	file = ofile.file;
+	mode = ofile.mode;
 	fitsptr = FitsPtr_( fptr  );
 
 	move_to( ofile.hdu_num() );
@@ -222,7 +224,7 @@ namespace misFITS {
     template <Entity::Type Entity, class Mode>
     FilePtr open( const std::string&file )  {
 
-	return FilePtr( new File(file, Open::open<Entity,Mode>( file ) ) );
+	return FilePtr( new File(file, Open::open<Entity,Mode>( file ), Mode::mode() ) );
     }
 
     template <>  FilePtr open<Entity::Memory>( ) {
