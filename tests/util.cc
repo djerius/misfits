@@ -58,19 +58,6 @@ GenFits::TearDown() {
     boost::filesystem::remove( TEST_FITS_QFILENAME);
 }
 
-void
-FiducialTableFptr::SetUp() {
-    GenFits::SetUp();
-    file.reset( new misFITS::File( TEST_FITS_QFILENAME ) );
-}
-
-void
-FiducialTableFptr::TearDown() {
-    file.reset();
-    GenFits::TearDown();
-}
-
-
 
 namespace misFITS_Test {
 

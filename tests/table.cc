@@ -32,9 +32,11 @@ namespace Mode = misFITS::Mode;
 using namespace misFITS_Test;
 using misFITS::ColumnType;
 
-TEST_F( FiducialTableFptr, MetaData ) {
+TEST_F( FiducialTableROFptr, MetaData ) {
 
     EXPECT_STREQ( TEST_FITS_QFILENAME, file->file.c_str());
+
+    file->move_to( 2 );
 
     misFITS::Table table( file );
 

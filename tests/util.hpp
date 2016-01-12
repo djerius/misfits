@@ -39,14 +39,26 @@ protected:
     void TearDown();
 };
 
+template< class Mode >
 class FiducialTableFptr : public GenFits {
 
 protected:
 
-    void SetUp();
-    void TearDown();
+    void SetUp() {
+	GenFits::SetUp();
+	file = misFITS::open<misFITS::Entity::File, Mode>( TEST_FITS_QFILENAME );
+    }
+
+    void TearDown() {
+	file.reset();
+	GenFits::TearDown();
+    }
+
     misFITS::FilePtr file;
 };
+
+typedef FiducialTableFptr<misFITS::Mode::ReadOnly> FiducialTableROFptr;
+typedef FiducialTableFptr<misFITS::Mode::ReadWrite> FiducialTableRWFptr;
 
 namespace misFITS_Test {
 
