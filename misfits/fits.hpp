@@ -207,6 +207,7 @@ namespace misFITS {
 	// reopen
 	File( const File& );
 
+	~File();
 	//////////////////////////
         // Table support        //
         //////////////////////////
@@ -218,6 +219,8 @@ namespace misFITS {
 	/////////////////////////////
         // CFITSIO wrappers	   //
         /////////////////////////////
+
+	void close ();
 
 	HDU_Type move_by( int nmove ) const;
 

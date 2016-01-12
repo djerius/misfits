@@ -38,14 +38,15 @@ using namespace std;
 
 namespace misFITS {
 
-    ///////////////////////
-    // File constructors //
-    ///////////////////////
+    //////////////////////////////////////
+    // File constructors and Destructor //
+    //////////////////////////////////////
 
     // destructor for shared_ptr class. should probably not throw...
     static void
     closeFitsPtr( fitsfile* fitsptr ) {
-	misFITS_CHECK_CFITSIO_EXPR( fits_close_file( fitsptr, &status ) );
+	if ( fitsptr )
+	    misFITS_CHECK_CFITSIO_EXPR( fits_close_file( fitsptr, &status ) );
     }
 
     File::FitsPtr
@@ -63,6 +64,23 @@ namespace misFITS {
     File::File( const std::string& file_, fitsfile* fitsfile_ ) :
 	fitsptr( FitsPtr_( fitsfile_ ) ), file(file_) {}
 
+
+    File::~File () {
+
+	// CFITSIO::fits_close_file may return an error.  Since
+	// destructors shouldn't throw exceptions, handle it by
+	// logging the error to stderr.  Normally the client would
+	// call the close method and catch the exception.  This is in
+	// case that doesn't happen.
+
+	try {
+	    close();
+	} catch ( Exception& e ) {
+	    std::cerr << "Client error: misFITS::File::close invoked by misFITS::File::~File.  Error closing file " << file << ": " << e.what() << std::endl;
+	}
+
+
+    }
 
     FilePtr
     File::fileptr() {
@@ -306,6 +324,11 @@ namespace misFITS {
     // Wrappers around CFITSIO routines //
     //////////////////////////////////////
 
+    void
+    File::close(  ) {
+	if ( fitsptr )
+	    misFITS_CHECK_CFITSIO_EXPR( fits_close_file( fitsptr.release(), &status ) );
+    }
 
     HDU_Type
     File::move_by( int nmove ) const {
