@@ -251,9 +251,6 @@ namespace misFITS {
     BOOST_PP_SEQ_FOR_EACH_PRODUCT(OPEN_FITS,(ENTITY_SEQ)(MODE_SEQ))
 
 
-    template FilePtr open<Entity::Memory>() ;
-
-
     ///////////////////
     // Table Support //
     ///////////////////

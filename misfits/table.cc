@@ -64,10 +64,10 @@ namespace misFITS {
     void
     Table::refresh( ) {
 
-	file()->move_to( hdu_num );
+	file->move_to( hdu_num );
 
 	// make sure we're really at a table
-	int type = boost::native_value( file()->hdu_type() );
+	int type = boost::native_value( file->hdu_type() );
 	if ( type != BINARY_TBL && type != ASCII_TBL )
 	    throw Exception::Assert( "Expected CHDU to be a table, but it's not" );
 
@@ -78,7 +78,7 @@ namespace misFITS {
 
 	LONGLONG offset = 1;
 	for ( int colnum = 1 ; colnum <= ncols ; colnum++ ) {
-	    columns.push_back( ColumnInfo( *file(), colnum, offset ) );
+	    columns.push_back( ColumnInfo( *file.get(), colnum, offset ) );
 	    offset += columns[colnum-1].nbytes;
 	}
     }
@@ -93,7 +93,7 @@ namespace misFITS {
     Table::exists_column( const std::string& templt ) const {
 	int colnum;
 	int status = 0;
-	fitsfile* fptr = file()->fptr();
+	fitsfile* fptr = file->fptr();
 
 	return ! fits_get_colnum( fptr, CASEINSEN, const_cast<char*>(templt.c_str()),
 				  &colnum, &status );
@@ -108,7 +108,7 @@ namespace misFITS {
     Table::colinfo( const string& colname ) {
 	int colnum;
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_colnum( file()->fptr(), 0, const_cast<char*>(colname.c_str()), &colnum, &status )
+	    ( fits_get_colnum( file->fptr(), 0, const_cast<char*>(colname.c_str()), &colnum, &status )
 	      );
 	return columns.at(colnum - 1);
     }
@@ -121,7 +121,7 @@ namespace misFITS {
 	if ( copy.colnum == 0 )
 	    copy.colnum = num_columns() + 1;
 
-	copy.insert( *file() );
+	copy.insert( *file.get() );
 
 	refresh();
 
@@ -138,7 +138,7 @@ namespace misFITS {
 	if ( colnum == 0 )
 	    colnum = num_columns() + 1;
 
-	ColumnInfo( ttype, column_type, tunit, extent, colnum ).insert( *file() );
+	ColumnInfo( ttype, column_type, tunit, extent, colnum ).insert( *file.get() );
 
 	refresh();
 
@@ -150,7 +150,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_delete_col( file()->fptr(), colnum, &status )
+	     fits_delete_col( file->fptr(), colnum, &status )
 	     );
 
 	refresh();
@@ -161,7 +161,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_delete_col( file()->fptr(), colinfo(name).colnum, &status )
+	     fits_delete_col( file->fptr(), colinfo(name).colnum, &status )
 	     );
     }
 
@@ -169,7 +169,7 @@ namespace misFITS {
     Table::num_columns( ) const {
 	int num_cols;
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_num_cols( file()->fptr(), &num_cols, &status )
+	    ( fits_get_num_cols( file->fptr(), &num_cols, &status )
 	      );
 	return num_cols;
     }
@@ -190,7 +190,7 @@ namespace misFITS {
 	LONGLONG num_rows;
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_get_num_rowsll( file()->fptr(), &num_rows, &status )
+	     fits_get_num_rowsll( file->fptr(), &num_rows, &status )
 	     );
 
 	return num_rows;
@@ -207,30 +207,30 @@ namespace misFITS {
     Table::copy( misFITS::FilePtr& ofile, const TableCopy& what, int morekeys ) const {
 
 	// FIXME: this should be undone with a scope guard.
-	int current_hdu = file()->hdu_num();
+	int current_hdu = file->hdu_num();
 
 	try {
-	    file()->move_to( hdu_num );
+	    file->move_to( hdu_num );
 
 	    switch( boost::native_value( what ) ) {
 
 	    case TableCopy::HDU :
-		file()->copy( ofile, FileCopy::CurrentHeader );
+		file->copy( ofile, FileCopy::CurrentHeader );
 		break;
 
 	    case TableCopy::Header :
-		file()->copy( ofile, FileCopy::CurrentHDU, morekeys );
+		file->copy( ofile, FileCopy::CurrentHDU, morekeys );
 		break;
 
 	    }
 
 	}
 	catch (...) {
-	    file()->move_to( current_hdu );
+	    file->move_to( current_hdu );
 	    throw;
 	}
 
-	file()->move_to( current_hdu );
+	file->move_to( current_hdu );
 	return TablePtr( new Table( ofile ) );
     }
 
