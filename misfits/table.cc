@@ -214,11 +214,11 @@ namespace misFITS {
 
 	    switch( boost::native_value( what ) ) {
 
-	    case TableCopy::HDU :
+	    case TableCopy::Header :
 		file->copy( ofile, FileCopy::CurrentHeader );
 		break;
 
-	    case TableCopy::Header :
+	    case TableCopy::HDU :
 		file->copy( ofile, FileCopy::CurrentHDU, morekeys );
 		break;
 

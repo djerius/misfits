@@ -23,6 +23,7 @@
 
 #include "misfits/fits.hpp"
 #include "misfits/table.hpp"
+#include "misfits/row.hpp"
 
 namespace Entity = misFITS::Entity;
 namespace Mode = misFITS::Mode;
@@ -56,7 +57,7 @@ TEST_F( FiducialTableROFptr, MetaData ) {
     }
 }
 
-TEST( TableTest, CreateTable ) {
+TEST( TableTest, CopyHeader ) {
 
     misFITS::Table table( "MYEXTENT" );
 
@@ -83,8 +84,7 @@ TEST( TableTest, CreateTable ) {
 
 
     misFITS::FilePtr file( misFITS::open<Entity::Memory>() );
-    table.copy( file, misFITS::TableCopy::HDU );
-
+    table.copy( file, misFITS::TableCopy::Header );
 
     misFITS::Table table2( file );
 
@@ -98,6 +98,42 @@ TEST( TableTest, CreateTable ) {
 
     EXPECT_EQ( 4, table.num_columns() );
     EXPECT_EQ( 5, table2.num_columns() );
+
+}
+
+TEST_F( FiducialTableROFptr, CopyHDU ) {
+
+    misFITS::FilePtr file2( misFITS::open<Entity::Memory>() );
+
+    file->move_to( "stuff" );
+    misFITS::Table table( file );
+
+
+    table.copy( file2, misFITS::TableCopy::HDU );
+
+    file->close();
+
+    file2->move_to("stuff");
+
+    Fiducial::Data fid;
+
+    misFITS::Table table2( file2 );
+
+
+    misFITS::Row row( table2 );
+
+    // test that we've really copied the whole HDU
+    // if just the header is copied, CFITSIO will copy
+    // NAXIS2, so we can't check if the number of rows
+    // is correct.  It'll also happily read rows that don't
+    // exist (up to the bogus NAXIS2).  So, read and compare
+    // some actual data.
+
+    int i1;
+    row.column( "i1", &i1 );
+
+    while ( row.read() )
+	EXPECT_EQ( fid.i1.data[ row.idx() - 2 ], i1 );
 
 }
 
