@@ -29,17 +29,61 @@
 
 using namespace misFITS_Test;
 using misFITS::ColumnType;
+using namespace misFITS;
 
-TEST_F( FiducialTableFptr, CopyALL ) {
+TEST_F( FiducialTableRWFptr, CopyALL ) {
+
+    // create an odd number of HDU's in file, move file to HDU #2,
+    // and copy all (make sure both previous and following HDU's are copied
+
+    misFITS::Table table( "extra" );
+
+    table.copy( file, misFITS::TableCopy::HDU );
+
+    ASSERT_EQ( 3, file->num_hdus() );
+
+    file->move_to( 2 );
+
+    misFITS::FilePtr output( misFITS::open<misFITS::Entity::Memory>() );
+
+    file->copy( output, misFITS::FileCopy::AllHDUs );
+
+    ASSERT_EQ( 3, file->num_hdus() );
+    ASSERT_EQ( file->num_hdus(), output->num_hdus() );
+
+}
+
+TEST_F( FiducialTableRWFptr, CopyPrevious ) {
 
     misFITS::FilePtr output( misFITS::open<misFITS::Entity::Memory>() );
 
     ASSERT_EQ( 2, file->num_hdus() );
 
-    file->copy( output, misFITS::FileCopy::AllHDUs );
+    // create an odd number of HDU's in file, move file to HDU #2,
+    // and copy previous (make sure only previous HDU's are copied)
+
+    misFITS::Table table( "extra" );
+    table.copy( file, misFITS::TableCopy::HDU );
+
+    file->copy( output, misFITS::FileCopy::PreviousHDUs );
+
+    ASSERT_EQ( 3, file->num_hdus() );
+
+    ASSERT_EQ( 2, output->num_hdus() );
+
+}
+
+TEST_F( FiducialTableROFptr, CopyFollowing ) {
+
+    misFITS::FilePtr output( misFITS::open<misFITS::Entity::Memory>() );
 
     ASSERT_EQ( 2, file->num_hdus() );
 
-    ASSERT_EQ( file->num_hdus(), output->num_hdus() );
+    file->move_to( file->num_hdus() );
+    file->copy( output, misFITS::FileCopy::PreviousHDUs );
+
+    ASSERT_EQ( 2, file->num_hdus() );
+
+    ASSERT_EQ( 1, output->num_hdus() );
 
 }
