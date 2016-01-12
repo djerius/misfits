@@ -195,6 +195,10 @@ namespace misFITS {
     void
     ColumnInfo::insert( const misFITS::File& file ) {
 
+	// TODO: test if this is really necessary
+	if ( OpenMode::ReadOnly == file.mode )
+	    throw Exception::CFITSIO( READONLY_FILE );
+
 	ostringstream tform;
 	if ( extent.nelem() > 1 )
 	    tform << extent.nelem();

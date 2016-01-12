@@ -379,6 +379,12 @@ namespace misFITS {
     void
     File::copy ( FilePtr& outfile, FileCopy::Flag what, int morekeys ) const {
 
+	// the various copy routines don't seem to check for readonly status;
+	// they wait until cfitsio syncs state with the file.
+
+	if ( OpenMode::ReadOnly == outfile->mode )
+	    throw Exception::CFITSIO( READONLY_FILE );
+
 	if ( what  == FileCopy::CurrentHeader ) {
 	    misFITS_CHECK_CFITSIO_EXPR( fits_copy_header( fptr(), outfile->fptr(), &status ) );
 	}
