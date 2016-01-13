@@ -291,30 +291,8 @@ namespace misFITS {
 
     TablePtr File::table( ) {
 
-#ifdef HAVE_STD__WEAK_FROM_THIS
-
-        WeakFilePtr wp( weak_from_this() );
-
-	// if object is on stack, wp won't have a vaild pointer
-        return TablePtr( wp.expired() ? new Table( *this ) : new Table( wp ) );
-
-#else
-
-        try {
-            SharedFilePtr sp( shared_from_this() );
-
-	    // if we survived shared_from_this(), make sure it has a
-	    // valid pointer (e.g. it's on the heap)
-            return TablePtr( sp.get() ? new Table( *this ) : new Table( WeakFilePtr(sp) ) );
-
-        } catch ( const bad_weak_ptr& e  ) {
-
-	    // shared_from_this didn't like things, probably because
-	    // this object is on the stack
-	    return TablePtr( new Table( *this )	 );
-        }
-
-#endif
+	FilePtr fp = fileptr();
+	return TablePtr( new Table( fp ) );
 
     }
 
