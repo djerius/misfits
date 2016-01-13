@@ -238,24 +238,9 @@ namespace misFITS {
 
     TablePtr File::add( const Table& in ) {
 
-	int in_chdu = in.file->hdu_num();
+	FilePtr fp = fileptr();
+	return in.copy( fp, TableCopy::HDU );
 
-	try {
-	    in.file->move_to( in.hdu_num );
-
-	    SharedFilePtr fptr = fileptr();
-	    in.file->copy( fptr, FileCopy::CurrentHDU );
-	} catch ( ... ) {
-
-	    in.file->move_to( in_chdu );
-
-	    throw;
-
-	}
-
-	in.file->move_to( in_chdu );
-
-	return table();
     }
 
     TablePtr File::add( const TablePtr& in ) {
