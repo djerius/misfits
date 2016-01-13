@@ -243,8 +243,8 @@ namespace misFITS {
 	try {
 	    in.file->move_to( in.hdu_num );
 
-	    SharedFilePtr fptr( in.file() );
-	    copy( fptr, FileCopy::CurrentHDU );
+	    SharedFilePtr fptr = fileptr();
+	    in.file->copy( fptr, FileCopy::CurrentHDU );
 	} catch ( ... ) {
 
 	    in.file->move_to( in_chdu );

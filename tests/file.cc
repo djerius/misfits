@@ -87,3 +87,17 @@ TEST_F( FiducialTableROFptr, CopyFollowing ) {
     ASSERT_EQ( 1, output->num_hdus() );
 
 }
+
+TEST_F( FiducialTableRWFptr, AddTable ) {
+
+    misFITS::Table  events( "EVENTS" );
+
+    int nhdus = file->num_hdus();
+
+    misFITS::TablePtr table = file->add( events );
+
+    ASSERT_EQ( 2, events.file->num_hdus() );
+
+    ASSERT_EQ( nhdus + 1, file->num_hdus() );
+
+}
