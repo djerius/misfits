@@ -133,11 +133,12 @@ namespace misFITS {
         // constructors	       //
         /////////////////////////
 
+	// null declaration; not defined.
+	File( const File& );
 	File& operator=( const File& );
 
 	// return a shared ptr to the current object
 	FilePtr fileptr();
-
 
 	////////////////////
         // methods	  //
@@ -184,12 +185,11 @@ namespace misFITS {
 	    return fitsptr.get();
 	}
 
-	// helper for reopening files
-	void reopen( const File& );
-
 	TablePtr add_( const Table* );
 
     public:
+
+	~File();
 
 	////////////////////
         // members	  //
@@ -198,17 +198,9 @@ namespace misFITS {
 	std::string file;
 
 
-	/////////////////////////
-        // constructors	       //
         /////////////////////////
 
-	// default: open at first data HDU in read only mode
-	File( const std::string& file );
 
-	// reopen
-	File( const File& );
-
-	~File();
 	//////////////////////////
         // Table support        //
         //////////////////////////
@@ -222,6 +214,7 @@ namespace misFITS {
         /////////////////////////////
 
 	void close ();
+	FilePtr reopen( );
 
 	HDU_Type move_by( int nmove ) const;
 

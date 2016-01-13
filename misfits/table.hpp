@@ -48,7 +48,6 @@ namespace misFITS {
 
 	Table( const std::string&, int extver = 1 );
 	Table( WeakFilePtr file );
-	Table( File& file );
 
 	const ColumnInfo& colinfo( int colnum );
 	const ColumnInfo& colinfo( const std::string& name );

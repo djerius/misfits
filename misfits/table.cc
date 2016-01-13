@@ -44,10 +44,6 @@ namespace misFITS {
 	refresh();
     }
 
-    Table::Table( File& file ) : HDU( file ) {
-	refresh();
-    }
-
     Table::Table( const std::string& extname, int extver ) {
 
 	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file->fptr(),

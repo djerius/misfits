@@ -44,7 +44,7 @@ struct read_row {
     misFITS::FilePtr file() {
 
     	if ( ! init ) {
-    	    file_ = misFITS::FilePtr( new misFITS::File( file_name_ ) );
+    	    file_ = misFITS::FilePtr( misFITS::open<misFITS::Entity::Data,misFITS::Mode::ReadOnly>( file_name_ ) );
     	    init = true;
     	}
 

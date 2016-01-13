@@ -32,12 +32,13 @@ namespace misFITS {
 	refresh();
     }
 
-    HDU::HDU( File& file_ ) {
+    HDU::HDU( SharedFilePtr& file_) {
 
-	file.set<own_or_observe::observed>( &file_ );
+	file.set<own_or_observe::observed>( file_ );
 	hdu_num = file->hdu_num();
 	refresh();
     }
+
 
     HDU::HDU( ) {
 

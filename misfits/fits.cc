@@ -54,14 +54,6 @@ namespace misFITS {
 	return File::FitsPtr( fitsptr, closeFitsPtr );
     }
 
-    // default: open at first data HDU in read only mode
-    File::File( const std::string& file ) : fitsptr( FitsPtr_( NULL ) ), file( file ) {
-	fitsfile* fptr = Open::open<Entity::Data,Mode::ReadOnly>( file.c_str() );
-	mode = OpenMode::ReadOnly;
-	fitsptr = FitsPtr_( fptr  );
-    }
-
-
     File::File( const std::string& file_, fitsfile* fitsfile_, int mode_ ) :
 	fitsptr( FitsPtr_( fitsfile_ ) ), mode( mode_ ), file(file_) {}
 
@@ -109,29 +101,18 @@ namespace misFITS {
 
     }
 
-    void
-    File::reopen( const File& ofile ) {
-	fitsfile *fptr;
+    FilePtr
+    File::reopen( ) {
 
-	misFITS_CHECK_CFITSIO_EXPR( fits_reopen_file( ofile.fptr(), &fptr, &status ) );
+	fitsfile *nfptr;
 
-	file = ofile.file;
-	mode = ofile.mode;
-	fitsptr = FitsPtr_( fptr  );
+	misFITS_CHECK_CFITSIO_EXPR( fits_reopen_file( fptr(), &nfptr, &status ) );
 
-	move_to( ofile.hdu_num() );
+	FilePtr fp = FilePtr( new File( file, nfptr, mode ) );
+	fp->move_to( hdu_num() );
+
+	return fp;
     }
-
-    File::File( const File& ofile ) : enable_shared_from_this<File>(), fitsptr( FitsPtr_(NULL) ) {
-	reopen( ofile );
-    }
-
-    File&
-    File::operator = ( const File& ofile ) {
-	reopen( ofile );
-	return *this;
-    }
-
 
 
     //////////////////////////////////////////////////

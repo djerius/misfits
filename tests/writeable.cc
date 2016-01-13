@@ -42,7 +42,7 @@ TEST( FITSFileTest, DeleteColumn ) {
     fid.normalize_data();
 
     {
-	misFITS::FilePtr file( misFITS::open<Entity::Data,Mode::ReadWrite>( TEST_FITS_QFILENAME ));
+	misFITS::FilePtr file = misFITS::open<Entity::Data,Mode::ReadWrite>( TEST_FITS_QFILENAME );
 
 	EXPECT_STREQ( TEST_FITS_QFILENAME, file->file.c_str());
 
@@ -59,9 +59,9 @@ TEST( FITSFileTest, DeleteColumn ) {
 
     // make sure changes were flushed and the file was closed
     {
-	misFITS::File file( TEST_FITS_QFILENAME );
+	misFITS::FilePtr file = misFITS::open<Entity::Data,Mode::ReadOnly>( TEST_FITS_QFILENAME );
 
-	misFITS::TablePtr table( file.table() );
+	misFITS::TablePtr table( file->table() );
 
 	EXPECT_EQ( fid.columns.size() - 1, table->num_columns() );
 	ASSERT_FALSE( table->exists_column( "E1" ) );

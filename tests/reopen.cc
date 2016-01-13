@@ -30,35 +30,31 @@ namespace Entity = misFITS::Entity;
 namespace Mode = misFITS::Mode;
 
 
-TEST( FITSReopen, Table ) {
-
-    gen_fits();
-
-    misFITS::File file( TEST_FITS_QFILENAME );
+TEST_F( FiducialTableROFptr, Table ) {
 
     misFITS::Table table( file );
 
     EXPECT_EQ( "stuff",  table.extname );
 
     // duplicate (reopen) file
-    misFITS::File rfile( file );
+    misFITS::FilePtr rfile = file->reopen();
 
     // we're at the same HDU
-    EXPECT_EQ( file.hdu_num(), rfile.hdu_num() );
+    EXPECT_EQ( file->hdu_num(), rfile->hdu_num() );
 
     // move to another HDU in file
-    int hdu_num = file.hdu_num();
-    file.move_to( 1 );
+    int hdu_num = file->hdu_num();
+    file->move_to( 1 );
 
     // we'd better not be at the last one, it should have been a
     // table.
-    ASSERT_NE( hdu_num, file.hdu_num() );
+    ASSERT_NE( hdu_num, file->hdu_num() );
 
     // we are were we think we are
-    EXPECT_EQ( 1, file.hdu_num() );
+    EXPECT_EQ( 1, file->hdu_num() );
 
     // rfile hasn't been touched.
-    EXPECT_EQ( hdu_num, rfile.hdu_num() );
+    EXPECT_EQ( hdu_num, rfile->hdu_num() );
 
 }
 

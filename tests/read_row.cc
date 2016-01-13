@@ -124,7 +124,7 @@ class ReadTest : public GenFits {};
 TEST_F( ReadTest, Cursors ) {
 
 
-    misFITS::File file( TEST_FITS_QFILENAME );
+    misFITS::FilePtr file = misFITS::open<misFITS::Entity::Data, misFITS::Mode::ReadOnly>( TEST_FITS_QFILENAME );
 
     misFITS::Table table( file );
 
@@ -177,7 +177,7 @@ TEST_F( ReadTest, Cursors ) {
 
 TEST_F( ReadTest, CopyRow ) {
 
-    misFITS::File file( TEST_FITS_QFILENAME );
+    misFITS::FilePtr file = misFITS::open<misFITS::Entity::Data, misFITS::Mode::ReadOnly>( TEST_FITS_QFILENAME );
 
     misFITS::Table table( file );
 
