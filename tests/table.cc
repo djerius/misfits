@@ -37,8 +37,6 @@ TEST_F( FiducialTableROFptr, MetaData ) {
 
     EXPECT_STREQ( TEST_FITS_QFILENAME, file->file.c_str());
 
-    file->move_to( 2 );
-
     misFITS::Table table( file );
 
     Fiducial::Data data;
@@ -105,7 +103,6 @@ TEST_F( FiducialTableROFptr, CopyHDU ) {
 
     misFITS::FilePtr file2( misFITS::open<Entity::Memory>() );
 
-    file->move_to( "stuff" );
     misFITS::Table table( file );
 
 

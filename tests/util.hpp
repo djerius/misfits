@@ -46,7 +46,7 @@ protected:
 
     void SetUp() {
 	GenFits::SetUp();
-	file = misFITS::open<misFITS::Entity::File, Mode>( TEST_FITS_QFILENAME );
+	file = misFITS::open<misFITS::Entity::Data, Mode>( TEST_FITS_QFILENAME );
     }
 
     void TearDown() {
