@@ -236,9 +236,7 @@ namespace misFITS {
     // Table Support //
     ///////////////////
 
-    TablePtr File::add_( const Table* in_ ) {
-
-	const Table& in = *in_;
+    TablePtr File::add( const Table& in ) {
 
 	int in_chdu = in.file->hdu_num();
 
@@ -260,15 +258,9 @@ namespace misFITS {
 	return table();
     }
 
-    TablePtr File::add( const Table& in ) {
-	return File::add_( &in );
-    }
-
     TablePtr File::add( const TablePtr& in ) {
-	return File::add_( in.get() );
+	return File::add( *in.get() );
     }
-
-
 
     TablePtr File::table( ) {
 

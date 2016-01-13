@@ -185,8 +185,6 @@ namespace misFITS {
 	    return fitsptr.get();
 	}
 
-	TablePtr add_( const Table* );
-
     public:
 
 	~File();
