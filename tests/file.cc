@@ -101,3 +101,76 @@ TEST_F( FiducialTableRWFptr, AddTable ) {
     ASSERT_EQ( nhdus + 1, file->num_hdus() );
 
 }
+
+
+TEST_F( FiducialTableRWFptr, ReturnTable ) {
+
+    // add a second table with the same name as the first but
+    // with a different version
+
+    {
+	Table t2( "stuff", 2 );
+	file->add( t2 );
+    }
+
+    file->move_to( "stuff", 1 );
+    int hdu1 = file->hdu_num();
+
+    file->move_to( "stuff", 2 );
+    int hdu2 = file->hdu_num();
+
+    ASSERT_NE( hdu1, hdu2 );
+
+    // move to the first HDU, it's not a table
+    file->move_to( 1 );
+
+    {
+	misFITS::TablePtr tp = file->table( 2 );
+
+	// make sure file is back at its original hdu
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	// make sure we picked up the correct table
+	ASSERT_EQ( "stuff", tp->extname );
+	ASSERT_EQ( 2, tp->hdu_num );
+	ASSERT_EQ( 1, tp->extver );
+    }
+
+    // now try with the second table
+    {
+	misFITS::TablePtr tp = file->table( 3 );
+
+	// make sure file is back at its original hdu
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	// make sure we picked up the correct table
+	ASSERT_EQ( "stuff", tp->extname );
+	ASSERT_EQ( 3, tp->hdu_num );
+	ASSERT_EQ( 2, tp->extver );
+    }
+
+    // now with extension names and versions
+    {
+	misFITS::TablePtr tp = file->table( "stuff", 1 );
+
+	// make sure file is back at its original hdu
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	// make sure we picked up the correct table
+	ASSERT_EQ( "stuff", tp->extname );
+	ASSERT_EQ( 2, tp->hdu_num );
+	ASSERT_EQ( 1, tp->extver );
+    }
+    // now try with the second table
+    {
+	misFITS::TablePtr tp = file->table( "stuff", 2 );
+
+	// make sure file is back at its original hdu
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	// make sure we picked up the correct table
+	ASSERT_EQ( "stuff", tp->extname );
+	ASSERT_EQ( 3, tp->hdu_num );
+	ASSERT_EQ( 2, tp->extver );
+    }
+}

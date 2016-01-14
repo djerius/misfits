@@ -202,7 +202,8 @@ namespace misFITS {
 	//////////////////////////
         // Table support        //
         //////////////////////////
-	TablePtr table();
+	TablePtr table( int hdu_num = 0);
+	TablePtr table( const std::string& extname, int extver = 1);
 	TablePtr add( const Table& table );
 	TablePtr add( const TablePtr& table );
 

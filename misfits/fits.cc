@@ -254,6 +254,36 @@ namespace misFITS {
 
     }
 
+    TablePtr File::table( int hdu_num_ ) {
+
+	int chdu = hdu_num();
+
+	if ( hdu_num_ )
+	    move_to( hdu_num_ );
+
+	FilePtr fp = fileptr();
+	TablePtr tp = TablePtr( new Table( fp ) );
+
+	if ( hdu_num_ )
+	    move_to( chdu );
+
+	return tp;
+    }
+
+    TablePtr File::table( const std::string& extname, int extver ) {
+
+	int chdu = hdu_num();
+
+	move_to( extname, extver, HDU_Type::BinaryTable );
+
+	FilePtr fp = fileptr();
+	TablePtr tp = TablePtr( new Table( fp ) );
+
+	move_to( chdu );
+
+	return tp;
+    }
+
 
     //////////////////////////////////////
     // Wrappers around CFITSIO routines //
