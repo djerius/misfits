@@ -28,6 +28,8 @@
 #include <misfits/table.hpp>
 #include <misfits/row.hpp>
 
+#include "fits_p.hpp"
+
 namespace misFITS {
 
     namespace Entry {
@@ -286,6 +288,8 @@ namespace misFITS {
     bool
     Row::read(){
 
+	resetHDU chdu( table->file, table->hdu_num );
+
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to read" );
 
@@ -305,6 +309,8 @@ namespace misFITS {
 
     void
     Row::write() {
+
+	resetHDU chdu( table->file, table->hdu_num );
 
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to write" );

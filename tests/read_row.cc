@@ -135,6 +135,11 @@ TEST_F( ReadTest, Cursors ) {
     ASSERT_EQ( fid.nrows, table.num_rows() );
     ASSERT_EQ( fid.num_columns(), table.num_columns() );
 
+    // now move file to another hdu to make sure the Rows keep track
+    // of where they are.
+
+    file->move_to( 1 );
+
     misFITS::Row r1( table );
 
     ASSERT_EQ( fid.nrows, r1.num_rows() );

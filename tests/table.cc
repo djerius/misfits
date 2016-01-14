@@ -39,9 +39,17 @@ TEST_F( FiducialTableROFptr, MetaData ) {
 
     misFITS::Table table( file );
 
+    // move file to different HDU to make sure we've isolated the
+    // table from the file
+    file->move_to( 1 );
+
     Fiducial::Data data;
 
     ASSERT_EQ( data.columns.size(), table.num_columns() );
+    ASSERT_EQ( data.nrows, table.num_rows() );
+
+    // and make sure file is still where we left it.
+    ASSERT_EQ( 1, file->hdu_num() );
 
     Fiducial::Data::Cols::const_iterator col( data.columns.begin() );
     Fiducial::Data::Cols::const_iterator end( data.columns.end() );
