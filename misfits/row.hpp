@@ -278,7 +278,7 @@ namespace misFITS {
 
 	int num_columns() const { return entries.size(); }
 
-	LONGLONG num_rows() const { return table->num_columns() ; }
+	LONGLONG num_rows() const { return table->num_rows() ; }
 
     private :
 	own_or_observe::ptr<Table> table;

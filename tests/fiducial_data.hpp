@@ -60,6 +60,7 @@ namespace misFITS_Test {
 
 	  typedef std::vector<ColumnBase*> Cols;
 	  Cols columns;
+	  Cols::size_type num_columns () { return columns.size() ; }
 
 	  Data();
 

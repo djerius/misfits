@@ -31,6 +31,9 @@ using namespace std;
 
 #include "row_test.hpp"
 #include "util.hpp"
+#include "fiducial_data.hpp"
+
+using namespace misFITS_Test;
 
 using misFITS::shared_ptr;
 
@@ -123,12 +126,18 @@ class ReadTest : public GenFits {};
 
 TEST_F( ReadTest, Cursors ) {
 
+    Fiducial::Data fid;
 
     misFITS::FilePtr file = misFITS::open<misFITS::Entity::Data, misFITS::Mode::ReadOnly>( TEST_FITS_QFILENAME );
 
     misFITS::Table table( file );
 
+    ASSERT_EQ( fid.nrows, table.num_rows() );
+    ASSERT_EQ( fid.num_columns(), table.num_columns() );
+
     misFITS::Row r1( table );
+
+    ASSERT_EQ( fid.nrows, r1.num_rows() );
 
     int i1;
 
