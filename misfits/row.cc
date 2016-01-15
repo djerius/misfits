@@ -277,13 +277,6 @@ namespace misFITS {
 	table.set<own_or_observe::owned>( fp );
     }
 
-    Row::Row( File& file ) {
-	init();
-	TablePtr tp( file.table() );
-	table.set<own_or_observe::owned>( tp );
-    }
-
-
 
     bool
     Row::read(){

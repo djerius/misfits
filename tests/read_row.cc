@@ -98,7 +98,8 @@ struct from_row_file : public read_row {
 
     misFITS::Row
     row () {
-    	return misFITS::Row( *file() );
+	misFITS::FilePtr fp = file();
+    	return misFITS::Row( fp );
     }
 
     static

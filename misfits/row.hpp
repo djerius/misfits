@@ -258,7 +258,6 @@ namespace misFITS {
 	Row( Table& table );
 	Row( TablePtr& table );
 	Row( FilePtr& file );
-	Row( File& file );
 
 	LONGLONG idx() const { return idx_ ; }
 	LONGLONG idx( LONGLONG idx ) {
