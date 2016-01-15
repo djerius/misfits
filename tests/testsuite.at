@@ -21,6 +21,8 @@ AT_CLEANUP
 
 AT_SETUP([row])
 
+AT_CHECK(row,,[ignore])
+
 AT_CHECK(read_row,,[ignore])
 
 AT_CHECK(write_row,,[ignore])

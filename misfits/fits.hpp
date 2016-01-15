@@ -37,6 +37,11 @@ namespace misFITS {
     typedef weak_ptr<File> WeakFilePtr;
     typedef SharedFilePtr FilePtr;
 
+    class HDU;
+    typedef shared_ptr<HDU> SharedHDUPtr;
+    typedef weak_ptr<HDU> WeakHDUPtr;
+    typedef SharedHDUPtr HDUPtr;
+
     class Table;
     typedef shared_ptr<Table> SharedTablePtr;
     typedef weak_ptr<Table> WeakTablePtr;
@@ -197,7 +202,11 @@ namespace misFITS {
 
 
         /////////////////////////
+        // Generic HDU support //
+        /////////////////////////
 
+	HDUPtr hdu( int hdu_num = 0);
+	HDUPtr hdu( const std::string& extname, int extver = 1 );
 
 	//////////////////////////
         // Table support        //

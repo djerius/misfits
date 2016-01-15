@@ -26,7 +26,6 @@ CXXFLAGS_%C%		=			\
 noinst_LTLIBRARIES	+= %D%/libtest_utils.la
 
 %C%_libtest_utils_la_CPPFLAGS =			\
-			$(AM_CPPFLAGS)		\
 			$(CPPFLAGS_%C%)
 
 %C%_libtest_utils_la_CXXFLAGS =			\
@@ -150,6 +149,17 @@ check_PROGRAMS		+= %D%/reopen
 %C%_reopen_LDADD	= $(LDADD_%C%_TESTS)
 %C%_reopen_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
 %C%_reopen_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
+check_PROGRAMS		+= %D%/row
+
+%C%_row_SOURCES	=			\
+			%D%/row.cc
+
+%C%_row_LDADD		= $(LDADD_%C%_TESTS)
+%C%_row_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_row_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
 
 ##############################
 

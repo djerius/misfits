@@ -41,7 +41,11 @@ namespace misFITS {
     // Constructors //
     ///////////
 
-    Table::Table( WeakFilePtr file ) : HDU( file ) {
+    Table::Table( WeakFilePtr file, int hdu_num ) : HDU( file, hdu_num  ) {
+	refresh();
+    }
+
+    Table::Table( WeakFilePtr file, const std::string& extname, int extver ) : HDU( file, extname, extver  ) {
 	refresh();
     }
 

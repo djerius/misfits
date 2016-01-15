@@ -22,23 +22,53 @@
 #include <string>
 
 #include <misfits/hdu.hpp>
+#include "fits_p.hpp"
 
 namespace misFITS {
 
-    HDU::HDU( WeakFilePtr& file_) {
+    HDU::HDU( WeakFilePtr& file_, int hdu_num_ ) : hdu_num( hdu_num_ ) {
 
 	file.set<own_or_observe::observed>( file_ );
-	hdu_num = file->hdu_num();
+	if ( 0 == hdu_num )
+	    hdu_num = file->hdu_num();
+
 	refresh();
     }
 
-    HDU::HDU( SharedFilePtr& file_) {
+
+    HDU::HDU( SharedFilePtr& file_, int hdu_num_ ) : hdu_num( hdu_num_ ) {
+
+    	file.set<own_or_observe::observed>( file_ );
+    	if ( 0 == hdu_num )
+    	    hdu_num = file->hdu_num();
+    	refresh();
+    }
+
+    HDU::HDU( WeakFilePtr& file_, const std::string& extname_, int extver_ ) : extname( extname_ ), extver( extver_ ) {
 
 	file.set<own_or_observe::observed>( file_ );
-	hdu_num = file->hdu_num();
+
+	{
+	    resetHDU chdu( file );
+	    file->move_to( extname, extver );
+	    hdu_num = file->hdu_num();
+	}
+
 	refresh();
     }
 
+    HDU::HDU( SharedFilePtr& file_, const std::string& extname_, int extver_ ) : extname( extname_ ), extver( extver_ ) {
+
+	file.set<own_or_observe::observed>( file_ );
+
+	{
+	    resetHDU chdu( file );
+	    file->move_to( extname, extver );
+	    hdu_num = file->hdu_num();
+	}
+
+	refresh();
+    }
 
     HDU::HDU( ) {
 
@@ -49,6 +79,9 @@ namespace misFITS {
     }
 
     void HDU::refresh() {
+
+	resetHDU chdu( file );
+	file->move_to( hdu_num );
 
 	extname = file->read_key<std::string>( "EXTNAME", "" ).value;
 	extver  = file->read_key<int>( "EXTVER", 1 ).value;

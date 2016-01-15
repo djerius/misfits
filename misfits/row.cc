@@ -256,41 +256,46 @@ namespace misFITS {
 	auto_advance( true );
     }
 
-    Row::Row( own_or_observe::rptr<Table>* table_ )  {
+    Row::Row( own_or_observe::rptr<Table>* table )  {
 	init();
-	table.set( table_ );
+	table_.set( table );
     }
 
-    Row::Row( TablePtr& table_ )  {
+    Row::Row( TablePtr& table )  {
 	init();
-	table.set<own_or_observe::observed>( table_ );
+	table_.set<own_or_observe::observed>( table );
     }
 
-    Row::Row( Table& table_ ) {
+    Row::Row( Table& table ) {
 	init();
-	table.set<own_or_observe::observed>( &table_ );
+	table_.set<own_or_observe::observed>( &table );
     }
 
-    Row::Row( FilePtr& file ) {
+    Row::Row( FilePtr& file, int hdu_num ) {
 	init();
-	TablePtr fp( file->table() );
-	table.set<own_or_observe::owned>( fp );
+	TablePtr fp = TablePtr( new Table( file, hdu_num ) );
+	table_.set<own_or_observe::owned>( fp );
     }
 
+    Row::Row( FilePtr& file, const std::string& extname, int extver ) {
+	init();
+	TablePtr fp = TablePtr( new Table( file, extname, extver ) );
+	table_.set<own_or_observe::owned>( fp );
+    }
 
     bool
     Row::read(){
 
-	resetHDU chdu( table->file, table->hdu_num );
+	resetHDU chdu( table_->file, table_->hdu_num );
 
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to read" );
 
-	if ( idx() > table->num_rows() )
+	if ( idx() > table_->num_rows() )
 	    return false;
 
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::ColumnBase::read, _1, boost::ref(*table->file()),
+		  boost::bind( &Entry::ColumnBase::read, _1, boost::ref(*table_->file()),
 			       idx() )
 		  );
 
@@ -303,14 +308,14 @@ namespace misFITS {
     void
     Row::write() {
 
-	resetHDU chdu( table->file, table->hdu_num );
+	resetHDU chdu( table_->file, table_->hdu_num );
 
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to write" );
 
 	for_each( entries.begin(), entries.end(),
 		  boost::bind( &Entry::ColumnBase::write, _1,
-			       boost::ref(*table->file()),
+			       boost::ref(*table_->file()),
 			       idx() )
 		  );
 

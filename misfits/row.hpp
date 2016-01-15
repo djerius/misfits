@@ -235,13 +235,13 @@ namespace misFITS {
 	    write();
 	}
 
-	const ColumnInfo& colinfo( int colnum ) { return table->colinfo( colnum ); }
-	const ColumnInfo& colinfo( const std::string& name ) { return table->colinfo( name ); }
+	const ColumnInfo& colinfo( int colnum ) { return table_->colinfo( colnum ); }
+	const ColumnInfo& colinfo( const std::string& name ) { return table_->colinfo( name ); }
 
 	template< class T >
 	Row& column( const std::string& column_name, T* base ) {
 
-	    const misFITS::ColumnInfo& ci = table->colinfo( column_name );
+	    const misFITS::ColumnInfo& ci = table_->colinfo( column_name );
 	    entries.push_back( make_shared< Entry::Column<T> >( ci, base ) );
 	    return *this;
 	}
@@ -257,7 +257,9 @@ namespace misFITS {
 	Row( own_or_observe::rptr<Table>* base );
 	Row( Table& table );
 	Row( TablePtr& table );
-	Row( FilePtr& file );
+
+	Row( FilePtr& file, int hdu_num = 0 );
+	Row( FilePtr& file, const std::string& extname, int extver = 1 );
 
 	LONGLONG idx() const { return idx_ ; }
 	LONGLONG idx( LONGLONG idx ) {
@@ -277,10 +279,12 @@ namespace misFITS {
 
 	int num_columns() const { return entries.size(); }
 
-	LONGLONG num_rows() const { return table->num_rows() ; }
+	LONGLONG num_rows() const { return table_->num_rows() ; }
+
+	TablePtr table() const { return table_; }
 
     private :
-	own_or_observe::ptr<Table> table;
+	own_or_observe::ptr<Table> table_;
 
 	void init ();
 	void push_back( shared_ptr<Entry::ColumnBase> col ) {

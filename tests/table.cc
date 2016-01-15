@@ -33,6 +33,81 @@ namespace Mode = misFITS::Mode;
 using namespace misFITS_Test;
 using misFITS::ColumnType;
 
+TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
+
+    // add a second table with the same name as the first but
+    // with a different version
+
+    {
+	misFITS::Table t2( "stuff", 2 );
+	file->add( t2 );
+    }
+
+    file->move_to( "stuff", 1 );
+    int hdu1 = file->hdu_num();
+
+    file->move_to( "stuff", 2 );
+    int hdu2 = file->hdu_num();
+
+    ASSERT_NE( hdu1, hdu2 );
+
+
+
+    {
+	file->move_to( hdu1 );
+	misFITS::Table table( file );
+	ASSERT_EQ( hdu1, table.hdu_num );
+	ASSERT_EQ( hdu1, file->hdu_num() );
+
+	ASSERT_EQ( "stuff", table.extname );
+	ASSERT_EQ( 1, table.extver );
+
+    }
+
+    {
+	file->move_to( 1 );
+	misFITS::Table table( file, "stuff" );
+	ASSERT_EQ( hdu1, table.hdu_num );
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	ASSERT_EQ( "stuff", table.extname );
+	ASSERT_EQ( 1, table.extver );
+
+    }
+
+    {
+	file->move_to( 1 );
+	misFITS::Table table( file, "stuff", 1 );
+	ASSERT_EQ( hdu1, table.hdu_num );
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	ASSERT_EQ( "stuff", table.extname );
+	ASSERT_EQ( 1, table.extver );
+    }
+
+    {
+	file->move_to( 1 );
+	misFITS::Table table( file, "stuff", 2 );
+	ASSERT_EQ( hdu2, table.hdu_num );
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	ASSERT_EQ( "stuff", table.extname );
+	ASSERT_EQ( 2, table.extver );
+    }
+
+    {
+	file->move_to( 1 );
+	misFITS::Table table( file, hdu2 );
+	ASSERT_EQ( hdu2, table.hdu_num );
+	ASSERT_EQ( 1, file->hdu_num() );
+
+	ASSERT_EQ( "stuff", table.extname );
+	ASSERT_EQ( 2, table.extver );
+    }
+
+
+}
+
 TEST_F( FiducialTableROFptr, MetaData ) {
 
     EXPECT_STREQ( TEST_FITS_QFILENAME, file->file.c_str());

@@ -102,11 +102,49 @@ TEST_F( FiducialTableRWFptr, AddTable ) {
 
 }
 
+template <typename T>
+struct HDUTableCreateTest : public FiducialTableRWFptr {
 
-TEST_F( FiducialTableRWFptr, ReturnTable ) {
+    T create( int hdu_num = 0 );
+    T create( const std::string& extname, int extver = 1 );
+
+};
+
+template<>
+misFITS::TablePtr
+HDUTableCreateTest<misFITS::TablePtr>::create( int hdu_num ) {
+	return misFITS::TablePtr( this->file->table( hdu_num ) );
+}
+
+template<>
+misFITS::TablePtr
+HDUTableCreateTest<misFITS::TablePtr>::create( const std::string& extname, int extver ) {
+    return misFITS::TablePtr( this->file->table( extname, extver ) );
+};
+
+template<>
+misFITS::HDUPtr
+HDUTableCreateTest<misFITS::HDUPtr>::create( int hdu_num  ) {
+	return misFITS::HDUPtr( this->file->table( hdu_num ) );
+}
+
+template<>
+misFITS::HDUPtr
+HDUTableCreateTest<misFITS::HDUPtr>::create( const std::string& extname, int extver  ) {
+    return misFITS::HDUPtr( this->file->table( extname, extver ) );
+};
+
+
+
+typedef ::testing::Types<misFITS::TablePtr, misFITS::HDUPtr> HDUTableCreateTypes;
+TYPED_TEST_CASE( HDUTableCreateTest, HDUTableCreateTypes );
+
+TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
 
     // add a second table with the same name as the first but
     // with a different version
+
+    FilePtr file = this->file;
 
     {
 	Table t2( "stuff", 2 );
@@ -125,52 +163,52 @@ TEST_F( FiducialTableRWFptr, ReturnTable ) {
     file->move_to( 1 );
 
     {
-	misFITS::TablePtr tp = file->table( 2 );
+	TypeParam tp = this->create( hdu1 );
 
 	// make sure file is back at its original hdu
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( 2, tp->hdu_num );
+	ASSERT_EQ( hdu1, tp->hdu_num );
 	ASSERT_EQ( 1, tp->extver );
     }
 
     // now try with the second table
     {
-	misFITS::TablePtr tp = file->table( 3 );
+	TypeParam tp = this->create( hdu2 );
 
 	// make sure file is back at its original hdu
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( 3, tp->hdu_num );
+	ASSERT_EQ( hdu2, tp->hdu_num );
 	ASSERT_EQ( 2, tp->extver );
     }
 
     // now with extension names and versions
     {
-	misFITS::TablePtr tp = file->table( "stuff", 1 );
+	TypeParam tp = this->create( "stuff", 1 );
 
 	// make sure file is back at its original hdu
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( 2, tp->hdu_num );
+	ASSERT_EQ( hdu1, tp->hdu_num );
 	ASSERT_EQ( 1, tp->extver );
     }
     // now try with the second table
     {
-	misFITS::TablePtr tp = file->table( "stuff", 2 );
+	TypeParam tp = this->create( "stuff", 2 );
 
 	// make sure file is back at its original hdu
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( 3, tp->hdu_num );
+	ASSERT_EQ( hdu2, tp->hdu_num );
 	ASSERT_EQ( 2, tp->extver );
     }
 }

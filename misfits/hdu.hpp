@@ -71,8 +71,12 @@ namespace misFITS {
 
     protected:
 
-	HDU( WeakFilePtr& file);
-	HDU( SharedFilePtr& file);
+	HDU( WeakFilePtr& file, int hdu_num = 0 );
+	HDU( WeakFilePtr& file, const std::string& extname, int extver = 1 );
+
+	HDU( SharedFilePtr& file, int hdu_num = 0 );
+	HDU( SharedFilePtr& file, const std::string& extname, int extver = 1 );
+
 	HDU( );
 	void refresh();
 

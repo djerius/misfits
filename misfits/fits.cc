@@ -247,10 +247,18 @@ namespace misFITS {
 	return File::add( *in.get() );
     }
 
-    TablePtr File::table( ) {
+
+    HDUPtr File::hdu( int hdu_num ) {
 
 	FilePtr fp = fileptr();
-	return TablePtr( new Table( fp ) );
+	return HDUPtr( new HDU( fp, hdu_num ) );
+
+    }
+
+    HDUPtr File::hdu( const std::string& extname, int extver ) {
+
+	FilePtr fp = fileptr();
+	return HDUPtr( new HDU( fp, extname, extver  ) );
 
     }
 
