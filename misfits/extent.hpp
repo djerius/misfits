@@ -29,7 +29,9 @@
 
 namespace misFITS {
 
-    class Extent : private std::vector<LONGLONG> {
+    typedef std::vector<LONGLONG> ExtentType;
+
+    class Extent : private ExtentType {
 
 	friend class ColumnInfo;
 	friend bool operator == ( const Extent& a0, const Extent& b0 );
@@ -37,7 +39,7 @@ namespace misFITS {
 
     public:
 
-	using std::vector<LONGLONG>::operator[];
+	using ExtentType::operator[];
 
 	Extent( LONGLONG e0 = 1,
 		LONGLONG e1 = 1,

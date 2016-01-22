@@ -73,7 +73,7 @@ namespace misFITS {
 	a.resize( a_end - a.begin() );
 	b.resize( b_end - b.begin() );
 
-	return a == b;
+	return static_cast<ExtentType>(a) == static_cast<ExtentType>(b);
     }
 
 }
