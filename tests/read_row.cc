@@ -147,7 +147,7 @@ TEST_F( ReadTest, Cursors ) {
 
     int i1;
 
-    r1.column( "I1", &i1 );
+    r1.add( "I1", &i1 );
 
     r1.read();
     ASSERT_EQ( 2, r1.idx() );
@@ -159,7 +159,7 @@ TEST_F( ReadTest, Cursors ) {
 
     misFITS::Row r2( table );
 
-    r2.column( "I1", &i1 );
+    r2.add( "I1", &i1 );
 
     r2.read();
     ASSERT_EQ( 2, r2.idx() );
@@ -200,7 +200,7 @@ TEST_F( ReadTest, CopyRow ) {
 
     int i1;
 
-    r1.column( "I1", &i1 );
+    r1.add( "I1", &i1 );
 
     r1.read();
     ASSERT_EQ( 2, r1.idx() );

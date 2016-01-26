@@ -108,17 +108,17 @@ TEST_F( WriteTest, Create ) {
     misFITS::Row orow( otable );
 
     orow
-    	.column( "I1", &data.I1 )
-    	.column( "J1", &data.J1 )
-        .column( "E1", &data.E1 )
-        .column( "D1", &data.D1 )
-        .column( "X1", &data.X1 )
-        .column( "A1", &data.A1 )
-        .column( "A2", &data.A2 )
-        .column( "A3", &data.A3 )
-        .column( "A4", &data.A4 )
-        .column( "A5", &data.A5 )
-        .column( "A6", &data.A6 )
+    	.add( "I1", &data.I1 )
+    	.add( "J1", &data.J1 )
+        .add( "E1", &data.E1 )
+        .add( "D1", &data.D1 )
+        .add( "X1", &data.X1 )
+        .add( "A1", &data.A1 )
+        .add( "A2", &data.A2 )
+        .add( "A3", &data.A3 )
+        .add( "A4", &data.A4 )
+        .add( "A5", &data.A5 )
+        .add( "A6", &data.A6 )
 	;
 
 

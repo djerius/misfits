@@ -210,7 +210,7 @@ TEST_F( FiducialTableROFptr, CopyHDU ) {
     // some actual data.
 
     int i1;
-    row.column( "i1", &i1 );
+    row.add( "i1", &i1 );
 
     while ( row.read() )
 	EXPECT_EQ( fid.i1.data[ row.idx() - 2 ], i1 );

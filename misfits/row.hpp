@@ -31,9 +31,12 @@
 #include <misfits/types.hpp>
 #include <misfits/table.hpp>
 
+#include <misfits/memblock.hpp>
+
 namespace misFITS {
 
     class Row;
+
     namespace Entry {
 
 	////////////////////
@@ -186,28 +189,6 @@ namespace misFITS {
         // MemBlocks	 //
         ///////////////////
 
-	template<class ReturnClass>
-	class MemBlockDSL {
-
-	public:
-	    MemBlockDSL( misFITS::Row* row, ReturnClass* caller, void* base ) : row_( row ), caller_( caller ), base_( base ) {}
-
-	    template< class T >
-	    MemBlockDSL& column( const std::string& column_name, size_t offset );
-	    ReturnClass& end_memblock() { return *caller_ ; }
-
-	    MemBlockDSL<MemBlockDSL> memblock( size_t offset ) {
-		return MemBlockDSL<MemBlockDSL>( row_, this, static_cast<char*>(base_) + offset  );
-	    }
-
-
-	private:
-
-	    misFITS::Row* row_;
-	    ReturnClass* caller_;
-	    void* base_;
-	};
-
 
     }
 
@@ -217,9 +198,6 @@ namespace misFITS {
 
 
     class Row {
-
-	template<class ReturnClass>
-	friend class Entry::MemBlockDSL;
 
     public:
 
@@ -239,15 +217,25 @@ namespace misFITS {
 	const ColumnInfo& colinfo( const std::string& name ) { return table_->colinfo( name ); }
 
 	template< class T >
-	Row& column( const std::string& column_name, T* base ) {
+	Row& add( const std::string& column_name, T* base ) {
 
 	    const misFITS::ColumnInfo& ci = table_->colinfo( column_name );
 	    entries.push_back( make_shared< Entry::Column<T> >( ci, base ) );
 	    return *this;
 	}
 
-	Entry::MemBlockDSL<Row> memblock( void* base ) {
-	    return Entry::MemBlockDSL<Row>( this, this, base );
+	Row& add( void* base, const Entry::MemBlock& block ) {
+
+	    Entry::MemBlock::Entries::const_iterator entry = block.entries.begin();
+	    Entry::MemBlock::Entries::const_iterator end = block.entries.end();
+
+	    for ( ; entry < end ; ++entry ) {
+
+		const misFITS::ColumnInfo& ci = table_->colinfo( (*entry)->name );
+		entries.push_back( (*entry)->column( ci, base ) ); 
+	    }
+
+	    return *this;
 	}
 
 	/////////////////////////
@@ -297,18 +285,6 @@ namespace misFITS {
 	// managing the same column entries
 	std::vector< shared_ptr<Entry::ColumnBase> > entries;
     };
-
-
-    namespace Entry {
-
-	template<class ReturnClass>
-	template< class T >
-	MemBlockDSL<ReturnClass>& MemBlockDSL<ReturnClass>::column( const std::string& column_name, size_t offset ) {
-	    const misFITS::ColumnInfo& ci ( row_->colinfo( column_name ) );
-	    row_->push_back( make_shared< Entry::Column<T> >( ci, reinterpret_cast<T*>(static_cast<char*>(base_) + offset )) ) ;
-	    return *this;
-	}
-    }
 
 
 }

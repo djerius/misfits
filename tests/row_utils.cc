@@ -38,37 +38,46 @@ using namespace std;
 
 using namespace misFITS_Test;
 
+    #define NBYTES 3
+
+struct A {
+    int I1;
+    short J1;
+};
+
+struct B {
+    float E1;
+    double D1;
+};
+
+struct C {
+    misFITS::BitSet X1_bitset;
+    misFITS::byte_t X1_array[NBYTES];
+    vector<misFITS::byte_t> X1_vector;
+};
+
+struct D {
+    struct A a;
+    struct B b;
+
+};
+
+struct Row {
+    struct A a;
+    struct B b;
+    struct C c;
+    struct D d;
+} storage;
+
+
 void
 test_fiducial( misFITS::Row &row ) {
 
     Fiducial::Data fid;
     fid.normalize_data();
 
-    #define NBYTES 3
     if ( NBYTES != fid.nbytes )
 	throw misFITS::Exception::Assert( "internal error: NBYTES != fid.nbytes" );
-
-    struct A {
-	int I1;
-	short J1;
-    };
-
-    struct B {
-	float E1;
-	double D1;
-    };
-
-    struct C {
-	misFITS::BitSet X1_bitset;
-	misFITS::byte_t X1_array[NBYTES];
-	vector<misFITS::byte_t> X1_vector;
-    };
-
-    struct Row {
-	struct A a;
-	struct B b;
-	struct C c;
-    } storage;
 
     int I1;
     short J1;
@@ -84,33 +93,51 @@ test_fiducial( misFITS::Row &row ) {
 	vector<string> vec;
     } As[6];
 
+    A atmp;
+    B btmp;
+
+    using misFITS::Entry::memblock;
+
+    misFITS::Entry::MemBlockAddr<struct A> mb_a
+	= memblock( &atmp )
+	.add( "I1", &atmp.I1 )
+	.add( "J1", &atmp.J1 );
+
+
     row
-    	.column( "I1", &I1 )
-    	.column( "J1", &J1 )
-        .column( "E1", &E1 )
-        .column( "D1", &D1 )
-	.column( "X1", &X1_bitset )
-	.column( "X1", X1_array )
-	.column( "X1", &X1_vector )
+    	.add( "I1", &I1 )
+    	.add( "J1", &J1 )
+        .add( "E1", &E1 )
+        .add( "D1", &D1 )
+	.add( "X1", &X1_bitset )
+	.add( "X1", X1_array )
+	.add( "X1", &X1_vector )
+
+	.add( &storage.a, mb_a )
+
+	.add( &storage.b,
+	      memblock( &btmp )
+	      .add( "E1", &btmp.E1 )
+	      .add( "D1", &btmp.D1 )
+	      )
 
 
-    	.memblock( &storage)
-	  .memblock( offsetof( Row, a ) )
-	    .column<int>( "I1", offsetof( A, I1 ) )
-	    .column<short>( "J1", offsetof( A, J1 ) )
-	  .end_memblock()
+	.add( &storage.c,
+	      memblock<C>()
+	      .add<misFITS::BitSet>(  "X1", offsetof( C, X1_bitset ) )
+	      .add< misFITS::byte_t > ( "X1", offsetof( C, X1_array ) )
+	      .add< vector<misFITS::byte_t> > ( "X1", offsetof( C, X1_vector ) )
+	      )
 
-	  .memblock( offsetof( Row, b ) )
-	    .column<float>( "E1", offsetof( B, E1 ) )
-	    .column<double>( "D1", offsetof( B, D1 ) )
-	  .end_memblock()
-
-	  .memblock( offsetof( Row, c ) )
-	    .column<misFITS::BitSet>(  "X1", offsetof( C, X1_bitset ) )
-	    .column< misFITS::byte_t > ( "X1", offsetof( C, X1_array ) )
-	    .column< vector<misFITS::byte_t> > ( "X1", offsetof( C, X1_vector ) )
-	  .end_memblock()
-	.end_memblock()
+	.add( &storage.d,
+	      memblock<D>()
+	      .add( offsetof( D, a ), mb_a )
+	      .add( offsetof( D, b ),
+		    memblock( &btmp )
+		    .add( "E1", &btmp.E1 )
+		    .add( "D1", &btmp.D1 )
+		    )
+	      );
     	;
 
     for ( int ia = 0 ; ia < 6 ; ++ia ) {
@@ -119,8 +146,8 @@ test_fiducial( misFITS::Row &row ) {
 	name << "A" << ia+1;
 
 	row
-	    .column( name.str(), &As[ia].str )
-	    .column( name.str(), &As[ia].vec )
+	    .add( name.str(), &As[ia].str )
+	    .add( name.str(), &As[ia].vec )
 	    ;
     }
 
@@ -132,19 +159,21 @@ test_fiducial( misFITS::Row &row ) {
 	// row.idx() returns next row to be read
 	LONGLONG zidx = row.idx() - 2;
 
-    	LONGLONG i = row.idx() - 1;
-
     	EXPECT_EQ( fid.i1.data[zidx], I1 );
     	EXPECT_EQ( fid.i1.data[zidx], storage.a.I1 );
+    	EXPECT_EQ( fid.i1.data[zidx], storage.d.a.I1 );
 
     	EXPECT_EQ( fid.j1.data[zidx], J1 );
     	EXPECT_EQ( fid.j1.data[zidx], storage.a.J1 );
+    	EXPECT_EQ( fid.j1.data[zidx], storage.d.a.J1 );
 
     	EXPECT_FLOAT_EQ( fid.e1.data[zidx], E1 );
     	EXPECT_FLOAT_EQ( fid.e1.data[zidx], storage.b.E1 );
+    	EXPECT_FLOAT_EQ( fid.e1.data[zidx], storage.d.b.E1 );
 
     	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], D1 );
     	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], storage.b.D1 );
+    	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], storage.d.b.D1 );
 
 	EXPECT_EQ( fid.x2.data[zidx], X1_bitset );
 	EXPECT_EQ( fid.x2.data[zidx], storage.c.X1_bitset );
