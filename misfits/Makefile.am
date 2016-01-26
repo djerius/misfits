@@ -28,15 +28,16 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/types.cc		\
 			%D%/types.hpp
 
-nobase_include_HEADERS	+=				\
-			%D%/bitset.hpp			\
-			%D%/config.hpp			\
-			%D%/columninfo.hpp		\
-			%D%/exception.hpp		\
-			%D%/extent.hpp			\
-			%D%/fits.hpp			\
-			%D%/hdu.hpp			\
-			%D%/keyword.hpp			\
-			%D%/row.hpp			\
-			%D%/table.hpp			\
+nobase_include_HEADERS	+=			\
+			%D%/bitset.hpp		\
+			%D%/config.hpp		\
+			%D%/columninfo.hpp	\
+			%D%/exception.hpp	\
+			%D%/extent.hpp		\
+			%D%/fits.hpp		\
+			%D%/hdu.hpp		\
+			%D%/keyword.hpp		\
+			%D%/memblock.hpp	\
+			%D%/row.hpp		\
+			%D%/table.hpp		\
 			%D%/types.hpp
