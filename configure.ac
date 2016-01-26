@@ -28,19 +28,12 @@ MST_POD_GEN_DOCS
 m4_include(prog_help.ac)
 
 #---------------------------------------------------------
-# Checks for libraries.
-
-#---------------------------------------------------------
-# Checks for header files.
-
-#---------------------------------------------------------
 # Checks for typedefs, structures, and compiler characteristics.
 
 BOOST_REQUIRE
 BOOST_FILESYSTEM
 # shouldn't this be done for me?
 BOOST_FILESYSTEM_LIBS="$BOOST_FILESYSTEM_LIBS $BOOST_SYSTEM_LIBS"
-
 STDCXX_CPPFLAGS=
 
 AC_CHECK_TYPES(
@@ -68,7 +61,7 @@ AC_CHECK_TYPES(
 	 [boost/shared_ptr.hpp],
 	 [AC_MSG_ERROR([Cannot find support for shared_ptr (either from compiler or Boost); cannot continue])],
 	 [SHARED_PTR=-DHAVE_BOOST__SHARED_PTR
-	  USE_BOST=1
+	  USE_BOOST_STDCXX=1
          ]
      )
    ],
