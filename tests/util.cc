@@ -97,9 +97,9 @@ namespace misFITS_Test {
 
 
 	     double D = 3.14159;
-	     char *Ds = "3.14159";
+	     const char *Ds = "3.14159";
 	     fits_write_key( fp, TDOUBLE, "PIE", &D, "DOUBLE",    &status );
-	     fits_write_key( fp, TSTRING, "PIESTR", Ds, "STRING", &status );
+	     fits_write_key( fp, TSTRING, "PIESTR", const_cast<char*>(Ds), "STRING", &status );
 
 	     fits_write_key( fp, TINT, "EXTVER", &extver, "",  &status );
 	     );
