@@ -9,8 +9,9 @@
 
 namespace misFITS {
 
-    struct resetHDU {
+    class resetHDU {
 
+    public:
 	FilePtr fp;
 	int chdu;
 
@@ -21,6 +22,11 @@ namespace misFITS {
 
 	}
 	~resetHDU () { fp->move_to( chdu ); }
+
+    private:
+	resetHDU( const resetHDU& );
+	resetHDU& operator=( const resetHDU& );
+
     };
 
 }
