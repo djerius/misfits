@@ -54,7 +54,7 @@ namespace misFITS {
 	return File::FitsPtr( fitsptr, closeFitsPtr );
     }
 
-    File::File( const std::string& file_, fitsfile* fitsfile_, int mode_ ) :
+    File::File( const std::string& file_, fitsfile* fitsfile_, OpenMode mode_ ) :
 	fitsptr( FitsPtr_( fitsfile_ ) ), mode( mode_ ), file(file_) {}
 
 
@@ -124,8 +124,8 @@ namespace misFITS {
     namespace MapCFITSIO {
 
 	template<>
-	int open<Entity::File>( fitsfile** fptr, const std::string& file, int mode, int* status ) {
-	    return fits_open_file( fptr, file.c_str(), mode, status );
+	int open<Entity::File>( fitsfile** fptr, const std::string& file, OpenMode mode, int* status ) {
+	    return fits_open_file( fptr, file.c_str(), boost::underlying_cast<int>(mode), status );
 	}
 
 	template<>
@@ -134,8 +134,8 @@ namespace misFITS {
 	}
 
 	template<>
-	int open<Entity::DiskFile>( fitsfile** fptr, const std::string& file, int mode, int* status ) {
-	    return fits_open_diskfile( fptr, file.c_str(), mode, status );
+	int open<Entity::DiskFile>( fitsfile** fptr, const std::string& file, OpenMode mode, int* status ) {
+	    return fits_open_diskfile( fptr, file.c_str(), boost::underlying_cast<int>(mode), status );
 	}
 
 	template<>
@@ -144,18 +144,18 @@ namespace misFITS {
 	}
 
 	template<>
-	int open<Entity::Data>( fitsfile** fptr, const std::string& file, int mode, int* status ) {
- 	    return fits_open_data( fptr, file.c_str(), mode, status );
+	int open<Entity::Data>( fitsfile** fptr, const std::string& file, OpenMode mode, int* status ) {
+ 	    return fits_open_data( fptr, file.c_str(), boost::underlying_cast<int>(mode), status );
 	}
 
 	template<>
-	int open<Entity::Table>( fitsfile** fptr, const std::string& file, int mode, int* status ) {
-	    return fits_open_table( fptr, file.c_str(), mode, status );
+	int open<Entity::Table>( fitsfile** fptr, const std::string& file, OpenMode mode, int* status ) {
+	    return fits_open_table( fptr, file.c_str(), boost::underlying_cast<int>(mode), status );
  	}
 
 	template<>
-	int open<Entity::Image>( fitsfile** fptr, const std::string& file, int mode, int* status ) {
-	    return fits_open_image( fptr, file.c_str(), mode, status );
+	int open<Entity::Image>( fitsfile** fptr, const std::string& file, OpenMode mode, int* status ) {
+	    return fits_open_image( fptr, file.c_str(), boost::underlying_cast<int>(mode), status );
 	}
     }
 
@@ -302,7 +302,7 @@ namespace misFITS {
     void
     File::move_to( const std::string& extname, int extver, HDU_Type hdu_type ) const {
 	misFITS_CHECK_CFITSIO_EXPR( fits_movnam_hdu( fptr(),
-						     boost::native_value(hdu_type),
+						     boost::underlying_cast<int>(hdu_type),
 						     const_cast<char*>(extname.c_str()),
 						     extver, &status ) );
     }

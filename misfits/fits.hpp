@@ -80,8 +80,8 @@ namespace misFITS {
 
     // ditto, but some should have actual values, so make 'em a struct.
     namespace Mode {
-	struct ReadOnly  { static int mode() { return OpenMode::ReadOnly ; } };
-	struct ReadWrite { static int mode() { return OpenMode::ReadWrite ; } };
+	struct ReadOnly  { static OpenMode mode() { return OpenMode::ReadOnly  ; } };
+	struct ReadWrite { static OpenMode mode() { return OpenMode::ReadWrite ; } };
 	struct Create  : public ReadWrite  { };
 	struct CreateOverWrite : public ReadWrite  {};
     }
@@ -91,7 +91,7 @@ namespace misFITS {
 
 	// no generic template
 
-	template<Entity::Type Entity> int open( fitsfile** fptr, const std::string& file, int mode, int* status );
+	template<Entity::Type Entity> int open( fitsfile** fptr, const std::string& file, OpenMode mode, int* status );
 	template<Entity::Type Entity> int create( fitsfile** fptr, const std::string& file, int* status );
 
     }
@@ -132,7 +132,7 @@ namespace misFITS {
 
 	typedef unique_ptr<fitsfile,void(*)(fitsfile*)> FitsPtr;
 	FitsPtr fitsptr;
-	int mode;
+	OpenMode mode;
 
 	/////////////////////////
         // constructors	       //
@@ -156,7 +156,7 @@ namespace misFITS {
 	//
 	// these will only be available to File::open
 
-	File( const std::string& file_, fitsfile* fitsfile_, int mode );
+	File( const std::string& file_, fitsfile* fitsfile_, OpenMode mode );
 
 	static FitsPtr FitsPtr_( fitsfile* fitsptr );
 

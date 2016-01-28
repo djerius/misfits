@@ -51,8 +51,10 @@ namespace misFITS {
 
     Table::Table( const std::string& extname, int extver ) {
 
+	HDU_Type hdu_type = HDU_Type::BinaryTable;
+
 	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file->fptr(),
-						     HDU_Type::BinaryTable,
+						     boost::underlying_cast<int>( hdu_type ),
 						     0, 0, NULL, NULL, NULL,
 						     extname.c_str(), &status  ) );
 
@@ -68,7 +70,7 @@ namespace misFITS {
 	resetHDU chdu( file, hdu_num );
 
 	// make sure we're really at a table
-	int type = boost::native_value( file->hdu_type() );
+	int type = boost::underlying_cast<int>( file->hdu_type() );
 	if ( type != BINARY_TBL && type != ASCII_TBL )
 	    throw Exception::Assert( "Expected CHDU to be a table, but it's not" );
 
