@@ -63,7 +63,11 @@ namespace misFITS {
 		}
 
 		shared_ptr<misFITS::Entry::ColumnBase> column( const ColumnInfo& info, void* base ) const {
-		    return make_shared< misFITS::Entry::Column<EntryType> >( info, reinterpret_cast<EntryType*>( reinterpret_cast<unsigned char*>(base) + EntryBase::offset ) );
+
+		    EntryType* ptr= reinterpret_cast<EntryType*>( reinterpret_cast<unsigned char*>(base) + EntryBase::offset );
+
+		    return make_shared< misFITS::Entry::Column<EntryType> >( info, ptr  );
+
 		}
 
 		~Entry() {};
@@ -95,11 +99,11 @@ namespace misFITS {
 
 	    template< typename EntryType >
 	    MemBlockAddr& add ( const std::string& name, EntryType *addr ) {
-		entries.push_back( make_shared< Entry<EntryType> > ( name,
-								     reinterpret_cast<unsigned char*>(addr)
-								     - reinterpret_cast<unsigned char*>( const_cast<void*>(base_) )
-								     )
-				   );
+
+		ptrdiff_t offset = reinterpret_cast<unsigned char*>(addr)
+		    - reinterpret_cast<unsigned char*>( const_cast<void*>(base_) );
+
+		entries.push_back( make_shared< Entry<EntryType> > ( name, offset ));
 		return *this;
 	    }
 
@@ -145,7 +149,5 @@ namespace misFITS {
     }
 
 }
-
-
 
 #endif  // ! misFITS_MEMBLOCK_H
