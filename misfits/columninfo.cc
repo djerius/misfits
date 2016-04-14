@@ -34,8 +34,8 @@ namespace misFITS {
 
     bool ColumnInfo::operator == (const ColumnInfo& col ) const {
 	return
-	    col.ttype  == ttype &&
-	    col.extent == col.extent;
+	    col.column_type  == column_type &&
+	    col.extent       == extent;
     }
 
     void
