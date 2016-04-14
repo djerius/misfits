@@ -182,3 +182,25 @@ check_PROGRAMS		+= %D%/cfitsio
 %C%_cfitsio_LDADD	= $(LDADD_%C%_TESTS)
 %C%_cfitsio_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
 %C%_cfitsio_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
+check_PROGRAMS		+= %D%/column_info
+
+%C%_column_info_SOURCES	=			\
+			%D%/column_info.cc
+
+%C%_column_info_LDADD	= $(LDADD_%C%_TESTS)
+%C%_column_info_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_column_info_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
+check_PROGRAMS		+= %D%/extent
+
+%C%_extent_SOURCES	=			\
+			%D%/extent.cc
+
+%C%_extent_LDADD	= $(LDADD_%C%_TESTS)
+%C%_extent_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_extent_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)

@@ -42,3 +42,15 @@ AT_SETUP([keywords])
 AT_CHECK(keywords,,[ignore])
 
 AT_CLEANUP
+
+AT_SETUP([Extent])
+
+AT_CHECK(extent,,[ignore])
+
+AT_CLEANUP
+
+AT_SETUP([ColumnInfo])
+
+AT_CHECK(column_info,,[ignore])
+
+AT_CLEANUP
