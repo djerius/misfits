@@ -1,3 +1,9 @@
+0.0.3	2016-04-14T17:54:58-0400
+
+  [ BUG FIX ]
+
+    * equality comparisons of ColumnInfo objects was broken
+
 0.0.2	2016-03-14T17:57:28-0400
 
   [ BUG FIX ]
