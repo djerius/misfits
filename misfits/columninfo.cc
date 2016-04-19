@@ -214,29 +214,15 @@ namespace misFITS {
 			     &status)
 	     );
 
-	if ( ColumnType::String == column_type ) {
-
-	    misFITS_CHECK_CFITSIO_EXPR
-		(
-		 fits_write_tdimll( file.fptr(),
-				    colnum,
-				    extent.naxes(),
-				    const_cast<LONGLONG*>(&(extent[0])),
-				    &status )
-		 );
-
-	}
-	else {
-	    misFITS_CHECK_CFITSIO_EXPR
-		(
-		 fits_write_tdimll( file.fptr(),
-				    colnum,
-				    extent.naxes(),
-				    const_cast<LONGLONG*>(&(extent[0])),
-				    &status )
-		 );
-
-	}
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_tdimll( file.fptr(),
+				colnum,
+				extent.naxes(),
+				const_cast<LONGLONG*>(&(extent[0])),
+				&status )
+	     );
 
     }
 }
+
