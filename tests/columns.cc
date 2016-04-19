@@ -142,4 +142,26 @@ namespace misFITS_Test {
 
   }
 
+
+    void
+    ColInfo::dump() {
+
+	std::cerr << "TDIM = "  << tdim << "\n"
+	     << "TTYPE = " << ttype << "\n"
+	     << "TUNIT = " << tunit << "\n"
+	     << "TYPECHAR = " << typechar << "\n"
+	     << "TDISP = " << tdisp << "\n"
+	     << "REPEAT = " << repeat << "\n"
+	     << "scale = " << scale << "\n"
+	     << "zero = " << zero << "\n"
+	     << "nulval = " << nulval << "\n"
+	     << "typecode = " << typecode << "\n"
+	     << "width = " << width << "\n"
+	     << "naxis = " << naxis << "\n"
+	    ;
+
+	for ( int i = 0 ; i < naxis ;  i++ )
+	    std::cerr << "naxes[i] = " << naxes[i] << "\n";
+    }
+
 }

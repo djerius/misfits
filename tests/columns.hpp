@@ -66,6 +66,7 @@ namespace misFITS_Test {
     int naxis;
 
     ColInfo( const TestFitsPtr& fp, int colnum );
+    void dump();
 
   };
 
