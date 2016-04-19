@@ -58,6 +58,7 @@ namespace misFITS {
     };
 
     bool operator == ( const Extent& a0, const Extent& b0 );
+    bool operator != ( const Extent& a0, const Extent& b0 );
 
 }
 

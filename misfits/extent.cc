@@ -76,4 +76,8 @@ namespace misFITS {
 	return static_cast<ExtentType>(a) == static_cast<ExtentType>(b);
     }
 
+    bool operator != ( const Extent& a0, const Extent& b0 ) {
+	return ! ( a0 == b0 ) ;
+    }
+
 }

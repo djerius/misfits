@@ -31,9 +31,11 @@ TEST( Extent, Compare ) {
     Extent e1;
     Extent e2( 1, 2 );
 
-    EXPECT_TRUE( e1 == e1 ) << "same extent";
+    EXPECT_TRUE( e1 == e1 ) << "== same extent";
+    EXPECT_FALSE( e1 != e1 ) << "!= same extent";
 
-    EXPECT_FALSE( e1 == e2 ) << "different extent";
+    EXPECT_FALSE( e1 == e2 ) << "== different extent";
+    EXPECT_TRUE( e1 != e2 )  << "!= different extent";
 
 }
 
