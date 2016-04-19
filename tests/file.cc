@@ -120,7 +120,7 @@ template<>
 misFITS::TablePtr
 HDUTableCreateTest<misFITS::TablePtr>::create( const std::string& extname, int extver ) {
     return misFITS::TablePtr( this->file->table( extname, extver ) );
-};
+}
 
 template<>
 misFITS::HDUPtr
@@ -132,7 +132,7 @@ template<>
 misFITS::HDUPtr
 HDUTableCreateTest<misFITS::HDUPtr>::create( const std::string& extname, int extver  ) {
     return misFITS::HDUPtr( this->file->table( extname, extver ) );
-};
+}
 
 
 
