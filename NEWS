@@ -1,3 +1,9 @@
+0.0.4	2016-04-19T18:00:37-0400
+
+  [ ENHANCEMENT ]
+
+    * Table::resize() resizes a column's vector length.
+
 0.0.3	2016-04-14T17:54:58-0400
 
   [ BUG FIX ]
