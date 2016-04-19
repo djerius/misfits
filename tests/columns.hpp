@@ -43,7 +43,7 @@ namespace misFITS_Test {
               const char* tdim = ""
               );
 
-    TestFitsPtr create( std::string filename );
+    TestFitsPtr create( std::string filename = "" );
     int ncols() { return ttype.size() ; }
   };
 

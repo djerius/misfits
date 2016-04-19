@@ -37,7 +37,7 @@ TEST( CFITSIO, A_120A_NULL ) {
 
     cols.add( "Acol", "120A" );
 
-    TestFitsPtr fp = cols.create( "mem://" );
+    TestFitsPtr fp = cols.create();
 
     ColInfo info( fp, 1 );
 
@@ -55,7 +55,7 @@ TEST( CFITSIO, A_120A_120 ) {
 
     cols.add( "Acol", "120A", "", "(120)" );
 
-    TestFitsPtr fp = cols.create( "mem://" );
+    TestFitsPtr fp = cols.create();
 
     ColInfo info( fp, 1 );
 
@@ -73,7 +73,7 @@ TEST( CFITSIO, A_120A_12_10 ) {
 
     cols.add( "Acol", "120A", "", "(12,10)" );
 
-    TestFitsPtr fp = cols.create( "mem://" );
+    TestFitsPtr fp = cols.create();
 
     ColInfo info( fp, 1 );
 
@@ -92,7 +92,7 @@ TEST( CFITSIO, A_120A12_NULL ) {
 
     cols.add( "Acol", "120A12" );
 
-    TestFitsPtr fp = cols.create( "mem://" );
+    TestFitsPtr fp = cols.create();
 
     ColInfo info( fp, 1 );
 
@@ -110,7 +110,7 @@ TEST( CFITSIO, A_120A12_120 ) {
 
     cols.add( "Acol", "120A12", "", "(120)" );
 
-    TestFitsPtr fp = cols.create( "mem://" );
+    TestFitsPtr fp = cols.create();
 
     ColInfo info( fp, 1 );
 
@@ -128,7 +128,7 @@ TEST( CFITSIO, A_120A12_12_10 ) {
 
     cols.add( "Acol", "120A12", "", "(12,10)" );
 
-    TestFitsPtr fp = cols.create( "mem://" );
+    TestFitsPtr fp = cols.create();
 
     ColInfo info( fp, 1 );
 

@@ -47,6 +47,9 @@ namespace misFITS_Test {
 
     fitsfile *fp;
 
+    if ( filename.empty() )
+	filename = "mem://";
+    
     filename.insert( 0, "!" );
 
     misFITS_CHECK_CFITSIO_EXPR( fits_create_file( &fp, const_cast<char*>(filename.c_str()), &status) );
