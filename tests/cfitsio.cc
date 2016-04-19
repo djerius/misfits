@@ -140,3 +140,37 @@ TEST( CFITSIO, A_120A12_12_10 ) {
     EXPECT_EQ( 10, info.naxes[1] );
 
 }
+
+TEST( CFITSIO, B_34 ) {
+
+    Columns cols;
+
+    cols.add( "Bcol", "34B" );
+
+    TestFitsPtr fp = cols.create();
+
+    {
+	ColInfo info( fp, 1 );
+
+	EXPECT_EQ( 34, info.repeat );
+	EXPECT_EQ( 1, info.width );
+	EXPECT_EQ( 1, info.naxis );
+	EXPECT_EQ( 34, info.naxes[0] );
+    }
+
+    {
+    misFITS_CHECK_CFITSIO_EXPR
+      (
+       fits_modify_vector_len( fp.get(), 1, 39, &status )
+       );
+
+	ColInfo info( fp, 1 );
+
+	EXPECT_EQ( 39, info.repeat );
+	EXPECT_EQ( 1, info.width );
+	EXPECT_EQ( 1, info.naxis );
+	EXPECT_EQ( 39, info.naxes[0] );
+
+    }
+
+}
