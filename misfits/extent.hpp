@@ -60,6 +60,8 @@ namespace misFITS {
     bool operator == ( const Extent& a0, const Extent& b0 );
     bool operator != ( const Extent& a0, const Extent& b0 );
 
+    std::string to_string( const Extent& extent );
+
 }
 
 #endif // ! misFITS_EXTENT_H

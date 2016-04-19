@@ -157,6 +157,41 @@ namespace misFITS {
     }
 
     void
+    Table::resize( int colnum, const Extent& extent ) {
+
+	resetHDU chdu( file, hdu_num );
+
+	ColumnInfo info = columns.at(colnum - 1);
+
+	// do nothing if the extent hasn't changed
+	if ( info.extent == extent )
+	    return;
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_modify_vector_len( file->fptr(), colnum, extent.nelem(), &status )
+	     );
+
+	// CFITSIO fixes up everything but TDIM
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     ostringstream tdim;
+	     tdim << "TDIM" << colnum ;
+	     fits_modify_key_str( file->fptr(), tdim.str().c_str(), to_string( extent ).c_str() , "&", &status );
+	     );
+
+	refresh();
+    }
+
+
+    void
+    Table::resize( const std::string& name , const Extent& extent ) {
+
+	resize( colinfo(name).colnum, extent );
+
+    }
+
+    void
     Table::delete_column( int colnum ) {
 
 	resetHDU chdu( file, hdu_num );

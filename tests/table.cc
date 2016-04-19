@@ -32,6 +32,9 @@ namespace Mode = misFITS::Mode;
 
 using namespace misFITS_Test;
 using misFITS::ColumnType;
+using misFITS::Extent;
+using misFITS::ColumnInfo;
+using misFITS::Keyword;
 
 TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 
@@ -217,3 +220,33 @@ TEST_F( FiducialTableROFptr, CopyHDU ) {
 
 }
 
+TEST( TableTest, ResizeColumn ) {
+
+    misFITS::Table table( "MYEXTENT" );
+
+    EXPECT_EQ( "MYEXTENT",  table.extname );
+    EXPECT_EQ( 1,  table.extver );
+
+    EXPECT_EQ( 0, table.num_columns() );
+
+    table.add( "col1", ColumnType::Double, "", 1, 1 );
+
+    Extent ex0 = table.colinfo( 1 ).extent;
+
+    table.resize( "col1", Extent( 3, 2 ) );
+
+    ColumnInfo c1 = table.colinfo( 1 );
+    Extent ex1 = c1.extent;
+
+    ASSERT_TRUE ( ex0 != ex1 ) << "Extents differ";
+
+    ASSERT_EQ( 6, c1.extent.nelem() );
+    ASSERT_EQ( 3, c1.extent[0] );
+    ASSERT_EQ( 2, c1.extent[1] );
+
+    Keyword<std::string> tdim ( table.file->read_keyword( "TDIM1" ) );
+
+    ASSERT_EQ( "'(3,2)   '", tdim.value );
+
+
+}

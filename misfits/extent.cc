@@ -22,6 +22,7 @@
 #include <numeric>
 #include <algorithm>
 #include <functional>
+#include <sstream>
 
 #include <misfits/extent.hpp>
 
@@ -79,5 +80,24 @@ namespace misFITS {
     bool operator != ( const Extent& a0, const Extent& b0 ) {
 	return ! ( a0 == b0 ) ;
     }
+
+    std::string
+    to_string( const Extent& extent ) {
+
+	std::ostringstream tdim;
+
+	tdim << '(';
+	ExtentType::size_type idx;
+	ExtentType::size_type naxes = extent.naxes();
+
+	for ( idx = 0 ; idx < naxes - 1 ; idx++ ) {
+
+	    tdim << extent[idx] << ',';
+	}
+
+	tdim << extent[idx] << ')';
+	return tdim.str();
+    }
+
 
 }
