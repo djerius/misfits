@@ -64,6 +64,14 @@ namespace misFITS {
 		    const Extent& extent = Extent(1),
 		    int colnum = 0);
 
+	Table& add( const std::string& ttype,
+		    ColumnType typecode,
+		    const Extent& extent,
+		    int colnum = 0) {
+
+	    return add( ttype, typecode, "", extent, colnum );
+	}
+
 	void resize( int colnum, const Extent& extent );
 	void resize( const std::string& name, const Extent& extent );
 
