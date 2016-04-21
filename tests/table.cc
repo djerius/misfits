@@ -250,3 +250,21 @@ TEST( TableTest, ResizeColumn ) {
 
 
 }
+
+TEST( TableTest, DISABLED_TableObjectSynchronization ) {
+
+    misFITS::Table table0( "MYEXTENT" );
+
+    misFITS::Table table1( table0.file.get() );
+
+    table0.add( "col1", ColumnType::Double );
+
+    ASSERT_EQ( 1, table0.num_columns() );
+    ASSERT_EQ( 1, table1.num_columns() );
+
+    ColumnInfo c0 = table0.colinfo( 1 );
+    ColumnInfo c1 = table1.colinfo( 1 );
+
+    EXPECT_EQ( c0, c1 );
+
+}
