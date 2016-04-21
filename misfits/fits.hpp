@@ -236,6 +236,10 @@ namespace misFITS {
 
 	HDU_Type delete_hdu ( ) const;
 
+	void flush_file () const;
+	void flush_buffer () const;
+
+
 	template< typename T>
 	void read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
 	template< typename T>

@@ -285,6 +285,20 @@ namespace misFITS {
 	    misFITS_CHECK_CFITSIO_EXPR( fits_close_file( fitsptr.release(), &status ) );
     }
 
+    void
+    File::flush_file ( ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR( fits_flush_file( fptr(), &status ) );
+
+    }
+
+    void
+    File::flush_buffer ( ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR( fits_flush_buffer( fptr(), 0, &status ) );
+
+    }
+
     HDU_Type
     File::move_by( int nmove ) const {
 	int hdu_type;
