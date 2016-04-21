@@ -41,13 +41,20 @@ using namespace misFITS_Test;
     #define NBYTES 3
 
 struct A {
-    int I1;
-    short J1;
+    short I1;
+    std::vector<short> IV1;
+
+    int J1;
+    std::vector<int> JV1;
+
 };
 
 struct B {
     float E1;
+    std::vector<float> EV1;
+
     double D1;
+    std::vector<double> DV1;
 };
 
 struct C {
@@ -79,10 +86,19 @@ test_fiducial( misFITS::Row &row ) {
     if ( NBYTES != fid.nbytes )
 	throw misFITS::Exception::Assert( "internal error: NBYTES != fid.nbytes" );
 
-    int I1;
-    short J1;
+    short I1;
+    std::vector<short> IV1;
+
+    int J1;
+    std::vector<int> JV1;
+
     float E1;
+    std::vector<float> EV1;
+
     double D1;
+    std::vector<double> DV1;
+
+
     misFITS::BitSet X1_bitset;
 
     misFITS::byte_t X1_array[NBYTES];
@@ -101,14 +117,20 @@ test_fiducial( misFITS::Row &row ) {
     misFITS::Entry::MemBlockAddr<struct A> mb_a
 	= memblock( &atmp )
 	.add( "I1", &atmp.I1 )
-	.add( "J1", &atmp.J1 );
+	.add( "IV1", &atmp.IV1 )
+	.add( "J1", &atmp.J1 )
+	.add( "JV1", &atmp.JV1 );
 
 
     row
     	.add( "I1", &I1 )
+    	.add( "IV1", &IV1 )
     	.add( "J1", &J1 )
+    	.add( "JV1", &JV1 )
         .add( "E1", &E1 )
+        .add( "EV1", &EV1 )
         .add( "D1", &D1 )
+        .add( "DV1", &DV1 )
 	.add( "X1", &X1_bitset )
 	.add( "X1", X1_array )
 	.add( "X1", &X1_vector )
@@ -118,7 +140,9 @@ test_fiducial( misFITS::Row &row ) {
 	.add( &storage.b,
 	      memblock( &btmp )
 	      .add( "E1", &btmp.E1 )
+	      .add( "EV1", &btmp.EV1 )
 	      .add( "D1", &btmp.D1 )
+	      .add( "DV1", &btmp.DV1 )
 	      )
 
 
@@ -135,7 +159,9 @@ test_fiducial( misFITS::Row &row ) {
 	      .add( offsetof( D, b ),
 		    memblock( &btmp )
 		    .add( "E1", &btmp.E1 )
+		    .add( "EV1", &btmp.EV1 )
 		    .add( "D1", &btmp.D1 )
+		    .add( "DV1", &btmp.DV1 )
 		    )
 	      );
     	;
@@ -163,17 +189,35 @@ test_fiducial( misFITS::Row &row ) {
     	EXPECT_EQ( fid.i1.data[zidx], storage.a.I1 );
     	EXPECT_EQ( fid.i1.data[zidx], storage.d.a.I1 );
 
+    	EXPECT_EQ( fid.iv1.data[zidx], IV1 );
+    	EXPECT_EQ( fid.iv1.data[zidx], storage.a.IV1 );
+    	EXPECT_EQ( fid.iv1.data[zidx], storage.d.a.IV1 );
+
     	EXPECT_EQ( fid.j1.data[zidx], J1 );
     	EXPECT_EQ( fid.j1.data[zidx], storage.a.J1 );
     	EXPECT_EQ( fid.j1.data[zidx], storage.d.a.J1 );
+
+    	EXPECT_EQ( fid.jv1.data[zidx], JV1 );
+    	EXPECT_EQ( fid.jv1.data[zidx], storage.a.JV1 );
+    	EXPECT_EQ( fid.jv1.data[zidx], storage.d.a.JV1 );
 
     	EXPECT_FLOAT_EQ( fid.e1.data[zidx], E1 );
     	EXPECT_FLOAT_EQ( fid.e1.data[zidx], storage.b.E1 );
     	EXPECT_FLOAT_EQ( fid.e1.data[zidx], storage.d.b.E1 );
 
+	// may fail 'cause we're comparing floats
+    	EXPECT_TRUE( fid.ev1.data[zidx] == EV1 );
+    	EXPECT_TRUE( fid.ev1.data[zidx] == storage.b.EV1 );
+    	EXPECT_TRUE( fid.ev1.data[zidx] == storage.d.b.EV1 );
+
     	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], D1 );
     	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], storage.b.D1 );
     	EXPECT_DOUBLE_EQ( fid.d1.data[zidx], storage.d.b.D1 );
+
+	// may fail 'cause we're comparing floats
+    	EXPECT_TRUE( fid.dv1.data[zidx] == DV1 );
+    	EXPECT_TRUE( fid.dv1.data[zidx] == storage.b.DV1 );
+    	EXPECT_TRUE( fid.dv1.data[zidx] == storage.d.b.DV1 );
 
 	EXPECT_EQ( fid.x2.data[zidx], X1_bitset );
 	EXPECT_EQ( fid.x2.data[zidx], storage.c.X1_bitset );

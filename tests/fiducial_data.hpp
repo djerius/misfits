@@ -39,9 +39,16 @@ namespace misFITS_Test {
 	  static int nbytes;
 
 	  Column<TSHORT , short>		i1;
+	  Column<TSHORT , std::vector<short> >  iv1;
+
 	  Column<TINT   , int>			j1;
+	  Column<TINT   , std::vector<int> >    jv1;
+
 	  Column<TFLOAT , float>		e1;
+	  Column<TFLOAT , std::vector<float> >	ev1;
+
 	  Column<TDOUBLE, double>		d1;
+	  Column<TDOUBLE, std::vector<double> > dv1;
 
 	  // we're writing bits as a string of bytes
 	  Column<TBYTE  , std::vector<misFITS::byte_t> >	x1;

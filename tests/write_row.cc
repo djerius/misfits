@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -57,7 +58,6 @@ struct from_fileptr : public read_row {
 
 class WriteTest : public GenFits {};
 
-
 TEST_F( WriteTest, Create ) {
 
     Fiducial::Data fid;
@@ -71,17 +71,21 @@ TEST_F( WriteTest, Create ) {
 	using namespace misFITS;
 
 	ttable
-	    .add( "I1", ColumnType::Long     )
-	    .add( "J1", ColumnType::LongLong )
+	    .add( "I1", ColumnType::Short     )
+	    .add( "IV1", ColumnType::Short, 10 )
+	    .add( "J1", ColumnType::Long )
+	    .add( "JV1", ColumnType::Long, 10 )
 	    .add( "E1", ColumnType::Float    )
+	    .add( "EV1", ColumnType::Float, 10    )
 	    .add( "D1", ColumnType::Double   )
-	    .add( "X1", ColumnType::Bit	    , "", Extent( Fiducial::Data::nbits ) )
-	    .add( "A1", ColumnType::String  , "", Extent( 60 ) )
-	    .add( "A2", ColumnType::String  , "", Extent( 12, 5 ) )
-	    .add( "A3", ColumnType::String  , "", Extent( 12, 5 ) )
-	    .add( "A4", ColumnType::String  , "", Extent( 60 ) )
-	    .add( "A5", ColumnType::String  , "", Extent( 12, 5 ) )
-	    .add( "A6", ColumnType::String  , "", Extent( 12, 5 ) )
+	    .add( "DV1", ColumnType::Double, 10   )
+	    .add( "X1", ColumnType::Bit	    , Fiducial::Data::nbits )
+	    .add( "A1", ColumnType::String  , 60 )
+	    .add( "A2", ColumnType::String  , Extent( 12, 5 ) )
+	    .add( "A3", ColumnType::String  , Extent( 12, 5 ) )
+	    .add( "A4", ColumnType::String  , 60 )
+	    .add( "A5", ColumnType::String  , Extent( 12, 5 ) )
+	    .add( "A6", ColumnType::String  , Extent( 12, 5 ) )
 	    ;
 
     }
@@ -90,9 +94,17 @@ TEST_F( WriteTest, Create ) {
 
     struct Row {
 	int I1;
+	std::vector<short> IV1;
+
 	short J1;
+	std::vector<int> JV1;
+
 	float E1;
+	std::vector<float> EV1;
+
 	double D1;
+	std::vector<double> DV1;
+
 	misFITS::BitSet X1;
 	string A1;
 	vector<string> A2;
@@ -109,9 +121,17 @@ TEST_F( WriteTest, Create ) {
 
     orow
     	.add( "I1", &data.I1 )
+    	.add( "IV1", &data.IV1 )
+
     	.add( "J1", &data.J1 )
+    	.add( "JV1", &data.JV1 )
+
         .add( "E1", &data.E1 )
+        .add( "EV1", &data.EV1 )
+
         .add( "D1", &data.D1 )
+        .add( "DV1", &data.DV1 )
+
         .add( "X1", &data.X1 )
         .add( "A1", &data.A1 )
         .add( "A2", &data.A2 )
@@ -125,9 +145,17 @@ TEST_F( WriteTest, Create ) {
     for( int row = 0 ; row < fid.nrows ; ++row ) {
 
 	data.I1 = fid.i1.data[row];
+	data.IV1 =  fid.iv1.data[row];
+
 	data.J1 = fid.j1.data[row];
+	data.JV1 = fid.jv1.data[row];
+
 	data.E1 = fid.e1.data[row];
+	data.EV1 = fid.ev1.data[row];
+
 	data.D1 = fid.d1.data[row];
+	data.DV1 = fid.dv1.data[row];
+
 	data.X1 = fid.x2.data[row];
 
 	data.A1 = fid.a1.data[row];

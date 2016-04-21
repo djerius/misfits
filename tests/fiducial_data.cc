@@ -41,12 +41,32 @@ namespace misFITS_Test {
 	    return os.str();
 	}
 
+	template< typename T >
+	std::vector<T>
+	fill( int start, typename std::vector<T>::size_type nelem ) {
+
+	    std::vector<T> v;
+	    v.resize(nelem);
+	    for ( typename std::vector<T>::size_type i = 0 ; i < nelem ; i++ )
+		v[i] = start + i - 1;
+
+	    return v;
+	}
+
 
 	Data::Data () :
 	    i1( "I1" , "I"    	      	      ),
+	    iv1( "IV1", "10I"		      ),
+
 	    j1( "J1" , "J"    	      	      ),
+	    jv1( "JV1" , "10J"    	      ),
+
 	    e1( "E1" , "E"    	      	      ),
+	    ev1( "EV1" , "10E"    	      ),
+
 	    d1( "D1" , "D"    	      	      ),
+	    dv1( "DV1" , "10D"    	      ),
+
 	    x1( "X1" , Xform() 	      	      ),
 	    x2( "X2" , Xform() 	      	      ),
 
@@ -61,9 +81,17 @@ namespace misFITS_Test {
 	{
 
 	    columns.push_back( &i1 );
+	    columns.push_back( &iv1 );
+
 	    columns.push_back( &j1 );
+	    columns.push_back( &jv1 );
+
 	    columns.push_back( &e1 );
+	    columns.push_back( &ev1 );
+
 	    columns.push_back( &d1 );
+	    columns.push_back( &dv1 );
+
 	    columns.push_back( &x1 );
 
 	    columns.push_back( &a1 );
@@ -94,9 +122,17 @@ namespace misFITS_Test {
 	    for ( int i = 1 ; i <= nrows ; i++ ) {
 
 		d1.push_back( 1.0 / i );
+		dv1.push_back( fill<double>(i + 1, 10 ) );
+
 		e1.push_back( 2.0f / i );
+		ev1.push_back( fill<float>(i + 11, 10 ) );
+
 		i1.push_back( i + 1 );
+		iv1.push_back( fill<short>(i + 21, 10 ) );
+
 		j1.push_back( i + 2 );
+		jv1.push_back( fill<int>(i + 31, 10 ) );
+
 		x1.data.resize(i);
 		x1.data[i-1].resize(nbytes);
 
