@@ -1,3 +1,21 @@
+0.0.5	2016-04-22T16:05:02-0400
+
+  [ BUGS ]
+
+    * when multiple table objects refer to a single file HDU, altering
+      one does not synchronize the others.
+      NOT FIXED.
+
+  [ ENHANCEMENT ]
+
+    * C++ bool type is now supported
+    * Logical FITS columns are supported via C++ bool types
+
+  [ TESTS ]
+
+    * testing of using std::vector objects to hold cell contents was added
+
+
 0.0.4	2016-04-19T18:00:37-0400
 
   [ ENHANCEMENT ]
