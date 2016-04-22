@@ -154,6 +154,9 @@ namespace misFITS_Test {
 	template<> void Column< TSTRING, std::string>::normalize ();
 	template<> void Column< TSTRING, std::vector<std::string> >::normalize( );
 
+	template<> void Column< TLOGICAL, bool >::write( TestFitsPtr& fp ) const;
+	template<> void	Column< TLOGICAL, std::vector<bool> >::write( TestFitsPtr& fp ) const;
+
 
 
     }

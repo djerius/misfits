@@ -80,6 +80,75 @@ namespace misFITS {
 
 	//-----------------------------------------
 
+	void
+	Column<bool>::read( const File& file, LONGLONG firstrow ) {
+
+	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
+
+		file.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+
+		std::vector<char>::size_type idx;
+		for ( idx = 0 ; idx < nelem_ ; idx++ )
+		    base_[idx] = buffer[idx];
+	    }
+
+	    else  {
+
+		file.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
+
+	    }
+
+	}
+
+	void
+	Column<bool>::write( const File& file, LONGLONG firstrow ) {
+
+	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
+
+		std::vector<char>::size_type idx;
+		for ( idx = 0 ; idx < nelem_ ; idx++ )
+		    buffer[idx] = base_[idx];
+
+		file.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+	    }
+
+	    else {
+
+		file.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
+
+	    }
+
+
+	}
+
+	//-----------------------------------------
+
+	// std::vector<bool> is a specialized monster that's not a vector of bools.
+
+	void
+	Column< std::vector<bool> >::read( const File& file, LONGLONG firstrow ) {
+
+	    file.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+
+	    std::vector<char>::size_type idx;
+	    for ( idx = 0 ; idx < nelem_ ; idx++ )
+		(*base_)[idx] = buffer[idx];
+
+	}
+
+	void
+	Column< std::vector<bool> >::write( const File& file, LONGLONG firstrow ) {
+
+	    std::vector<char>::size_type idx;
+	    for ( idx = 0 ; idx < nelem_ ; idx++ )
+		buffer[idx] = (*base_)[idx];
+
+	    file.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+
+	}
+
+	//-----------------------------------------
+
 
 	template<>
 	Column<byte_t>::Column( const ColumnInfo& info, byte_t* base ) :

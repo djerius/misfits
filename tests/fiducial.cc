@@ -1,3 +1,5 @@
+#include "misfits/types.hpp"
+
 #include "fiducial.hpp"
 
 #include <functional>
@@ -7,6 +9,8 @@ using namespace std;
 namespace misFITS_Test {
 
     namespace Fiducial {
+
+	// ------------------------------------------------------- //
 
 	template<>
 	void
@@ -103,6 +107,58 @@ namespace misFITS_Test {
 	    }
 	}
 
+	// ------------------------------------------------------- //
+
+
+	template<>
+	void
+	Column< TLOGICAL, bool >::write( TestFitsPtr& fp ) const {
+
+	    std::vector<misFITS::NativeType<misFITS::SC_BYTE>::storage_type> buffer( nelem );
+
+	    if ( nelem > 1 ) 
+		throw misFITS::Exception::Assert( "currently cannot model bool arrays" );
+	    for( int row = 1 ; row <= data.size()  ; ++row ) {
+
+		buffer[0] = data[row-1];
+
+		misFITS_CHECK_CFITSIO_EXPR
+		    (
+		     fits_write_col( fp.get(), TLOGICAL, colnum, row, 1, nelem, &buffer[0], &status );
+		     );
+
+	    }
+
+	}
+
+
+	template<>
+	void
+	Column< TLOGICAL, std::vector<bool> >::write( TestFitsPtr& fp ) const {
+
+	    std::vector<misFITS::NativeType<misFITS::SC_BYTE>::storage_type> buffer( nelem );
+
+	    for (LONGLONG row = 1 ; row <= Parent::data.size() ; ++row ) {
+
+		const std::vector<bool>& drow = Parent::data[row-1];
+
+		if ( drow.size() != Parent::nelem )
+		    throw misFITS::Exception::Assert( "data for vector cell has incorrect length" );
+
+		for ( int idx = 0 ; idx < nelem ; idx++ )
+		    buffer[idx] = drow[idx];
+
+		misFITS_CHECK_CFITSIO_EXPR
+		    (
+		     fits_write_col( fp.get(), TLOGICAL, Parent::colnum, row, 1, Parent::nelem, &buffer[0], &status )
+		     );
+
+		}
+
+	}
+	
+
+	// ------------------------------------------------------- //
 
 	void
 	ColumnBase::insert ( TestFitsPtr& fpp, int offset_ ) const {

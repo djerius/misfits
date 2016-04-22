@@ -50,6 +50,10 @@ namespace misFITS_Test {
 	  Column<TDOUBLE, double>		d1;
 	  Column<TDOUBLE, std::vector<double> > dv1;
 
+	  Column<TLOGICAL, bool>		l1;
+	  Column<TLOGICAL, std::vector<bool> >  lv1;
+
+
 	  // we're writing bits as a string of bytes
 	  Column<TBYTE  , std::vector<misFITS::byte_t> >	x1;
 

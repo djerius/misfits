@@ -67,6 +67,9 @@ namespace misFITS_Test {
 	    d1( "D1" , "D"    	      	      ),
 	    dv1( "DV1" , "10D"    	      ),
 
+	    l1( "L1" , "L"    	      	      ),
+	    lv1( "LV1" , "10L"    	      ),
+
 	    x1( "X1" , Xform() 	      	      ),
 	    x2( "X2" , Xform() 	      	      ),
 
@@ -91,6 +94,9 @@ namespace misFITS_Test {
 
 	    columns.push_back( &d1 );
 	    columns.push_back( &dv1 );
+
+	    columns.push_back( &l1 );
+	    columns.push_back( &lv1 );
 
 	    columns.push_back( &x1 );
 
@@ -132,6 +138,12 @@ namespace misFITS_Test {
 
 		j1.push_back( i + 2 );
 		jv1.push_back( fill<int>(i + 31, 10 ) );
+
+		l1.push_back( true );
+		std::vector<bool> b1(10);
+		b1[0] = b1[2] = b1[4] = b1[6] = b1[8] = true;
+		b1[1] = b1[3] = b1[5] = b1[7] = b1[9] = true;
+		lv1.push_back( b1 );
 
 		x1.data.resize(i);
 		x1.data[i-1].resize(nbytes);

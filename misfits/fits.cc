@@ -620,4 +620,38 @@ namespace misFITS {
     template void File::write_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const;
 
     misFITS_INSTANTIATE_OVER_STORAGE_TYPES(WRITE_COL)
+
+    //-----------------------------------------
+
+    template<>
+    void File::read_col<ColumnType::Logical>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, NativeType<SC_BYTE>::storage_type* data ) const {
+
+    	misFITS_CHECK_CFITSIO_EXPR
+    	    (
+    	     fits_read_col( fptr(),
+    			    static_cast<int>(ColumnType::Logical),
+    			    colnum,
+    			    firstrow, firstelem,
+    			    nelem,
+    			    NULL,
+    			    data, NULL, &status)
+    	     );
+
+    }
+
+    template<>
+    void File::write_col<ColumnType::Logical>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const NativeType<SC_BYTE>::storage_type* data ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_col( fptr(),
+			     static_cast<int>(ColumnType::Logical),
+			     colnum,
+			     firstrow, firstelem,
+			     nelem,
+			     const_cast<NativeType<SC_BYTE>::storage_type*>(data), &status)
+	     );
+
+    }
+
 }

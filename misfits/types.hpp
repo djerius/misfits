@@ -46,6 +46,7 @@ namespace misFITS {
 	SC_UINT        = TUINT,
 	SC_ULONG       = TULONG,
 	SC_USHORT      = TUSHORT,
+	SC_LOGICAL     = TLOGICAL,
 	SC_UNDEF       = 0
     };
 
@@ -116,6 +117,11 @@ namespace misFITS {
 	static unsigned char default_value () { return 0; }
     };
 
+    template <> struct StorageCode<bool>          {
+	static const StorageType type = SC_LOGICAL;
+	static short default_value () { return 0; }
+    };
+
     template <> struct StorageCode<std::string> {
 	static const StorageType type = SC_STRING;
 	static const char* default_value () { return ""; }
@@ -127,15 +133,16 @@ namespace misFITS {
 
     template <StorageType T> struct NativeType;
 
-    template <> struct NativeType<SC_DOUBLE> { typedef double 	       storage_type; };
-    template <> struct NativeType<SC_FLOAT>  { typedef float 	       storage_type; };
-    template <> struct NativeType<SC_INT>    { typedef int 	       storage_type; };
-    template <> struct NativeType<SC_LONG>   { typedef long 	       storage_type; };
-    template <> struct NativeType<SC_SHORT>  { typedef short 	       storage_type; };
-    template <> struct NativeType<SC_BYTE>   { typedef unsigned char   storage_type; };
-    template <> struct NativeType<SC_UINT>   { typedef unsigned int    storage_type; };
-    template <> struct NativeType<SC_ULONG>  { typedef unsigned long   storage_type; };
-    template <> struct NativeType<SC_USHORT> { typedef unsigned short  storage_type; };
+    template <> struct NativeType<SC_DOUBLE>  { typedef double 	       	storage_type; };
+    template <> struct NativeType<SC_FLOAT>   { typedef float 	       	storage_type; };
+    template <> struct NativeType<SC_INT>     { typedef int 	       	storage_type; };
+    template <> struct NativeType<SC_LONG>    { typedef long 	       	storage_type; };
+    template <> struct NativeType<SC_SHORT>   { typedef short 	       	storage_type; };
+    template <> struct NativeType<SC_BYTE>    { typedef unsigned char   storage_type; };
+    template <> struct NativeType<SC_UINT>    { typedef unsigned int    storage_type; };
+    template <> struct NativeType<SC_ULONG>   { typedef unsigned long   storage_type; };
+    template <> struct NativeType<SC_USHORT>  { typedef unsigned short  storage_type; };
+    template <> struct NativeType<SC_LOGICAL> { typedef bool  		storage_type; };
 
 
     // these must be listed such that the last entry for a valid

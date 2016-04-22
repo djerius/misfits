@@ -124,6 +124,51 @@ namespace misFITS {
 	    std::vector<BitSet::block_type> buffer;
 	};
 
+	template<>
+	class Column< bool > : public ColumnBase {
+
+	public:
+	    Column( const ColumnInfo& info, bool* base ) :
+		base_( base ),
+		colnum_( info.colnum ),
+		nelem_( info.nelem() ) {
+
+		if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) )
+		    buffer.resize( nelem_ );
+	    }
+	    virtual ~Column() { };
+
+	    virtual void read( const File& file, LONGLONG firstrow );
+	    virtual void write( const File& file, LONGLONG firstrow );
+
+	protected:
+	    bool* base_;
+	    int colnum_;
+	    LONGLONG nelem_;
+	    std::vector<NativeType<SC_BYTE>::storage_type> buffer;
+	};
+
+	template<>
+	class Column< std::vector<bool> > : public ColumnBase {
+
+	public:
+	    Column( const ColumnInfo& info, std::vector<bool>* base ) : base_( base ),
+									colnum_( info.colnum ),
+									nelem_( info.nelem() ) {
+		base->resize( nelem_ );
+		buffer.resize( nelem_ );
+	    }
+
+	    void read( const File& file, LONGLONG firstrow );
+	    void write( const File& file, LONGLONG firstrow );
+
+	private:
+	    std::vector<bool>* base_;
+	    int colnum_;
+	    LONGLONG nelem_;
+	    std::vector<NativeType<SC_BYTE>::storage_type> buffer;
+	};
+
 
 	template<>
 	class Column<std::string>: public ColumnBase {

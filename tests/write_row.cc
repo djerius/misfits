@@ -75,6 +75,8 @@ TEST_F( WriteTest, Create ) {
 	    .add( "IV1", ColumnType::Short, 10 )
 	    .add( "J1", ColumnType::Long )
 	    .add( "JV1", ColumnType::Long, 10 )
+	    .add( "L1", ColumnType::Logical )
+	    .add( "LV1", ColumnType::Logical, 10 )
 	    .add( "E1", ColumnType::Float    )
 	    .add( "EV1", ColumnType::Float, 10    )
 	    .add( "D1", ColumnType::Double   )
@@ -98,6 +100,9 @@ TEST_F( WriteTest, Create ) {
 
 	short J1;
 	std::vector<int> JV1;
+
+	bool L1;
+	std::vector<bool> LV1;
 
 	float E1;
 	std::vector<float> EV1;
@@ -126,6 +131,9 @@ TEST_F( WriteTest, Create ) {
     	.add( "J1", &data.J1 )
     	.add( "JV1", &data.JV1 )
 
+    	.add( "L1", &data.L1 )
+    	.add( "LV1", &data.LV1 )
+
         .add( "E1", &data.E1 )
         .add( "EV1", &data.EV1 )
 
@@ -149,6 +157,9 @@ TEST_F( WriteTest, Create ) {
 
 	data.J1 = fid.j1.data[row];
 	data.JV1 = fid.jv1.data[row];
+
+	data.L1 = fid.l1.data[row];
+	data.LV1 = fid.lv1.data[row];
 
 	data.E1 = fid.e1.data[row];
 	data.EV1 = fid.ev1.data[row];
