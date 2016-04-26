@@ -6,6 +6,12 @@ AT_CHECK(cfitsio,,[ignore])
 
 AT_CLEANUP
 
+AT_SETUP([BitSet])
+
+AT_CHECK(bitset,,[ignore])
+
+AT_CLEANUP
+
 AT_SETUP([Files])
 
 AT_CHECK(file,,[ignore])

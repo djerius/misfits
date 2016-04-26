@@ -48,13 +48,18 @@ namespace misFITS {
 	Column<BitSet>::Column( const ColumnInfo& info, BitSet* base ) :
 	    base_( base ),
 	    colnum_( info.colnum ),
-	    nelem_( info.nelem() ) {
+	    nbits_( info.nelem() )
+	{
 
 	    if ( ColumnType::Bit != info.column_type )
 		throw( Exception::Assert( "can't use an misFITS::BitSet object with a non bit FITS column" ) );
 
-	    base_->resize( nelem_ );
+	    base_->resize( nbits_ );
+
+
 	    nbytes_ = base_->num_blocks();
+	    max_bits_ = nbytes_ * BitSet::bits_per_block;
+
 	    buffer.resize( nbytes_ );
 	}
 
@@ -63,9 +68,12 @@ namespace misFITS {
 
 	    file.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 
+	    base_->resize( max_bits_ );
 	    boost::from_block_range(bitset_input_iterator( buffer.begin() ),
-				    bitset_input_iterator( buffer.end() ),
-				    *base_ );
+	    			    bitset_input_iterator( buffer.end() ),
+	    			    *base_ );
+	    base_->resize( nbits_ );
+
 	}
 
 	void

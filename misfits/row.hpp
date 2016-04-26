@@ -115,7 +115,8 @@ namespace misFITS {
 	private:
 	    BitSet* base_;
 	    int colnum_;
-	    LONGLONG nelem_;
+	    LONGLONG nbits_;
+	    BitSet::size_type max_bits_;
 
 	    // number of bytes required to store the bits. cached for
 	    // speed
