@@ -1,3 +1,11 @@
+0.0.6	2016-04-27T11:22:27-0400
+
+  [ BUGS ]
+
+    * A BitSet with a size which is not an integral multiple of the
+      number of bits in a char was not correctly handled due to a
+      feature in the underlying boost::dynamic_bitset library.
+
 0.0.5	2016-04-22T16:05:02-0400
 
   [ BUGS ]
