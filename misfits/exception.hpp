@@ -33,7 +33,7 @@ namespace misFITS {
 	class CFITSIO;
 	class Assert : public std::runtime_error {
 	public:
-	    Assert( const char* what_arg ) : runtime_error( what_arg ) { }
+	    Assert( const std::string& what_arg ) : runtime_error( what_arg ) { }
 	};
 
     };
