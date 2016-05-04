@@ -372,8 +372,7 @@ namespace misFITS {
 	    return false;
 
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::ColumnBase::read, _1, boost::ref(*table_->file()),
-			       idx() )
+		  boost::bind( &Entry::ColumnBase::read, _1, boost::ref( *table_->file.get()), idx() )
 		  );
 
 	if ( auto_advance() )
@@ -392,8 +391,7 @@ namespace misFITS {
 
 	for_each( entries.begin(), entries.end(),
 		  boost::bind( &Entry::ColumnBase::write, _1,
-			       boost::ref(*table_->file()),
-			       idx() )
+			       boost::ref(*table_->file.get()), idx() )
 		  );
 
 	if ( auto_advance() )
