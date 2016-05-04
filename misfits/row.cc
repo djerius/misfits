@@ -363,7 +363,7 @@ namespace misFITS {
     bool
     Row::read(){
 
-	resetHDU chdu( table_->file, table_->hdu_num );
+	resetHDU chdu( table_ );
 
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to read" );
@@ -385,7 +385,7 @@ namespace misFITS {
     void
     Row::write() {
 
-	resetHDU chdu( table_->file, table_->hdu_num );
+	resetHDU chdu( table_ );
 
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to write" );

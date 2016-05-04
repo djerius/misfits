@@ -67,7 +67,7 @@ namespace misFITS {
     void
     Table::refresh( ) {
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	// make sure we're really at a table
 	int type = boost::underlying_cast<int>( file->hdu_type() );
@@ -97,7 +97,7 @@ namespace misFITS {
 	int colnum;
 	int status = 0;
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	return ! fits_get_colnum( file->fptr(), CASEINSEN, const_cast<char*>(templt.c_str()),
 					   &colnum, &status );
@@ -112,7 +112,7 @@ namespace misFITS {
     Table::colinfo( const string& colname ) {
 	int colnum;
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_colnum( file->fptr(), 0, const_cast<char*>(colname.c_str()), &colnum, &status )
@@ -125,7 +125,7 @@ namespace misFITS {
 
 	ColumnInfo copy = ci;
 
-	resetHDU chdu( file );
+	resetHDU chdu( *this );
 
 	if ( copy.colnum == 0 )
 	    copy.colnum = num_columns() + 1;
@@ -144,7 +144,7 @@ namespace misFITS {
 		const Extent& extent,
 		int colnum ) {
 
-	resetHDU chdu( file );
+	resetHDU chdu( *this );
 
 	if ( colnum == 0 )
 	    colnum = num_columns() + 1;
@@ -159,7 +159,7 @@ namespace misFITS {
     void
     Table::resize( int colnum, const Extent& extent ) {
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	ColumnInfo info = columns.at(colnum - 1);
 
@@ -194,7 +194,7 @@ namespace misFITS {
     void
     Table::delete_column( int colnum ) {
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -207,7 +207,7 @@ namespace misFITS {
     void
     Table::delete_column( const std::string& name ) {
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -219,7 +219,7 @@ namespace misFITS {
     Table::num_columns( ) const {
 	int num_cols;
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_num_cols( file->fptr(), &num_cols, &status )
@@ -243,7 +243,7 @@ namespace misFITS {
 
 	LONGLONG num_rows;
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -262,7 +262,7 @@ namespace misFITS {
     TablePtr
     Table::copy( misFITS::FilePtr& ofile, const TableCopy& what, int morekeys ) const {
 
-	resetHDU chdu( file, hdu_num );
+	resetHDU chdu( *this );
 
 	switch( boost::native_value( what ) ) {
 
