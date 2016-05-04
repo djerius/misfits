@@ -48,8 +48,8 @@ namespace misFITS {
 	    friend class misFITS::Row;
 
 	private:
-	    virtual void read( const File& file, LONGLONG firstrow ) = 0;
-	    virtual void write( const File& file, LONGLONG firstrow ) = 0;
+	    virtual void read( const Table& table, LONGLONG firstrow ) = 0;
+	    virtual void write( const Table& table, LONGLONG firstrow ) = 0;
 
 	protected:
 	    virtual ~ColumnBase() {}
@@ -64,11 +64,11 @@ namespace misFITS {
 						  nelem_( info.nelem() ) {}
 	    virtual ~Column() { };
 
-	    virtual void read( const File& file, LONGLONG firstrow ) {
-		file.read_col( colnum_, firstrow, 1, nelem_, base_ );
+	    virtual void read( const Table& table, LONGLONG firstrow ) {
+		table.read_col( colnum_, firstrow, 1, nelem_, base_ );
 	    }
-	    virtual void write( const File& file, LONGLONG firstrow ) {
-		file.write_col( colnum_, firstrow, 1, nelem_, base_ );
+	    virtual void write( const Table& table, LONGLONG firstrow ) {
+		table.write_col( colnum_, firstrow, 1, nelem_, base_ );
 	    }
 
 	protected:
@@ -87,11 +87,11 @@ namespace misFITS {
 		base_->resize( nelem_ );
 	    }
 
-	    void read( const File& file, LONGLONG firstrow ) {
-		file.read_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
+	    void read( const Table& table, LONGLONG firstrow ) {
+		table.read_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
 	    }
-	    void write( const File& file, LONGLONG firstrow ) {
-		file.write_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
+	    void write( const Table& table, LONGLONG firstrow ) {
+		table.write_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
 	    }
 
 	private:
@@ -108,8 +108,8 @@ namespace misFITS {
 	    Column( const ColumnInfo& info, BitSet* base );
 	    virtual ~Column() { };
 
-	    void read(  const File& file, LONGLONG firstrow );
-	    void write( const File& file, LONGLONG firstrow );
+	    void read(  const Table& table, LONGLONG firstrow );
+	    void write( const Table& table, LONGLONG firstrow );
 
 
 	private:
@@ -139,8 +139,8 @@ namespace misFITS {
 	    }
 	    virtual ~Column() { };
 
-	    virtual void read( const File& file, LONGLONG firstrow );
-	    virtual void write( const File& file, LONGLONG firstrow );
+	    virtual void read( const Table& table, LONGLONG firstrow );
+	    virtual void write( const Table& table, LONGLONG firstrow );
 
 	protected:
 	    bool* base_;
@@ -160,8 +160,8 @@ namespace misFITS {
 		buffer.resize( nelem_ );
 	    }
 
-	    void read( const File& file, LONGLONG firstrow );
-	    void write( const File& file, LONGLONG firstrow );
+	    void read( const Table& table, LONGLONG firstrow );
+	    void write( const Table& table, LONGLONG firstrow );
 
 	private:
 	    std::vector<bool>* base_;
@@ -179,8 +179,8 @@ namespace misFITS {
 	    Column( const ColumnInfo& info, std::string* base );
 	    virtual ~Column() { };
 
-	    void read(  const File& file, LONGLONG firstrow );
-	    void write( const File& file, LONGLONG firstrow );
+	    void read(  const Table& table, LONGLONG firstrow );
+	    void write( const Table& table, LONGLONG firstrow );
 
 	private:
 
@@ -206,8 +206,8 @@ namespace misFITS {
 	    Column( const ColumnInfo& info, std::vector<std::string>* base );
 	    virtual ~Column() { };
 
-	    void read(  const File& file, LONGLONG firstrow );
-	    void write( const File& file, LONGLONG firstrow );
+	    void read(  const Table& table, LONGLONG firstrow );
+	    void write( const Table& table, LONGLONG firstrow );
 
 
 	private:

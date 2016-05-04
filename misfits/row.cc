@@ -64,9 +64,9 @@ namespace misFITS {
 	}
 
 	void
-	Column<BitSet>::read( const File& file, LONGLONG firstrow ) {
+	Column<BitSet>::read( const Table& table, LONGLONG firstrow ) {
 
-	    file.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
+	    table.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 
 	    base_->resize( max_bits_ );
 	    boost::from_block_range(bitset_input_iterator( buffer.begin() ),
@@ -77,11 +77,11 @@ namespace misFITS {
 	}
 
 	void
-	Column<BitSet>::write( const File& file, LONGLONG firstrow ) {
+	Column<BitSet>::write( const Table& table, LONGLONG firstrow ) {
 
 	    boost::to_block_range(*base_, bitset_output_iterator( buffer.begin()) );
 
-	    file.write_col( colnum_, firstrow, 1, nbytes_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
+	    table.write_col( colnum_, firstrow, 1, nbytes_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 	}
 
 
@@ -89,11 +89,11 @@ namespace misFITS {
 	//-----------------------------------------
 
 	void
-	Column<bool>::read( const File& file, LONGLONG firstrow ) {
+	Column<bool>::read( const Table& table, LONGLONG firstrow ) {
 
 	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
 
-		file.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
 
 		std::vector<char>::size_type idx;
 		for ( idx = 0 ; idx < nelem_ ; idx++ )
@@ -102,14 +102,14 @@ namespace misFITS {
 
 	    else  {
 
-		file.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
+		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
 
 	    }
 
 	}
 
 	void
-	Column<bool>::write( const File& file, LONGLONG firstrow ) {
+	Column<bool>::write( const Table& table, LONGLONG firstrow ) {
 
 	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
 
@@ -117,12 +117,12 @@ namespace misFITS {
 		for ( idx = 0 ; idx < nelem_ ; idx++ )
 		    buffer[idx] = base_[idx];
 
-		file.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
 	    }
 
 	    else {
 
-		file.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
+		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
 
 	    }
 
@@ -134,9 +134,9 @@ namespace misFITS {
 	// std::vector<bool> is a specialized monster that's not a vector of bools.
 
 	void
-	Column< std::vector<bool> >::read( const File& file, LONGLONG firstrow ) {
+	Column< std::vector<bool> >::read( const Table& table, LONGLONG firstrow ) {
 
-	    file.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+	    table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
 
 	    std::vector<char>::size_type idx;
 	    for ( idx = 0 ; idx < nelem_ ; idx++ )
@@ -145,13 +145,13 @@ namespace misFITS {
 	}
 
 	void
-	Column< std::vector<bool> >::write( const File& file, LONGLONG firstrow ) {
+	Column< std::vector<bool> >::write( const Table& table, LONGLONG firstrow ) {
 
 	    std::vector<char>::size_type idx;
 	    for ( idx = 0 ; idx < nelem_ ; idx++ )
 		buffer[idx] = (*base_)[idx];
 
-	    file.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+	    table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
 
 	}
 
@@ -207,14 +207,14 @@ namespace misFITS {
 
 
 	void
-	Column<std::string>::read( const File& file, LONGLONG firstrow ) {
+	Column<std::string>::read( const Table& table, LONGLONG firstrow ) {
 
 	    // CFITSIO's TSTRING implementation won't allow reading in a multidim set of characters
 	    // in one go into a buffer, and attempts to read TBYTE fail because of the "magic"
 	    // associated with strings in CFITSIO, so, use a very low level routine
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_read_tblbytes( file.fptr(), firstrow, offset, nbytes,
+		 fits_read_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
 				     reinterpret_cast<unsigned char*>(&buffer[0]),
 				     &status )
 		 );
@@ -226,14 +226,14 @@ namespace misFITS {
 	}
 
 	void
-	Column<std::string>::write( const File& file, LONGLONG firstrow ) {
+	Column<std::string>::write( const Table& table, LONGLONG firstrow ) {
 
 	    buffer.assign( nbytes, ' ' );
 	    base_->copy( &buffer[0], nbytes );
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_write_tblbytes( file.fptr(), firstrow, offset, nbytes,
+		 fits_write_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
 				      reinterpret_cast<unsigned char*>(&buffer[0]), &status )
 		 );
 	}
@@ -259,11 +259,11 @@ namespace misFITS {
 
 
 	void
-	Column< std::vector<std::string> >::read( const File& file, LONGLONG firstrow ) {
+	Column< std::vector<std::string> >::read( const Table& table, LONGLONG firstrow ) {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_read_tblbytes( file.fptr(), firstrow, offset, nbytes,
+		 fits_read_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
 				     reinterpret_cast<unsigned char*>(&buffer[0]),
 				     &status )
 		 );
@@ -294,7 +294,7 @@ namespace misFITS {
 	}
 
 	void
-	Column< std::vector<std::string> >::write( const File& file, LONGLONG firstrow ) {
+	Column< std::vector<std::string> >::write( const Table& table, LONGLONG firstrow ) {
 
 	    buffer.assign( nbytes, ' ' );
 
@@ -315,7 +315,7 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_write_tblbytes( file.fptr(), firstrow, offset, nbytes,
+		 fits_write_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
 				      reinterpret_cast<unsigned char*>(&buffer[0]), &status )
 		 );
 
@@ -372,7 +372,7 @@ namespace misFITS {
 	    return false;
 
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::ColumnBase::read, _1, boost::ref( *table_->file.get()), idx() )
+		  boost::bind( &Entry::ColumnBase::read, _1, boost::ref(*table_.get()), idx() )
 		  );
 
 	if ( auto_advance() )
@@ -390,8 +390,7 @@ namespace misFITS {
 	    throw Exception::Assert( "row object was not assigned any columns to write" );
 
 	for_each( entries.begin(), entries.end(),
-		  boost::bind( &Entry::ColumnBase::write, _1,
-			       boost::ref(*table_->file.get()), idx() )
+		  boost::bind( &Entry::ColumnBase::write, _1, boost::ref(*table_.get()), idx() )
 		  );
 
 	if ( auto_advance() )

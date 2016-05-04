@@ -240,17 +240,6 @@ namespace misFITS {
 	void flush_buffer () const;
 
 
-	template< typename T>
-	void read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
-	template< typename T>
-	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const T* data ) const;
-
-	// in rare cases (i.e. TLOGICAL), can't uniquely map CFITSIO storage type to required datatype
-	template< BOOST_SCOPED_ENUM_NATIVE(ColumnType) T>
-	void read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, NativeType<SC_BYTE>::storage_type* data ) const;
-	template< BOOST_SCOPED_ENUM_NATIVE(ColumnType) T>
-	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const NativeType<SC_BYTE>::storage_type* data ) const;
-
 	std::pair<int,int> get_hdrpos( );
 
 	Keyword<std::string> read_keyword( const std::string& keyname,

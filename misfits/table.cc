@@ -228,6 +228,87 @@ namespace misFITS {
 	return num_cols;
     }
 
+
+    //-----------------------------------------
+    template<typename T>
+    void Table::read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const {
+
+    	misFITS_CHECK_CFITSIO_EXPR
+    	    (
+    	     fits_read_col( file->fptr(),
+    			    StorageCode<T>::type,
+    			    colnum,
+    			    firstrow, firstelem,
+    			    nelem,
+    			    NULL,
+    			    data, NULL, &status)
+    	     );
+
+    }
+
+#define READ_COL(r,d,T) \
+    template void Table::read_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
+
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(READ_COL)
+
+    //-----------------------------------------
+
+    template<typename T>
+    void Table::write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_col( file->fptr(),
+			     StorageCode<T>::type,
+			     colnum,
+			     firstrow, firstelem,
+			     nelem,
+			     const_cast<T*>(data), &status)
+	     );
+
+    }
+
+#define WRITE_COL(r,d,T) \
+    template void Table::write_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const;
+
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(WRITE_COL)
+
+    //-----------------------------------------
+
+    template<>
+    void Table::read_col<ColumnType::Logical>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, NativeType<SC_BYTE>::storage_type* data ) const {
+
+    	misFITS_CHECK_CFITSIO_EXPR
+    	    (
+    	     fits_read_col( file->fptr(),
+    			    static_cast<int>(ColumnType::Logical),
+    			    colnum,
+    			    firstrow, firstelem,
+    			    nelem,
+    			    NULL,
+    			    data, NULL, &status)
+    	     );
+
+    }
+
+    template<>
+    void Table::write_col<ColumnType::Logical>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const NativeType<SC_BYTE>::storage_type* data ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_col( file->fptr(),
+			     static_cast<int>(ColumnType::Logical),
+			     colnum,
+			     firstrow, firstelem,
+			     nelem,
+			     const_cast<NativeType<SC_BYTE>::storage_type*>(data), &status)
+	     );
+
+    }
+
+
+    //-----------------------------------------
+
     ////////////////////////
     // Table Row Routines //
     ////////////////////////
