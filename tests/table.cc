@@ -135,7 +135,7 @@ TEST_F( FiducialTableROFptr, MetaData ) {
     for ( ; col < end ; ++ col ) {
 
 	SCOPED_TRACE( (*col)->ttype );
-	ASSERT_TRUE( table.exists_column( (*col)->ttype ) );
+	ASSERT_TRUE( table.has_column( (*col)->ttype ) );
 	ASSERT_EQ( (*col)->colnum, table.colinfo( (*col)->ttype ).colnum );
 
     }

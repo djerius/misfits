@@ -78,7 +78,11 @@ namespace misFITS {
 	int num_columns() const;
 	LONGLONG num_rows() const;
 
-	bool exists_column( const std::string& templt )  const;
+	bool has_column( const std::string& templt )  const;
+	bool exists_column( const std::string& templt )  const {
+	    std::cerr << "misFITS::Table::exists_column is deprecated; use misFITS::Table::has_column\n";
+	    return has_column( templt );
+	};
 	void delete_column( int colnum );
 	void delete_column( const std::string& name );
 

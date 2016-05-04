@@ -54,7 +54,7 @@ TEST( FITSFileTest, DeleteColumn ) {
 
 	EXPECT_EQ( fid.columns.size() - 1, table.num_columns() );
 
-	ASSERT_FALSE( table.exists_column( "E1" ) );
+	ASSERT_FALSE( table.has_column( "E1" ) );
     }
 
     // make sure changes were flushed and the file was closed
@@ -64,7 +64,7 @@ TEST( FITSFileTest, DeleteColumn ) {
 	misFITS::TablePtr table( file->table() );
 
 	EXPECT_EQ( fid.columns.size() - 1, table->num_columns() );
-	ASSERT_FALSE( table->exists_column( "E1" ) );
+	ASSERT_FALSE( table->has_column( "E1" ) );
     }
 
 }

@@ -93,7 +93,7 @@ namespace misFITS {
 
 
     bool
-    Table::exists_column( const std::string& templt ) const {
+    Table::has_column( const std::string& templt ) const {
 	int colnum;
 	int status = 0;
 
