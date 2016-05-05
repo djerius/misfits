@@ -1,0 +1,8 @@
+1. When multiple table objects refer to a single file HDU, altering
+   one does not synchronize the others.  NOT FIXED.
+
+2. If a table layout changes, any row objects attached to it do not
+   change, so will read/write garbage.  Because the fundamental
+   identity of a column is its column number, row objects can't be
+   automatically updated.  They should throw, though, if it's determined
+   that the underlying table layout has changed.
