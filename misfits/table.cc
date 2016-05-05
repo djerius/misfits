@@ -228,6 +228,50 @@ namespace misFITS {
 	return num_cols;
     }
 
+    // copy a column to another table
+    void
+    Table::copy_column( Table& dest, const std::string& name, const ColumnCopy& how ) {
+
+	resetHDU chdu( file, hdu_num );
+	resetHDU chdu_dest( dest.file, dest.hdu_num );
+
+	int create_col = 1;
+
+	if ( ! has_column( name ) )
+	    throw Exception::Assert( std::string("request to copy a non-existent column: ") + name );
+
+	int dest_column = dest.num_columns() + 1;
+
+
+	if ( dest.has_column( name ) ) {
+
+	    switch ( boost::native_value( how ) ) {
+
+		case ColumnCopy::NoDuplicates :
+		    throw Exception::Assert( std::string("destination table already has a column named '") + name + "'" );
+		    break;
+
+		case ColumnCopy::Replace :
+		    dest.delete_column( name );
+		    dest_column = dest.num_columns() + 1;
+		    break;
+
+		case ColumnCopy::OverWrite :
+		    dest_column = dest.colinfo( name ).colnum;
+		    create_col = 0;
+		    break;
+		}
+	}
+
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    ( fits_copy_col( file->fptr(), dest.file->fptr(),
+			     colinfo(name).colnum,
+			     dest_column, create_col,
+			     &status )
+	      );
+    }
+
 
     //-----------------------------------------
     template<typename T>

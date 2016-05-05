@@ -42,6 +42,12 @@ namespace misFITS {
     }
     BOOST_SCOPED_ENUM_DECLARE_END( TableCopy )
 
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( ColumnCopy )
+    {
+	NoDuplicates, Replace, OverWrite
+    }
+    BOOST_SCOPED_ENUM_DECLARE_END( ColumnCopy )
+
     class Table : public HDU {
 
     public:
@@ -55,6 +61,9 @@ namespace misFITS {
 
 	// copy table to other file
 	TablePtr copy( FilePtr& file, const TableCopy& what, int morekeys = 0 ) const;
+
+	// copy column to other table
+	TablePtr copy( TablePtr& dest, const std::string& name ) const;
 
 	Table& add( const ColumnInfo& );
 
@@ -89,6 +98,9 @@ namespace misFITS {
 	};
 	void delete_column( int colnum );
 	void delete_column( const std::string& name );
+
+	void copy_column( Table& dest, const std::string& name,
+			  const ColumnCopy& how = ColumnCopy::NoDuplicates );
 
 	misFITS::Row row();
 

@@ -268,3 +268,91 @@ TEST( TableTest, DISABLED_TableObjectSynchronization ) {
     EXPECT_EQ( c0, c1 );
 
 }
+
+TEST( TableTest, CopyColumnNoDuplicates ) {
+
+    misFITS::Table table0( "MyEXTENT" );
+
+    misFITS::Table table1( "MyEXTENT" );
+
+    table0.add( "col1", ColumnType::Double );
+    table1.add( "col1", ColumnType::Double );
+
+    ASSERT_THROW( { table0.copy_column( table1, "col1" ); }, misFITS::Exception::Assert );
+
+}
+
+TEST( TableTest, CopyColumnOverWrite ) {
+
+    misFITS::Table table0( "MyEXTENT" );
+
+    table0.add( "col1", ColumnType::Double );
+
+    misFITS::Row r0( table0 );
+    double col1 = 33.5;
+    r0.add( "col1", &col1 );
+    r0.write();
+    table0.flush();
+
+    misFITS::Table table1( "MyEXTENT" );
+    table1.add( "col1", ColumnType::Long );
+    table1.add( "col2", ColumnType::Double );
+    misFITS::Row r1( table1 );
+    r1.add( "col1", &col1 );
+
+    // CFITSIO doesn't extend the table if there are more rows in the
+    // source than in the destination, so make sure there's a row to
+    // overwrite
+    col1 = 22;
+    r1.write();
+    table1.flush();
+
+    table0.copy_column( table1, "col1", misFITS::ColumnCopy::OverWrite );
+
+    ColumnInfo ci = table1.colinfo( "col1" );
+    ASSERT_EQ( 1, ci.colnum );
+    r1.read( 1 );
+
+    ASSERT_EQ( 33, col1 );
+
+}
+
+TEST( TableTest, CopyColumnReplace ) {
+
+    misFITS::Table table0( "MyEXTENT" );
+
+    table0.add( "col1", ColumnType::Double );
+
+    misFITS::Row r0( table0 );
+    double col1 = 33.5;
+    r0.add( "col1", &col1 );
+    r0.write();
+    table0.flush();
+
+    misFITS::Table table1( "MyEXTENT" );
+    table1.add( "col1", ColumnType::Long );
+    table1.add( "col2", ColumnType::Double );
+    misFITS::Row r1( table1 );
+    r1.add( "col1", &col1 );
+
+    // CFITSIO doesn't extend the table if there are more rows in the
+    // source than in the destination, so make sure there's a row to
+    // overwrite
+    col1 = 22;
+    r1.write();
+    table1.flush();
+
+    table0.copy_column( table1, "col1", misFITS::ColumnCopy::Replace );
+
+    ColumnInfo ci = table1.colinfo( "col1" );
+    ASSERT_EQ( 2, ci.colnum );
+
+    // can't use old row, as it doesn't know about changes to table
+    misFITS::Row r2( table1 );
+    r2.add( "col1", &col1 );
+    r2.read( 1 );
+
+    ASSERT_EQ( 33.5, col1 );
+
+}
+
