@@ -1,3 +1,17 @@
+0.0.7	2016-05-05T18:29:35-0400
+
+  [API CHANGE]
+
+    * Table::exist_column() is deprecated; use Table::has_column().
+
+    * File::flush_buffer() is deprecated in favor of File::flush(), which
+       now takes an argument indicating what to flush.
+
+  [ENHANCEMENT]
+
+    * new methods Table::copy_column & Table::copy_columns: copy
+      columns from one HDU to another
+
 0.0.6	2016-04-27T11:22:27-0400
 
   [ BUGS ]
