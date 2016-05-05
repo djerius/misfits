@@ -67,6 +67,8 @@ namespace misFITS {
 	// number of elements written to FITS header. may not be same read/written
 	LONGLONG nelem() const { return extent.nelem(); }
 
+	std::string tform () const;
+
     private:
 	void init( const misFITS::File& file );
 

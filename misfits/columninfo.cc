@@ -192,12 +192,8 @@ namespace misFITS {
 
     }
 
-    void
-    ColumnInfo::insert( const misFITS::File& file ) {
-
-	// TODO: test if this is really necessary
-	if ( OpenMode::ReadOnly == file.mode )
-	    throw Exception::CFITSIO( READONLY_FILE );
+    std::string
+    ColumnInfo::tform() const {
 
 	ostringstream tform;
 	if ( extent.nelem() > 1 )
@@ -205,12 +201,24 @@ namespace misFITS {
 
 	tform << ColumnCode::code[column_type];
 
+	return tform.str();
+    }
+
+    void
+    ColumnInfo::insert( const misFITS::File& file ) {
+
+	// TODO: test if this is really necessary
+	if ( OpenMode::ReadOnly == file.mode )
+	    throw Exception::CFITSIO( READONLY_FILE );
+
+	std::string tform_str = tform();
+
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_insert_col(file.fptr(),
 			     colnum,
 			     const_cast<char*>(ttype.c_str()),
-			     const_cast<char*>(tform.str().c_str()),
+			     const_cast<char*>(tform_str.c_str()),
 			     &status)
 	     );
 
