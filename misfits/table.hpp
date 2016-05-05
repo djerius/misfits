@@ -78,6 +78,10 @@ namespace misFITS {
 	int num_columns() const;
 	LONGLONG num_rows() const;
 
+	void flush ( const FlushMode& mode = FlushMode::File ) const {
+	    file->flush( mode );
+	};
+
 	bool has_column( const std::string& templt )  const;
 	bool exists_column( const std::string& templt )  const {
 	    std::cerr << "misFITS::Table::exists_column is deprecated; use misFITS::Table::has_column\n";

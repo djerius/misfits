@@ -174,3 +174,54 @@ TEST( CFITSIO, B_34 ) {
     }
 
 }
+
+// the flush tests rely upon the non-updating of the number of rows,
+// so make sure the CFITSIO behavior is deterministic
+
+TEST( CFITSIO, Flush ) {
+
+    Columns cols;
+    long c0 = 33;
+    cols.add( "c0", "J" );
+
+    TestFitsPtr fp0 = cols.create();
+
+    LONGLONG nrows = 99999;
+    misFITS_CHECK_CFITSIO_EXPR( fits_get_num_rowsll( fp0.get(), &nrows, &status ) );
+    ASSERT_EQ( 0, nrows );
+
+    misFITS_CHECK_CFITSIO_EXPR( fits_write_col( fp0.get(), TLONG, 1, 1, 1, 1, &c0, &status ) );
+
+    // flush everything to get a consistent state, as fp0 is not the test subject
+    misFITS_CHECK_CFITSIO_EXPR( fits_flush_file( fp0.get(), &status ) );
+
+    TestFitsPtr fp1 = cols.create();
+    c0 = 22;
+    misFITS_CHECK_CFITSIO_EXPR( fits_write_col( fp1.get(), TLONG, 1, 1, 1, 1, &c0, &status ) );
+
+    // if fp1 isn't flushed, it's NAXIS2 value isn't updated and
+    // fits_copy_col sees num_rows(fp1) = 0.
+    //
+    // as it writes min( num_rows(fp0), num_rows(fp1)) rows (which is
+    // 0), the row in fp1 does not get overwritten.
+    misFITS_CHECK_CFITSIO_EXPR( fits_copy_col( fp0.get(), fp1.get(), 1, 1, 0, &status ) );
+    misFITS_CHECK_CFITSIO_EXPR( fits_read_col( fp1.get(), TLONG, 1, 1, 1, 1, NULL, &c0, NULL, &status ) );
+    ASSERT_EQ( 22, c0 );
+
+    // Note however, that the _internal_ count of the number of rows is correct
+    misFITS_CHECK_CFITSIO_EXPR( fits_get_num_rowsll( fp0.get(), &nrows, &status ) );
+    ASSERT_EQ( 1, nrows );
+
+    // even if the buffer is flushed, NAXIS2 is not updated
+    misFITS_CHECK_CFITSIO_EXPR( fits_flush_buffer( fp1.get(), 0, &status ) );
+    misFITS_CHECK_CFITSIO_EXPR( fits_copy_col( fp0.get(), fp1.get(), 1, 1, 0, &status ) );
+    misFITS_CHECK_CFITSIO_EXPR( fits_read_col( fp1.get(), TLONG, 1, 1, 1, 1, NULL, &c0, NULL, &status ) );
+    ASSERT_EQ( 22, c0 );
+
+    // need to flush the whole file to get NAXIS2 updated
+    misFITS_CHECK_CFITSIO_EXPR( fits_flush_file( fp1.get(), &status ) );
+    misFITS_CHECK_CFITSIO_EXPR( fits_copy_col( fp0.get(), fp1.get(), 1, 1, 0, &status ) );
+    misFITS_CHECK_CFITSIO_EXPR( fits_read_col( fp1.get(), TLONG, 1, 1, 1, 1, NULL, &c0, NULL, &status ) );
+    ASSERT_EQ( 33, c0 );
+
+}

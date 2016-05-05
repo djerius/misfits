@@ -215,3 +215,14 @@ check_PROGRAMS		+= %D%/bitset
 %C%_bitset_LDADD	= $(LDADD_%C%_TESTS)
 %C%_bitset_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
 %C%_bitset_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+
+##############################
+
+check_PROGRAMS		+= %D%/flush
+
+%C%_flush_SOURCES	=			\
+			%D%/flush.cc
+
+%C%_flush_LDADD		= $(LDADD_%C%_TESTS)
+%C%_flush_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_flush_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)

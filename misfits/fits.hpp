@@ -236,9 +236,7 @@ namespace misFITS {
 
 	HDU_Type delete_hdu ( ) const;
 
-	void flush_file () const;
-	void flush_buffer () const;
-
+	void flush ( const FlushMode& mode = FlushMode::File ) const;
 
 	std::pair<int,int> get_hdrpos( );
 

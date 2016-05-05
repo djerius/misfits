@@ -195,6 +195,12 @@ namespace misFITS {
     }
     BOOST_SCOPED_ENUM_DECLARE_END( OpenMode )
 
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN( FlushMode )
+    {
+	File, Buffer
+    }
+    BOOST_SCOPED_ENUM_DECLARE_END( FlushMode )
+
 }
 
 #endif // ! misFITS_TYPES_H

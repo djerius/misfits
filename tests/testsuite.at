@@ -16,6 +16,8 @@ AT_SETUP([Files])
 
 AT_CHECK(file,,[ignore])
 
+AT_CHECK(flush,,[ignore])
+
 AT_CLEANUP
 
 
