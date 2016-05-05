@@ -230,22 +230,50 @@ namespace misFITS {
 
     // copy a column to another table
     void
-    Table::copy_column( Table& dest, const std::string& name, const ColumnCopy& how ) {
+    Table::copy_column( Table& dest, const std::string& name, ColumnCopy::Flag how ) {
+
+	vector<std::string> names;
+	names.push_back( name );
+
+	copy_columns( dest, names, how );
+    }
+
+
+    // copy a column to another table
+    void
+    Table::copy_columns( Table& dest, const std::vector<std::string>& names, ColumnCopy::Flag how ) {
 
 	resetHDU chdu( file, hdu_num );
 	resetHDU chdu_dest( dest.file, dest.hdu_num );
 
-	int create_col = 1;
+	// find out which columns need to be created in the
+	// destination. create them all at once for efficiency
+	std::vector<ColumnInfo> src_ci;
+	std::vector<std::string> dest_ttype;
+	std::vector<std::string> dest_tform;
+	std::vector<const char*> dest_ttype_ptr;
+	std::vector<const char*> dest_tform_ptr;
 
-	if ( ! has_column( name ) )
-	    throw Exception::Assert( std::string("request to copy a non-existent column: ") + name );
+	for( std::vector<std::string>::size_type idx = 0 ; idx < names.size() ; ++idx ) {
 
-	int dest_column = dest.num_columns() + 1;
+	    const std::string& name = names[idx];
 
+	    if ( ! has_column( name ) )
+		throw Exception::Assert( std::string("request to copy a non-existent column: ") + name );
 
-	if ( dest.has_column( name ) ) {
+	    ColumnInfo ci = colinfo( name );
+	    src_ci.push_back( ci );
 
-	    switch ( boost::native_value( how ) ) {
+	    if ( ! dest.has_column( name ) ) {
+		dest_ttype.push_back( src_ci.back().ttype );
+		dest_tform.push_back( src_ci.back().tform() );
+		dest_ttype_ptr.push_back( dest_ttype.back().c_str() );
+		dest_tform_ptr.push_back( dest_tform.back().c_str() );
+
+	    }
+	    else {
+
+		switch ( how & ColumnCopy::FlagMask ) {
 
 		case ColumnCopy::NoDuplicates :
 		    throw Exception::Assert( std::string("destination table already has a column named '") + name + "'" );
@@ -253,25 +281,66 @@ namespace misFITS {
 
 		case ColumnCopy::Replace :
 		    dest.delete_column( name );
-		    dest_column = dest.num_columns() + 1;
+		    dest_ttype.push_back( src_ci.back().ttype );
+		    dest_tform.push_back( src_ci.back().tform() );
+		    dest_ttype_ptr.push_back( dest_ttype.back().c_str() );
+		    dest_tform_ptr.push_back( dest_tform.back().c_str() );
 		    break;
 
 		case ColumnCopy::OverWrite :
-		    dest_column = dest.colinfo( name ).colnum;
-		    create_col = 0;
+		    // nothing to do
 		    break;
+
+		default:
+		    throw Exception::Assert( "uknown misFITS::ColumnCopy flag" );
+
 		}
+	    }
 	}
 
+	if ( ! dest_ttype.empty() ) {
 
-	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_copy_col( file->fptr(), dest.file->fptr(),
-			     colinfo(name).colnum,
-			     dest_column, create_col,
+	    misFITS_CHECK_CFITSIO_EXPR
+		( fits_insert_cols( dest.file->fptr(),
+				    dest.num_columns() + 1,
+				    dest_ttype.size(),
+				    const_cast<char**>( &dest_ttype_ptr[0] ),
+				    const_cast<char**>( &dest_tform_ptr[0] ),
+				    &status )
+		  );
+	}
+
+	// if not enough rows, must get CFITSIO to allocate space for them
+	if ( num_rows() > dest.num_rows()
+	     && (    ( how & ColumnCopy::ExtendTable )
+		  || ( how & ColumnCopy::ExtendTableIfEmpty && dest.num_rows() == 0 )
+		)
+	   ) {
+
+	    misFITS_CHECK_CFITSIO_EXPR
+		( fits_insert_rows( dest.file->fptr(),
+				    dest.num_rows(),
+				    num_rows() - dest.num_rows(),
+				    &status )
+		  );
+
+	}
+	// make sure we know where everything is
+	dest.refresh();
+
+	for( std::vector<ColumnInfo>::size_type idx = 0 ; idx < src_ci.size() ; ++idx ) {
+
+	    misFITS_CHECK_CFITSIO_EXPR
+		( fits_copy_col( file->fptr(), dest.file->fptr(),
+				 src_ci[idx].colnum,
+				 dest.colinfo( src_ci[idx].ttype).colnum,
+				 0,
 			     &status )
 	      );
-    }
 
+	}
+
+    }
 
     //-----------------------------------------
     template<typename T>

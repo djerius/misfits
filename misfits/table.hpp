@@ -42,11 +42,16 @@ namespace misFITS {
     }
     BOOST_SCOPED_ENUM_DECLARE_END( TableCopy )
 
-    BOOST_SCOPED_ENUM_DECLARE_BEGIN( ColumnCopy )
-    {
-	NoDuplicates, Replace, OverWrite
-    }
-    BOOST_SCOPED_ENUM_DECLARE_END( ColumnCopy )
+    struct ColumnCopy {
+	enum Flag {
+	    NoDuplicates       = 0x01,
+	    Replace            = 0x02,
+	    OverWrite          = 0x03,
+	    ExtendTable        = 0x10,
+	    ExtendTableIfEmpty = 0x20,
+	    FlagMask           = 0x0f
+	};
+    };
 
     class Table : public HDU {
 
@@ -100,7 +105,10 @@ namespace misFITS {
 	void delete_column( const std::string& name );
 
 	void copy_column( Table& dest, const std::string& name,
-			  const ColumnCopy& how = ColumnCopy::NoDuplicates );
+			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) );
+
+	void copy_columns( Table& dest, const std::vector< std::string >& name,
+			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) );
 
 	misFITS::Row row();
 
