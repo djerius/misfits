@@ -24,14 +24,20 @@ namespace misFITS {
 
 	}
 
-	resetHDU ( const Table& table ) : fp( table.file ), chdu ( fp->hdu_num() ) {
+	resetHDU ( const HDU& hdu ) : fp( hdu.file ), chdu ( fp->hdu_num() ) {
 
-	    fp->move_to( table.hdu_num );
+	    fp->move_to( hdu.hdu_num );
 	}
 
-	resetHDU( const TablePtr& table ) : fp( table->file ), chdu ( fp->hdu_num() ) {
+	resetHDU( const HDUPtr& hdu ) : fp( hdu->file ), chdu ( fp->hdu_num() ) {
 
-	    fp->move_to( table->hdu_num );
+	    fp->move_to( hdu->hdu_num );
+
+	}
+
+	resetHDU( const TablePtr& tbl ) : fp( tbl->file ), chdu ( fp->hdu_num() ) {
+
+	    fp->move_to( tbl->hdu_num );
 
 	}
 

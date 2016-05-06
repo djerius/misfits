@@ -80,8 +80,7 @@ namespace misFITS {
 
     void HDU::refresh() {
 
-	resetHDU chdu( file );
-	file->move_to( hdu_num );
+	resetHDU chdu( *this );
 
 	extname = file->read_key<std::string>( "EXTNAME", "" ).value;
 	extver  = file->read_key<int>( "EXTVER", 1 ).value;
