@@ -67,9 +67,6 @@ namespace misFITS {
 	// copy table to other file
 	TablePtr copy( FilePtr& file, const TableCopy& what, int morekeys = 0 ) const;
 
-	// copy column to other table
-	TablePtr copy( TablePtr& dest, const std::string& name ) const;
-
 	Table& add( const ColumnInfo& );
 
 	Table& add( const std::string& ttype,
