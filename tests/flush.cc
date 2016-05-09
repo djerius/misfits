@@ -41,30 +41,30 @@ TEST( FlushTest, FlushAwayRay ) {
     row.add( "col1", &col1 );
     row.write();
 
-    Keyword<long> nrows = table.file->read_key<long>( "NAXIS2" );
+    Keyword<long> nrows = table.read_key<long>( "NAXIS2" );
     ASSERT_EQ( 0, nrows.value );
 
     // explicit buffer flush, doesn't affect NAXIS2 keyword
     table.flush( FlushMode::Buffer );
 
-    nrows = table.file->read_key<long>( "NAXIS2" );
+    nrows = table.read_key<long>( "NAXIS2" );
     ASSERT_EQ( 0, nrows.value );
 
     // explicit file flush, updates NAXIS2 keyword
     table.flush( FlushMode::File );
 
-    nrows = table.file->read_key<long>( "NAXIS2" );
+    nrows = table.read_key<long>( "NAXIS2" );
     ASSERT_EQ( 1, nrows.value );
 
     row.write();
 
-    nrows = table.file->read_key<long>( "NAXIS2" );
+    nrows = table.read_key<long>( "NAXIS2" );
     ASSERT_EQ( 1, nrows.value );
 
     // default flush (which is a file flush), updates NAXIS2 keyword
     table.flush( );
 
-    nrows = table.file->read_key<long>( "NAXIS2" );
+    nrows = table.read_key<long>( "NAXIS2" );
     ASSERT_EQ( 2, nrows.value );
 
 }

@@ -244,7 +244,7 @@ TEST( TableTest, ResizeColumn ) {
     ASSERT_EQ( 3, c1.extent[0] );
     ASSERT_EQ( 2, c1.extent[1] );
 
-    Keyword<std::string> tdim ( table.file->read_keyword( "TDIM1" ) );
+    Keyword<std::string> tdim ( table.read_keyword( "TDIM1" ) );
 
     ASSERT_EQ( "'(3,2)   '", tdim.value );
 

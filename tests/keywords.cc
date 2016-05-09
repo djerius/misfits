@@ -25,6 +25,7 @@
 
 #include "misfits/fits.hpp"
 #include "misfits/table.hpp"
+#include "misfits/keyword.hpp"
 
 namespace Entity = misFITS::Entity;
 namespace Mode = misFITS::Mode;
@@ -32,20 +33,22 @@ namespace Mode = misFITS::Mode;
 
 TEST_F( FiducialTableROFptr, read ) {
 
-    EXPECT_EQ( "stuff", file->read_key<std::string>( "EXTNAME" ).value );
-    EXPECT_EQ( 1, file->read_key<int>( "EXTVER" ).value );
+    misFITS::Table table( file );
 
-    EXPECT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIE" ).value );
-    EXPECT_DOUBLE_EQ( 3.14159, file->read_key<double>( "PIESTR" ).value );
+    EXPECT_EQ( "stuff", table.read_key<std::string>( "EXTNAME" ).value );
+    EXPECT_EQ( 1, table.read_key<int>( "EXTVER" ).value );
 
-    EXPECT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIE" ).value );
-    EXPECT_FLOAT_EQ( 3.14159f, file->read_key<float>( "PIESTR" ).value );
+    EXPECT_DOUBLE_EQ( 3.14159, table.read_key<double>( "PIE" ).value );
+    EXPECT_DOUBLE_EQ( 3.14159, table.read_key<double>( "PIESTR" ).value );
 
-    EXPECT_EQ( 3, file->read_key<int>( "PIE" ).value );
-    EXPECT_EQ( 3, file->read_key<int>( "PIESTR" ).value );
+    EXPECT_FLOAT_EQ( 3.14159f, table.read_key<float>( "PIE" ).value );
+    EXPECT_FLOAT_EQ( 3.14159f, table.read_key<float>( "PIESTR" ).value );
 
-    EXPECT_EQ( "3.14159", file->read_key<std::string>( "PIE" ).value );
-    EXPECT_EQ( "3.14159", file->read_key<std::string>( "PIESTR" ).value );
+    EXPECT_EQ( 3, table.read_key<int>( "PIE" ).value );
+    EXPECT_EQ( 3, table.read_key<int>( "PIESTR" ).value );
+
+    EXPECT_EQ( "3.14159", table.read_key<std::string>( "PIE" ).value );
+    EXPECT_EQ( "3.14159", table.read_key<std::string>( "PIESTR" ).value );
 
 }
 

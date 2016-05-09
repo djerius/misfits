@@ -25,13 +25,15 @@
 #define misFITS_HDU_H
 
 #include <string>
+#include <iosfwd>
+
 #include <own_or_observe_ptr.hpp>
 
 #include <misfits/fits.hpp>
 
 namespace misFITS {
 
-    class HDU {
+    class HDU : public Shared<HDU> {
 
 	friend class Row;
 	friend class File;
@@ -44,28 +46,22 @@ namespace misFITS {
 
 	own_or_observe::ptr<File> file;
 
-	std::pair<int,int> get_hdrpos( ) { return file->get_hdrpos() ; }
+	std::pair<int,int> get_hdrpos( );
 
 	Keyword<std::string> read_keyword( const std::string& keyname,
-					   const std::string& default_value = "") const {
-	    return file->read_keyword( keyname, default_value );
-	}
+					   const std::string& default_value = "") const;
+
+	Keyword<std::string> read_keyn( int keynum, const std::string& default_value = "" ) const;
 
 	template<typename T>
 	Keyword<T> read_key( const std::string& keyname,
-			     const T& default_value = StorageCode<T>::default_value() ) const{
-	    return file->read_key( keyname, default_value );
-	}
+			     const T& default_value = StorageCode<T>::default_value() ) const;
 
 	template<typename T>
-	void write_key( const Keyword<T>& kw) const {
-	    return file->write_key( kw );
-	}
+	void write_key( const Keyword<T>& kw) const;
 
 	template<typename T>
-	void update_key( const Keyword<T>& kw) const {
-	    return file->update_key( kw );
-	}
+	void update_key( const Keyword<T>& kw) const;
 
 	virtual ~HDU() {}
 

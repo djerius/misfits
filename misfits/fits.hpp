@@ -270,24 +270,6 @@ namespace misFITS {
 
 	void flush ( const FlushMode& mode = FlushMode::File ) const;
 
-	std::pair<int,int> get_hdrpos( );
-
-	Keyword<std::string> read_keyword( const std::string& keyname,
-					   const std::string& default_value = "") const;
-
-	Keyword<std::string> read_keyn( int keynum, const std::string& default_value = "" ) const;
-
-	template<typename T>
-	Keyword<T> read_key( const std::string& keyname,
-			     const T& default_value = StorageCode<T>::default_value() ) const;
-
-	template<typename T>
-	void write_key( const Keyword<T>& kw) const;
-
-	template<typename T>
-	void update_key( const Keyword<T>& kw) const;
-
-
     };
 
     //////////////////////////

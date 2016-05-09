@@ -58,8 +58,9 @@ namespace misFITS {
 						     0, 0, NULL, NULL, NULL,
 						     extname.c_str(), &status  ) );
 
-	file->write_key( Keyword<int>( "EXTVER", extver ) );
 	hdu_num = file->hdu_num();
+
+	write_key( Keyword<int>( "EXTVER", extver ) );
 
 	refresh();
     }
