@@ -63,6 +63,10 @@ namespace misFITS {
 	template<typename T>
 	void update_key( const Keyword<T>& kw) const;
 
+	void dump_keywords( );
+
+	void dump_keywords( std::ostream& os, int keynum = 1  );
+
 	virtual ~HDU() {}
 
     protected:

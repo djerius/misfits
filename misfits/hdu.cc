@@ -310,4 +310,32 @@ namespace misFITS {
 	extver  = read_key<int>( "EXTVER", 1 ).value;
     }
 
+    struct keyword_output {
+
+	std::ostream& os;
+
+	keyword_output( std::ostream& os_ ) : os( os_ ) {}
+
+	void operator() ( const Keyword<std::string>& kw ) {
+	    os << kw.keyname << " = " << kw.value << "\n";
+
+	}
+    };
+
+    void HDU::dump_keywords( std::ostream& os, int keynum ) {
+
+	shared_ptr<HDU> hdp =  get_shared_ptr();
+	KeywordIterator start( hdp, keynum );
+	KeywordIterator end( start.end() );
+
+	for_each( start, end, keyword_output(os) );
+    }
+
+
+    void HDU::dump_keywords(  ) {
+	dump_keywords( std::cerr, 1 );
+    }
+
+
+
 }
