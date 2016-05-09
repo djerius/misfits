@@ -28,9 +28,6 @@
 #include <misfits/fits_p.hpp>
 #include <misfits/table.hpp>
 
-#include <boost/core/null_deleter.hpp>
-#include <boost/preprocessor/seq/elem.hpp>
-
 using namespace std;
 
 // includes final \0
@@ -72,32 +69,6 @@ namespace misFITS {
 	    std::cerr << "Client error: misFITS::File::close invoked by misFITS::File::~File.  Error closing file " << file << ": " << e.what() << std::endl;
 	}
 
-
-    }
-
-    FilePtr
-    File::fileptr() {
-
-	SharedFilePtr sp;
-
-        try {
-	     sp = shared_from_this();
-
-        } catch ( const bad_weak_ptr& e  ) {
-
-	    // shared_from_this didn't like things, probably because
-	    // this object is on the stack
-	    sp.reset(); // just in case
-
-	} catch ( ... ) {
-
-	    throw;
-	}
-
-
-	// if we survived, make sure sp has a valid pointer (e.g. it's
-	// on the heap)
-	return sp.get() ? sp : FilePtr( this, boost::null_deleter() ) ;
 
     }
 
@@ -238,7 +209,7 @@ namespace misFITS {
 
     TablePtr File::add( const Table& in ) {
 
-	FilePtr fp = fileptr();
+	FilePtr fp = get_shared_ptr();
 	return in.copy( fp, TableCopy::HDU );
 
     }
@@ -250,27 +221,27 @@ namespace misFITS {
 
     HDUPtr File::hdu( int hdu_num ) {
 
-	FilePtr fp = fileptr();
+	FilePtr fp = get_shared_ptr();
 	return HDUPtr( new HDU( fp, hdu_num ) );
 
     }
 
     HDUPtr File::hdu( const std::string& extname, int extver ) {
 
-	FilePtr fp = fileptr();
+	FilePtr fp = get_shared_ptr();
 	return HDUPtr( new HDU( fp, extname, extver  ) );
 
     }
 
     TablePtr File::table( int hdu_num_ ) {
 
-	FilePtr fp = fileptr();
+	FilePtr fp = get_shared_ptr();
 	return TablePtr( new Table( fp, hdu_num_ ) );
     }
 
     TablePtr File::table( const std::string& extname, int extver ) {
 
-	FilePtr fp = fileptr();
+	FilePtr fp = get_shared_ptr();
 	return TablePtr( new Table( fp, extname, extver ) );
     }
 

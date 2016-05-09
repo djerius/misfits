@@ -22,6 +22,8 @@
 #ifndef misFITS_H
 #define misFITS_H
 
+#include <boost/core/null_deleter.hpp>
+
 #include <string>
 #include <iostream>
 #include <utility>
@@ -47,6 +49,39 @@ namespace misFITS {
     typedef weak_ptr<Table> WeakTablePtr;
     typedef SharedTablePtr TablePtr;
 
+
+    template< class T >
+    class Shared : public enable_shared_from_this<T> {
+
+    protected:
+
+	shared_ptr<T>
+	get_shared_ptr() {
+
+	    shared_ptr<T> sp;
+
+	    try {
+		sp = enable_shared_from_this<T>::shared_from_this();
+
+	    } catch ( const bad_weak_ptr& e  ) {
+
+		// shared_from_this didn't like things, probably because
+		// this object is on the stack
+		sp.reset(); // just in case
+
+	    } catch ( ... ) {
+
+		throw;
+	    }
+
+
+	    // if we survived, make sure sp has a valid pointer (e.g. it's
+	    // on the heap)
+	    return sp.get() ? sp : shared_ptr<T>( static_cast<T*>(this), boost::null_deleter() ) ;
+
+	}
+
+    };
 }
 
 #include <misfits/types.hpp>
@@ -121,7 +156,7 @@ namespace misFITS {
     template<Entity::Type Entity> FilePtr open( );
     template<Entity::Type Entity, class Mode> FilePtr open( const std::string& file );
 
-    class File : public enable_shared_from_this<File> {
+    class File : public Shared<File> {
 
     private:
 
@@ -141,9 +176,6 @@ namespace misFITS {
 	// null declaration; not defined.
 	File( const File& );
 	File& operator=( const File& );
-
-	// return a shared ptr to the current object
-	FilePtr fileptr();
 
 	////////////////////
         // methods	  //
