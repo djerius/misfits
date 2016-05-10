@@ -19,6 +19,10 @@ namespace misFITS {
 	    keyname(keyname), value(value), comment(comment ), defined( defined ) { }
     };
 
+    template <typename T>
+    Keyword<T> keyword( const std::string& keyname, const T& value, const std::string& comment = "", bool defined = true ) {
+	return Keyword<T>( keyname, value, comment, defined );
+    }
 
     class KeywordIterator : public std::iterator <std::forward_iterator_tag, Keyword<std::string>, void >{
 
