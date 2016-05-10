@@ -48,7 +48,7 @@ namespace misFITS_Test {
 	    std::vector<T> v;
 	    v.resize(nelem);
 	    for ( typename std::vector<T>::size_type i = 0 ; i < nelem ; i++ )
-		v[i] = start + i - 1;
+		v[i] = static_cast<T>(start + i - 1);
 
 	    return v;
 	}

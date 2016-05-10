@@ -44,7 +44,7 @@ namespace misFITS_Test {
               );
 
     TestFitsPtr create( std::string filename = "" );
-    int ncols() { return ttype.size() ; }
+    int ncols() { return static_cast<int>( ttype.size() ) ; }
   };
 
   struct ColInfo {

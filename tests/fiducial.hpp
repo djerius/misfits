@@ -69,8 +69,9 @@ namespace misFITS_Test {
 	struct ColumnBaseT : public ColumnBase  {
 
 	    typedef std::vector<T> VectorT;
+	    typedef typename VectorT::size_type data_size_type;
 
-	    std::vector<T> data;
+	    VectorT data;
 
 	    void push_back( T datum ) {
 		data.push_back( datum );
@@ -104,7 +105,7 @@ namespace misFITS_Test {
 	    void write ( TestFitsPtr& fpp ) const {
 
 		misFITS_CHECK_CFITSIO_EXPR
-		    ( fits_write_col( fpp.get(), storage_type,  Parent::colnum, 1, 1, Parent::data.size(), const_cast<T*>(&Parent::data[0]), &status )
+		    ( fits_write_col( fpp.get(), storage_type,  Parent::colnum, 1, 1, static_cast<LONGLONG>(Parent::data.size()), const_cast<T*>(&Parent::data[0]), &status )
 		      );
 
 	    }
@@ -128,15 +129,15 @@ namespace misFITS_Test {
 
 	    void write( TestFitsPtr& fpp ) const {
 
-		for (LONGLONG row = 1 ; row <= Parent::data.size() ; ++row ) {
+		for (typename Parent::data_size_type row = 1 ; row <= static_cast<LONGLONG>(Parent::data.size()) ; ++row ) {
 		    const std::vector<T>& drow = Parent::data[row-1];
 
-		    if ( drow.size() != Parent::nelem )
+		    if ( static_cast<LONGLONG>( drow.size() ) != Parent::nelem )
 			throw misFITS::Exception::Assert( "data for vector cell has incorrect length" );
 
 		    misFITS_CHECK_CFITSIO_EXPR
 			(
-			 fits_write_col( fpp.get(), storage_type, Parent::colnum, row, 1, Parent::nelem, const_cast<T*>(&drow[0]), &status )
+			 fits_write_col( fpp.get(), storage_type, Parent::colnum, static_cast<LONGLONG>(row), 1, Parent::nelem, const_cast<T*>(&drow[0]), &status )
 			 );
 
 		}

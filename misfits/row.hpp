@@ -247,6 +247,8 @@ namespace misFITS {
 
     public:
 
+	typedef std::vector< shared_ptr<Entry::ColumnBase> >Entries;
+
 	bool read();
 	bool read( LONGLONG row ) {
 	    idx( row );
@@ -311,7 +313,7 @@ namespace misFITS {
 	    return auto_advance_;
 	}
 
-	int num_columns() const { return entries.size(); }
+	Entries::size_type num_columns() const { return entries.size(); }
 
 	LONGLONG num_rows() const { return table_->num_rows() ; }
 
@@ -329,7 +331,7 @@ namespace misFITS {
 	bool auto_advance_;
 	// if the row object is copied, don't want two objects
 	// managing the same column entries
-	std::vector< shared_ptr<Entry::ColumnBase> > entries;
+	Entries entries;
     };
 
 

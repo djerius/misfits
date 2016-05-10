@@ -19,11 +19,11 @@ namespace misFITS_Test {
 	    // write data exactly as specified; don't let CFITSIO
 	    // think it's a NULL terminated string
 
-	    for( int row = 1 ; row <= data.size()  ; ++row ) {
+	    for( data_size_type row = 1 ; row <= data.size()  ; ++row ) {
 
 		const ColumnT& str = data[row-1];
 
-		if ( str.size() != nbytes )
+		if ( static_cast<LONGLONG>( str.size() ) != nbytes )
 		    throw misFITS::Exception::Assert( "string not equal to column width" );
 
 		misFITS_CHECK_CFITSIO_EXPR
@@ -64,7 +64,7 @@ namespace misFITS_Test {
 	    // think it's a NULL terminated string. Note that
 	    // this code assumes that the strings
 
-	    for( int row = 1 ; row <= data.size()  ; ++row ) {
+	    for( data_size_type row = 1 ; row <= data.size()  ; ++row ) {
 
 		const vector<ColumnT>& vs = data[row-1];
 
@@ -77,12 +77,12 @@ namespace misFITS_Test {
 		vector<ColumnT>::const_iterator end  = vs.end();
 		for ( ; str < end ; ++str, toffset += tnbytes ) {
 
-		    if ( str->size() != tnbytes )
+		    if ( static_cast<LONGLONG>( str->size() ) != tnbytes )
 			throw misFITS::Exception::Assert( "sub string not equal to string width" );
 
 		    misFITS_CHECK_CFITSIO_EXPR
 			(
-			 fits_write_tblbytes( fp.get(), row,
+			 fits_write_tblbytes( fp.get(), static_cast<LONGLONG>(row),
 					      toffset, tnbytes,
 					      reinterpret_cast<unsigned char*>(const_cast<char*>(str->data())),
 					      &status )
@@ -116,15 +116,15 @@ namespace misFITS_Test {
 
 	    std::vector<misFITS::NativeType<misFITS::SC_BYTE>::storage_type> buffer( nelem );
 
-	    if ( nelem > 1 ) 
+	    if ( nelem > 1 )
 		throw misFITS::Exception::Assert( "currently cannot model bool arrays" );
-	    for( int row = 1 ; row <= data.size()  ; ++row ) {
+	    for( data_size_type row = 1 ; row <= data.size()  ; ++row ) {
 
 		buffer[0] = data[row-1];
 
 		misFITS_CHECK_CFITSIO_EXPR
 		    (
-		     fits_write_col( fp.get(), TLOGICAL, colnum, row, 1, nelem, &buffer[0], &status );
+		     fits_write_col( fp.get(), TLOGICAL, colnum, static_cast<LONGLONG>(row), 1, nelem, &buffer[0], &status );
 		     );
 
 	    }
@@ -138,11 +138,11 @@ namespace misFITS_Test {
 
 	    std::vector<misFITS::NativeType<misFITS::SC_BYTE>::storage_type> buffer( nelem );
 
-	    for (LONGLONG row = 1 ; row <= Parent::data.size() ; ++row ) {
+	    for (Parent::data_size_type row = 1 ; row <= Parent::data.size() ; ++row ) {
 
 		const std::vector<bool>& drow = Parent::data[row-1];
 
-		if ( drow.size() != Parent::nelem )
+		if ( static_cast<LONGLONG>( drow.size() ) != Parent::nelem )
 		    throw misFITS::Exception::Assert( "data for vector cell has incorrect length" );
 
 		for ( int idx = 0 ; idx < nelem ; idx++ )
@@ -150,13 +150,13 @@ namespace misFITS_Test {
 
 		misFITS_CHECK_CFITSIO_EXPR
 		    (
-		     fits_write_col( fp.get(), TLOGICAL, Parent::colnum, row, 1, Parent::nelem, &buffer[0], &status )
+		     fits_write_col( fp.get(), TLOGICAL, Parent::colnum, static_cast<LONGLONG>(row), 1, Parent::nelem, &buffer[0], &status )
 		     );
 
 		}
 
 	}
-	
+
 
 	// ------------------------------------------------------- //
 

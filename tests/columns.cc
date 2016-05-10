@@ -58,7 +58,7 @@ namespace misFITS_Test {
     vector<char*> form_t;
     vector<char*> unit_t;
 
-    for( int col = 0 ; col < ttype.size() ; ++col ) {
+    for( std::vector< std::string>::size_type col = 0 ; col < ttype.size() ; ++col ) {
       type_t.push_back( const_cast<char*>( ttype[col].c_str() ) );
       form_t.push_back( const_cast<char*>( tform[col].c_str() ) );
       unit_t.push_back( const_cast<char*>( tunit[col].c_str() ) );
@@ -66,7 +66,8 @@ namespace misFITS_Test {
 
     misFITS_CHECK_CFITSIO_EXPR
       (
-       fits_create_tbl( fp, BINARY_TBL, 0, ttype.size(),
+       fits_create_tbl( fp, BINARY_TBL, 0,
+			static_cast<int>( ttype.size() ),
 			&type_t[0],
 			&form_t[0],
 			&unit_t[0],
@@ -74,7 +75,7 @@ namespace misFITS_Test {
 			&status )
        );
 
-    for ( int col = 0 ; col < ttype.size() ; ++ col ) {
+    for ( int col = 0 ; col < static_cast<int>( ttype.size() ) ; ++ col ) {
       if ( ! tdim[col].empty() )
 	misFITS_CHECK_CFITSIO_EXPR
 	  (

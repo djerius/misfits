@@ -309,8 +309,8 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		( fits_insert_cols( dest.file->fptr(),
-				    dest.num_columns() + 1,
-				    dest_ttype.size(),
+				    static_cast<int>(dest.num_columns() + 1),
+				    static_cast<int>( dest_ttype.size() ),
 				    const_cast<char**>( &dest_ttype_ptr[0] ),
 				    const_cast<char**>( &dest_tform_ptr[0] ),
 				    &status )

@@ -95,8 +95,7 @@ namespace misFITS {
 
 		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
 
-		std::vector<char>::size_type idx;
-		for ( idx = 0 ; idx < nelem_ ; idx++ )
+		for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
 		    base_[idx] = buffer[idx];
 	    }
 
@@ -113,8 +112,7 @@ namespace misFITS {
 
 	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
 
-		std::vector<char>::size_type idx;
-		for ( idx = 0 ; idx < nelem_ ; idx++ )
+		for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
 		    buffer[idx] = base_[idx];
 
 		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
@@ -138,8 +136,7 @@ namespace misFITS {
 
 	    table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
 
-	    std::vector<char>::size_type idx;
-	    for ( idx = 0 ; idx < nelem_ ; idx++ )
+	    for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
 		(*base_)[idx] = buffer[idx];
 
 	}
@@ -147,8 +144,7 @@ namespace misFITS {
 	void
 	Column< std::vector<bool> >::write( const Table& table, LONGLONG firstrow ) {
 
-	    std::vector<char>::size_type idx;
-	    for ( idx = 0 ; idx < nelem_ ; idx++ )
+	    for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
 		buffer[idx] = (*base_)[idx];
 
 	    table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
@@ -303,7 +299,7 @@ namespace misFITS {
 	    std::vector<std::string>::iterator str = base_->begin();
 	    std::vector<std::string>::iterator end = base_->end();
 	    for ( ; str < end ; ++str, start += width ) {
-		std::string::size_type maxc = str->length();
+		LONGLONG maxc = static_cast<LONGLONG>( str->length() );
 		if ( width > maxc ) {
 		    str->copy( start, maxc );
 		    start[maxc] = '\0';
