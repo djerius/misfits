@@ -240,9 +240,14 @@ namespace misFITS {
     }
 
 
-    // copy a column to another table
+    // copy columns to another table
     void
     Table::copy_columns( Table& dest, const std::vector<std::string>& names, ColumnCopy::Flag how ) {
+
+	// do nothing if nothing is to be done. later logic assumes
+	// names is not empty
+	if ( names.empty() )
+	    return;
 
 	resetHDU chdu( file, hdu_num );
 	resetHDU chdu_dest( dest.file, dest.hdu_num );
@@ -299,6 +304,7 @@ namespace misFITS {
 	    }
 	}
 
+	// insert the new (or replaced) columns
 	if ( ! dest_ttype.empty() ) {
 
 	    misFITS_CHECK_CFITSIO_EXPR
@@ -311,7 +317,9 @@ namespace misFITS {
 		  );
 	}
 
-	// if not enough rows, must get CFITSIO to allocate space for them
+	// if not enough rows, must get CFITSIO to allocate space for
+	// them.  This should only be done if there is actually something to copy;
+	// that is checked above at the entry to this method.
 	if ( num_rows() > dest.num_rows()
 	     && (    ( how & ColumnCopy::ExtendTable )
 		  || ( how & ColumnCopy::ExtendTableIfEmpty && dest.num_rows() == 0 )

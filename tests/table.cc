@@ -282,6 +282,26 @@ TEST( TableTest, CopyColumnNoDuplicates ) {
 
 }
 
+TEST( TableTest, CopyColumnNoColumns ) {
+
+    double col1;
+    misFITS::Table table0( "MyEXTENT" );
+    table0.add( "col1", ColumnType::Double );
+    misFITS::Row r0( table0 );
+    r0.add( "col1", &col1 );
+    col1 = 2;
+    r0.write();
+    table0.flush();
+
+    misFITS::Table table1( "MyEXTENT" );
+
+    // copying nothing used to trigger a CFITSIO exception
+    std::vector<std::string> names;
+    ASSERT_NO_THROW( table0.copy_columns( table1, names ) );
+    ASSERT_EQ( 0, table1.num_rows() );
+}
+
+
 TEST( TableTest, CopyColumnOverWrite ) {
 
     misFITS::Table table0( "MyEXTENT" );
