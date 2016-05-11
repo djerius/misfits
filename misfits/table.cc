@@ -249,8 +249,8 @@ namespace misFITS {
 	if ( names.empty() )
 	    return;
 
-	resetHDU chdu( file, hdu_num );
-	resetHDU chdu_dest( dest.file, dest.hdu_num );
+	resetHDU chdu( *this );
+	resetHDU chdu_dest( dest );
 
 	// find out which columns need to be created in the
 	// destination. create them all at once for efficiency
