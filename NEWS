@@ -1,3 +1,14 @@
+0.0.8	2016-05-09T16:56:12-0400
+
+  [API CHANGE]
+
+    * keyword handling is now in the HDU class (formerly in the File class)
+
+  [ENHANCEMEMT]
+
+    * HDU::dump_keywords method dumps keyword info to a stream.
+    * new convenience function misFITS::keyword() to generate Keywords
+
 0.0.7	2016-05-05T18:29:35-0400
 
   [API CHANGE]
