@@ -34,7 +34,7 @@ TEST_F( FiducialTableROFptr, Table ) {
 
     misFITS::Table table( file );
 
-    EXPECT_EQ( "stuff",  table.extname );
+    EXPECT_EQ( "stuff",  table.extname() );
 
     // duplicate (reopen) file
     misFITS::FilePtr rfile = file->reopen();

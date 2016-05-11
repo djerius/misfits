@@ -53,12 +53,12 @@ namespace misFITS {
 
 	HDU_Type hdu_type = HDU_Type::BinaryTable;
 
-	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file->fptr(),
+	misFITS_CHECK_CFITSIO_EXPR( fits_create_tbl( file_->fptr(),
 						     boost::underlying_cast<int>( hdu_type ),
 						     0, 0, NULL, NULL, NULL,
 						     extname.c_str(), &status  ) );
 
-	hdu_num = file->hdu_num();
+	hdu_num_ = file_->hdu_num();
 
 	write_key( Keyword<int>( "EXTVER", extver ) );
 
@@ -71,7 +71,7 @@ namespace misFITS {
 	resetHDU chdu( *this );
 
 	// make sure we're really at a table
-	int type = boost::underlying_cast<int>( file->hdu_type() );
+	int type = boost::underlying_cast<int>( file_->hdu_type() );
 	if ( type != BINARY_TBL && type != ASCII_TBL )
 	    throw Exception::Assert( "Expected CHDU to be a table, but it's not" );
 
@@ -82,7 +82,7 @@ namespace misFITS {
 
 	LONGLONG offset = 1;
 	for ( int colnum = 1 ; colnum <= ncols ; colnum++ ) {
-	    columns.push_back( ColumnInfo( *file.get(), colnum, offset ) );
+	    columns.push_back( ColumnInfo( *file_.get(), colnum, offset ) );
 	    offset += columns[colnum-1].nbytes;
 	}
     }
@@ -100,7 +100,7 @@ namespace misFITS {
 
 	resetHDU chdu( *this );
 
-	return ! fits_get_colnum( file->fptr(), CASEINSEN, const_cast<char*>(templt.c_str()),
+	return ! fits_get_colnum( file_->fptr(), CASEINSEN, const_cast<char*>(templt.c_str()),
 					   &colnum, &status );
     }
 
@@ -116,7 +116,7 @@ namespace misFITS {
 	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_colnum( file->fptr(), 0, const_cast<char*>(colname.c_str()), &colnum, &status )
+	    ( fits_get_colnum( file_->fptr(), 0, const_cast<char*>(colname.c_str()), &colnum, &status )
 	      );
 	return columns.at(colnum - 1);
     }
@@ -131,7 +131,7 @@ namespace misFITS {
 	if ( copy.colnum == 0 )
 	    copy.colnum = num_columns() + 1;
 
-	copy.insert( *file.get() );
+	copy.insert( *file_.get() );
 
 	refresh();
 
@@ -150,7 +150,7 @@ namespace misFITS {
 	if ( colnum == 0 )
 	    colnum = num_columns() + 1;
 
-	ColumnInfo( ttype, column_type, tunit, extent, colnum ).insert( *file.get() );
+	ColumnInfo( ttype, column_type, tunit, extent, colnum ).insert( *file_.get() );
 
 	refresh();
 
@@ -170,7 +170,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_modify_vector_len( file->fptr(), colnum, extent.nelem(), &status )
+	     fits_modify_vector_len( file_->fptr(), colnum, extent.nelem(), &status )
 	     );
 
 	// CFITSIO fixes up everything but TDIM
@@ -178,7 +178,7 @@ namespace misFITS {
 	    (
 	     ostringstream tdim;
 	     tdim << "TDIM" << colnum ;
-	     fits_modify_key_str( file->fptr(), tdim.str().c_str(), to_string( extent ).c_str() , "&", &status );
+	     fits_modify_key_str( file_->fptr(), tdim.str().c_str(), to_string( extent ).c_str() , "&", &status );
 	     );
 
 	refresh();
@@ -199,7 +199,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_delete_col( file->fptr(), colnum, &status )
+	     fits_delete_col( file_->fptr(), colnum, &status )
 	     );
 
 	refresh();
@@ -212,7 +212,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_delete_col( file->fptr(), colinfo(name).colnum, &status )
+	     fits_delete_col( file_->fptr(), colinfo(name).colnum, &status )
 	     );
     }
 
@@ -223,7 +223,7 @@ namespace misFITS {
 	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_num_cols( file->fptr(), &num_cols, &status )
+	    ( fits_get_num_cols( file_->fptr(), &num_cols, &status )
 	      );
 
 	return num_cols;
@@ -308,7 +308,7 @@ namespace misFITS {
 	if ( ! dest_ttype.empty() ) {
 
 	    misFITS_CHECK_CFITSIO_EXPR
-		( fits_insert_cols( dest.file->fptr(),
+		( fits_insert_cols( dest.file_->fptr(),
 				    static_cast<int>(dest.num_columns() + 1),
 				    static_cast<int>( dest_ttype.size() ),
 				    const_cast<char**>( &dest_ttype_ptr[0] ),
@@ -327,7 +327,7 @@ namespace misFITS {
 	   ) {
 
 	    misFITS_CHECK_CFITSIO_EXPR
-		( fits_insert_rows( dest.file->fptr(),
+		( fits_insert_rows( dest.file_->fptr(),
 				    dest.num_rows(),
 				    num_rows() - dest.num_rows(),
 				    &status )
@@ -340,7 +340,7 @@ namespace misFITS {
 	for( std::vector<ColumnInfo>::size_type idx = 0 ; idx < src_ci.size() ; ++idx ) {
 
 	    misFITS_CHECK_CFITSIO_EXPR
-		( fits_copy_col( file->fptr(), dest.file->fptr(),
+		( fits_copy_col( file_->fptr(), dest.file_->fptr(),
 				 src_ci[idx].colnum,
 				 dest.colinfo( src_ci[idx].ttype).colnum,
 				 0,
@@ -357,7 +357,7 @@ namespace misFITS {
 
     	misFITS_CHECK_CFITSIO_EXPR
     	    (
-    	     fits_read_col( file->fptr(),
+    	     fits_read_col( file_->fptr(),
     			    StorageCode<T>::type,
     			    colnum,
     			    firstrow, firstelem,
@@ -380,7 +380,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_write_col( file->fptr(),
+	     fits_write_col( file_->fptr(),
 			     StorageCode<T>::type,
 			     colnum,
 			     firstrow, firstelem,
@@ -402,7 +402,7 @@ namespace misFITS {
 
     	misFITS_CHECK_CFITSIO_EXPR
     	    (
-    	     fits_read_col( file->fptr(),
+    	     fits_read_col( file_->fptr(),
     			    static_cast<int>(ColumnType::Logical),
     			    colnum,
     			    firstrow, firstelem,
@@ -418,7 +418,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_write_col( file->fptr(),
+	     fits_write_col( file_->fptr(),
 			     static_cast<int>(ColumnType::Logical),
 			     colnum,
 			     firstrow, firstelem,
@@ -450,7 +450,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_get_num_rowsll( file->fptr(), &num_rows, &status )
+	     fits_get_num_rowsll( file_->fptr(), &num_rows, &status )
 	     );
 
 	return num_rows;
@@ -470,11 +470,11 @@ namespace misFITS {
 	switch( boost::native_value( what ) ) {
 
 	case TableCopy::Header :
-	    file->copy( ofile, FileCopy::CurrentHeader );
+	    file_->copy( ofile, FileCopy::CurrentHeader );
 	    break;
 
 	case TableCopy::HDU :
-	    file->copy( ofile, FileCopy::CurrentHDU, morekeys );
+	    file_->copy( ofile, FileCopy::CurrentHDU, morekeys );
 	    break;
 
 	}

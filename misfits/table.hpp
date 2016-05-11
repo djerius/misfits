@@ -90,7 +90,7 @@ namespace misFITS {
 	LONGLONG num_rows() const;
 
 	void flush ( const FlushMode& mode = FlushMode::File ) const {
-	    file->flush( mode );
+	    file_->flush( mode );
 	};
 
 	bool has_column( const std::string& templt )  const;

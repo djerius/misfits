@@ -35,16 +35,11 @@ namespace misFITS {
 
     class HDU : public Shared<HDU> {
 
-	friend class Row;
 	friend class File;
+	template<typename T> friend class Entry::Column;
+	friend class resetHDU;
 
     public:
-
-	std::string extname;
-	int extver;
-	int hdu_num;
-
-	own_or_observe::ptr<File> file;
 
 	std::pair<int,int> get_hdrpos( );
 
@@ -69,8 +64,6 @@ namespace misFITS {
 
 	virtual ~HDU() {}
 
-    protected:
-
 	HDU( WeakFilePtr& file, int hdu_num = 0 );
 	HDU( WeakFilePtr& file, const std::string& extname, int extver = 1 );
 
@@ -79,6 +72,18 @@ namespace misFITS {
 
 	HDU( );
 	void refresh();
+
+	SharedFilePtr file( ) const { return file_.get(); }
+	const std::string& extname() const { return extname_; }
+	int hdu_num() const { return hdu_num_; }
+	int extver() const { return extver_; }
+
+    protected:
+	own_or_observe::ptr<File> file_;
+	std::string extname_;
+	int extver_;
+	int hdu_num_;
+
 
     };
 

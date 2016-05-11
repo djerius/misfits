@@ -59,53 +59,53 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
     {
 	file->move_to( hdu1 );
 	misFITS::Table table( file );
-	ASSERT_EQ( hdu1, table.hdu_num );
+	ASSERT_EQ( hdu1, table.hdu_num() );
 	ASSERT_EQ( hdu1, file->hdu_num() );
 
-	ASSERT_EQ( "stuff", table.extname );
-	ASSERT_EQ( 1, table.extver );
+	ASSERT_EQ( "stuff", table.extname() );
+	ASSERT_EQ( 1, table.extver() );
 
     }
 
     {
 	file->move_to( 1 );
 	misFITS::Table table( file, "stuff" );
-	ASSERT_EQ( hdu1, table.hdu_num );
+	ASSERT_EQ( hdu1, table.hdu_num() );
 	ASSERT_EQ( 1, file->hdu_num() );
 
-	ASSERT_EQ( "stuff", table.extname );
-	ASSERT_EQ( 1, table.extver );
+	ASSERT_EQ( "stuff", table.extname() );
+	ASSERT_EQ( 1, table.extver() );
 
     }
 
     {
 	file->move_to( 1 );
 	misFITS::Table table( file, "stuff", 1 );
-	ASSERT_EQ( hdu1, table.hdu_num );
+	ASSERT_EQ( hdu1, table.hdu_num() );
 	ASSERT_EQ( 1, file->hdu_num() );
 
-	ASSERT_EQ( "stuff", table.extname );
-	ASSERT_EQ( 1, table.extver );
+	ASSERT_EQ( "stuff", table.extname() );
+	ASSERT_EQ( 1, table.extver() );
     }
 
     {
 	file->move_to( 1 );
 	misFITS::Table table( file, "stuff", 2 );
-	ASSERT_EQ( hdu2, table.hdu_num );
+	ASSERT_EQ( hdu2, table.hdu_num() );
 	ASSERT_EQ( 1, file->hdu_num() );
 
-	ASSERT_EQ( "stuff", table.extname );
-	ASSERT_EQ( 2, table.extver );
+	ASSERT_EQ( "stuff", table.extname() );
+	ASSERT_EQ( 2, table.extver() );
     }
 
     {
 	file->move_to( 1 );
 	misFITS::Table table( file, hdu2 );
-	ASSERT_EQ( hdu2, table.hdu_num );
+	ASSERT_EQ( hdu2, table.hdu_num() );
 	ASSERT_EQ( 1, file->hdu_num() );
 
-	ASSERT_EQ( "stuff", table.extname );
-	ASSERT_EQ( 2, table.extver );
+	ASSERT_EQ( "stuff", table.extname() );
+	ASSERT_EQ( 2, table.extver() );
     }
 
 
@@ -145,8 +145,8 @@ TEST( TableTest, CopyHeader ) {
 
     misFITS::Table table( "MYEXTENT" );
 
-    EXPECT_EQ( "MYEXTENT",  table.extname );
-    EXPECT_EQ( 1,  table.extver );
+    EXPECT_EQ( "MYEXTENT",  table.extname() );
+    EXPECT_EQ( 1,  table.extver() );
 
     EXPECT_EQ( 0, table.num_columns() );
 
@@ -224,8 +224,8 @@ TEST( TableTest, ResizeColumn ) {
 
     misFITS::Table table( "MYEXTENT" );
 
-    EXPECT_EQ( "MYEXTENT",  table.extname );
-    EXPECT_EQ( 1,  table.extver );
+    EXPECT_EQ( "MYEXTENT",  table.extname() );
+    EXPECT_EQ( 1,  table.extver() );
 
     EXPECT_EQ( 0, table.num_columns() );
 
@@ -255,7 +255,7 @@ TEST( TableTest, DISABLED_TableObjectSynchronization ) {
 
     misFITS::Table table0( "MYEXTENT" );
 
-    misFITS::Table table1( table0.file.get() );
+    misFITS::Table table1( table0.file() );
 
     table0.add( "col1", ColumnType::Double );
 

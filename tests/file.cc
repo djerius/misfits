@@ -96,7 +96,7 @@ TEST_F( FiducialTableRWFptr, AddTable ) {
 
     misFITS::TablePtr table = file->add( events );
 
-    ASSERT_EQ( 2, events.file->num_hdus() );
+    ASSERT_EQ( 2, events.file()->num_hdus() );
 
     ASSERT_EQ( nhdus + 1, file->num_hdus() );
 
@@ -169,9 +169,9 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
-	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( hdu1, tp->hdu_num );
-	ASSERT_EQ( 1, tp->extver );
+	ASSERT_EQ( "stuff", tp->extname() );
+	ASSERT_EQ( hdu1, tp->hdu_num() );
+	ASSERT_EQ( 1, tp->extver() );
     }
 
     // now try with the second table
@@ -182,9 +182,9 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
-	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( hdu2, tp->hdu_num );
-	ASSERT_EQ( 2, tp->extver );
+	ASSERT_EQ( "stuff", tp->extname() );
+	ASSERT_EQ( hdu2, tp->hdu_num() );
+	ASSERT_EQ( 2, tp->extver() );
     }
 
     // now with extension names and versions
@@ -195,9 +195,9 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
-	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( hdu1, tp->hdu_num );
-	ASSERT_EQ( 1, tp->extver );
+	ASSERT_EQ( "stuff", tp->extname() );
+	ASSERT_EQ( hdu1, tp->hdu_num() );
+	ASSERT_EQ( 1, tp->extver() );
     }
     // now try with the second table
     {
@@ -207,8 +207,8 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
 	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
-	ASSERT_EQ( "stuff", tp->extname );
-	ASSERT_EQ( hdu2, tp->hdu_num );
-	ASSERT_EQ( 2, tp->extver );
+	ASSERT_EQ( "stuff", tp->extname() );
+	ASSERT_EQ( hdu2, tp->hdu_num() );
+	ASSERT_EQ( 2, tp->extver() );
     }
 }

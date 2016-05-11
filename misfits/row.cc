@@ -210,7 +210,7 @@ namespace misFITS {
 	    // associated with strings in CFITSIO, so, use a very low level routine
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_read_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
+		 fits_read_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
 				     reinterpret_cast<unsigned char*>(&buffer[0]),
 				     &status )
 		 );
@@ -229,7 +229,7 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_write_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
+		 fits_write_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
 				      reinterpret_cast<unsigned char*>(&buffer[0]), &status )
 		 );
 	}
@@ -259,7 +259,7 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_read_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
+		 fits_read_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
 				     reinterpret_cast<unsigned char*>(&buffer[0]),
 				     &status )
 		 );
@@ -311,7 +311,7 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_write_tblbytes( table.file->fptr(), firstrow, offset, nbytes,
+		 fits_write_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
 				      reinterpret_cast<unsigned char*>(&buffer[0]), &status )
 		 );
 

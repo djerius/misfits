@@ -44,7 +44,7 @@ namespace misFITS {
 
 	int keysexist, keynum;
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_hdrpos( file->fptr(), &keysexist, &keynum, &status )
+	    ( fits_get_hdrpos( file_->fptr(), &keysexist, &keynum, &status )
 	      );
 
 	return std::make_pair( keysexist, keynum );
@@ -92,7 +92,7 @@ namespace misFITS {
 
 	RETURN_KEYWORD
 	    ( std::string,
-	      fits_read_keyword( file->fptr(), keyname.c_str(),
+	      fits_read_keyword( file_->fptr(), keyname.c_str(),
 				 value, comment, &status )
 	      );
     }
@@ -110,7 +110,7 @@ namespace misFITS {
 
 	RETURN_KEYWORD
 	    ( std::string,
-	      fits_read_keyn( file->fptr(), keynum,
+	      fits_read_keyn( file_->fptr(), keynum,
 			      keyname, value, comment, &status )
 	      );
 
@@ -129,7 +129,7 @@ namespace misFITS {
 
 	RETURN_KEYWORD
 	    ( std::string,
-	      fits_read_key( file->fptr(), SC_STRING,
+	      fits_read_key( file_->fptr(), SC_STRING,
 			     keyname.c_str(),
 			     &value, comment, &status )
 	      );
@@ -146,7 +146,7 @@ namespace misFITS {
 
 	RETURN_KEYWORD
 	    ( T,
-	      fits_read_key( file->fptr(),
+	      fits_read_key( file_->fptr(),
 			     StorageCode<T>::type,
 			     keyname.c_str(),
 			     &value,
@@ -171,7 +171,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_write_key( file->fptr(),
+	     fits_write_key( file_->fptr(),
 			     StorageCode<std::string>::type,
 			     kw.keyname.c_str(),
 			     const_cast<char *>(kw.value.c_str()),
@@ -188,7 +188,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_write_key( file->fptr(),
+	     fits_write_key( file_->fptr(),
 			     StorageCode<T>::type,
 			     kw.keyname.c_str(),
 			     const_cast<T*>(&kw.value),
@@ -215,7 +215,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_update_key( file->fptr(),
+	     fits_update_key( file_->fptr(),
 			      StorageCode<std::string>::type,
 			      kw.keyname.c_str(),
 			      const_cast<char *>(kw.value.c_str()),
@@ -232,7 +232,7 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_update_key( file->fptr(),
+	     fits_update_key( file_->fptr(),
 			      StorageCode<T>::type,
 			      kw.keyname.c_str(),
 			      const_cast<T*>(&kw.value),
@@ -250,45 +250,45 @@ namespace misFITS {
     misFITS_INSTANTIATE_OVER_STORAGE_TYPES(UPDATE_KEY)
 
 
-    HDU::HDU( WeakFilePtr& file_, int hdu_num_ ) : hdu_num( hdu_num_ ) {
+    HDU::HDU( WeakFilePtr& file, int hdu_num ) : hdu_num_( hdu_num ) {
 
-	file.set<own_or_observe::observed>( file_ );
-	if ( 0 == hdu_num )
-	    hdu_num = file->hdu_num();
+	file_.set<own_or_observe::observed>( file );
+	if ( 0 == hdu_num_ )
+	    hdu_num_ = file_->hdu_num();
 
 	refresh();
     }
 
 
-    HDU::HDU( SharedFilePtr& file_, int hdu_num_ ) : hdu_num( hdu_num_ ) {
+    HDU::HDU( SharedFilePtr& file, int hdu_num ) : hdu_num_( hdu_num ) {
 
-    	file.set<own_or_observe::observed>( file_ );
-    	if ( 0 == hdu_num )
-    	    hdu_num = file->hdu_num();
+    	file_.set<own_or_observe::observed>( file );
+    	if ( 0 == hdu_num_ )
+    	    hdu_num_ = file_->hdu_num();
     	refresh();
     }
 
-    HDU::HDU( WeakFilePtr& file_, const std::string& extname_, int extver_ ) : extname( extname_ ), extver( extver_ ) {
+    HDU::HDU( WeakFilePtr& file, const std::string& extname, int extver ) : extname_( extname ), extver_( extver ) {
 
-	file.set<own_or_observe::observed>( file_ );
+	file_.set<own_or_observe::observed>( file );
 
 	{
-	    resetHDU chdu( file );
-	    file->move_to( extname, extver );
-	    hdu_num = file->hdu_num();
+	    resetHDU chdu( file_ );
+	    file_->move_to( extname, extver );
+	    hdu_num_ = file_->hdu_num();
 	}
 
 	refresh();
     }
 
-    HDU::HDU( SharedFilePtr& file_, const std::string& extname_, int extver_ ) : extname( extname_ ), extver( extver_ ) {
+    HDU::HDU( SharedFilePtr& file, const std::string& extname, int extver ) : extname_( extname ), extver_( extver ) {
 
-	file.set<own_or_observe::observed>( file_ );
+	file_.set<own_or_observe::observed>( file );
 
 	{
-	    resetHDU chdu( file );
-	    file->move_to( extname, extver );
-	    hdu_num = file->hdu_num();
+	    resetHDU chdu( file_ );
+	    file_->move_to( extname, extver );
+	    hdu_num_ = file_->hdu_num();
 	}
 
 	refresh();
@@ -297,17 +297,17 @@ namespace misFITS {
     HDU::HDU( ) {
 
 	FilePtr fp( open<Entity::File,  Mode::Create>( "mem://" ) );
-	file.set<own_or_observe::owned>( fp );
+	file_.set<own_or_observe::owned>( fp );
 
-	hdu_num = 1;
+	hdu_num_ = 1;
     }
 
     void HDU::refresh() {
 
 	resetHDU chdu( *this );
 
-	extname = read_key<std::string>( "EXTNAME", "" ).value;
-	extver  = read_key<int>( "EXTVER", 1 ).value;
+	extname_ = read_key<std::string>( "EXTNAME", "" ).value;
+	extver_  = read_key<int>( "EXTVER", 1 ).value;
     }
 
     struct keyword_output {
