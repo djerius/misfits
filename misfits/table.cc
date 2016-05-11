@@ -257,8 +257,6 @@ namespace misFITS {
 	std::vector<ColumnInfo> src_ci;
 	std::vector<std::string> dest_ttype;
 	std::vector<std::string> dest_tform;
-	std::vector<const char*> dest_ttype_ptr;
-	std::vector<const char*> dest_tform_ptr;
 
 	for( std::vector<std::string>::size_type idx = 0 ; idx < names.size() ; ++idx ) {
 
@@ -273,9 +271,6 @@ namespace misFITS {
 	    if ( ! dest.has_column( name ) ) {
 		dest_ttype.push_back( src_ci.back().ttype );
 		dest_tform.push_back( src_ci.back().tform() );
-		dest_ttype_ptr.push_back( dest_ttype.back().c_str() );
-		dest_tform_ptr.push_back( dest_tform.back().c_str() );
-
 	    }
 	    else {
 
@@ -289,8 +284,6 @@ namespace misFITS {
 		    dest.delete_column( name );
 		    dest_ttype.push_back( src_ci.back().ttype );
 		    dest_tform.push_back( src_ci.back().tform() );
-		    dest_ttype_ptr.push_back( dest_ttype.back().c_str() );
-		    dest_tform_ptr.push_back( dest_tform.back().c_str() );
 		    break;
 
 		case ColumnCopy::OverWrite :
@@ -306,6 +299,14 @@ namespace misFITS {
 
 	// insert the new (or replaced) columns
 	if ( ! dest_ttype.empty() ) {
+
+	    std::vector<const char*> dest_ttype_ptr;
+	    std::vector<const char*> dest_tform_ptr;
+
+	    for( int idx = 0 ; idx < dest_ttype.size() ; ++idx ) {
+		dest_ttype_ptr.push_back( dest_ttype[idx].c_str() );
+		dest_tform_ptr.push_back( dest_tform[idx].c_str() );
+	    }
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		( fits_insert_cols( dest.file_->fptr(),
