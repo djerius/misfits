@@ -31,9 +31,9 @@ namespace misFITS_Test {
     namespace Fiducial {
 
 
-	const int Data::nrows = 20;
-	const int Data::nbits = 23;
-	int Data::nbytes = 0;
+	const std::size_t Data::nrows = 20;
+	const std::size_t Data::nbits = 23;
+	std::size_t Data::nbytes = 0;
 
 	std::string Data::Xform() {
 	    ostringstream os;
@@ -152,8 +152,8 @@ namespace misFITS_Test {
 		// this is left justified in the bit array, as specified
 		// by the FITS standard.
 
-		int byte = (i - 1) / 8;
-		int shift = ( 8 - (i - byte * 8) );
+		std::size_t byte = (i - 1) / 8;
+		std::size_t shift = ( 8 - (i - byte * 8) );
 		x1.data[i-1][byte] |= 1<<shift;
 
 		x2.data.resize(i);
@@ -166,7 +166,7 @@ namespace misFITS_Test {
 		    os.setf( std::ios::right, std::ios::adjustfield );
 		    os.fill( '0' );
 
-		    for ( int i = 0; i < NSTR ; ++i )
+		    for ( std::size_t i = 0; i < NSTR ; ++i )
 			os << std::setw(STRLEN) << i + i;
 
 		    string A = os.str();
@@ -176,7 +176,7 @@ namespace misFITS_Test {
 		    vector<string> A2;
 		    vector<string> A3;
 
-		    for ( int i = 0 ; i < BUFLEN ; i += STRLEN ) {
+		    for ( std::size_t i = 0 ; i < BUFLEN ; i += STRLEN ) {
 			A2.push_back( A.substr( i, STRLEN ) );
 			A3.push_back( A.substr( i, STRLEN ) );
 		    }
@@ -192,7 +192,7 @@ namespace misFITS_Test {
 		    os.setf( std::ios::left, std::ios::adjustfield );
 		    os.fill( '\0' );
 
-		    for ( int i = 0; i < NSTR ; ++i )
+		    for ( std::size_t i = 0; i < NSTR ; ++i )
 			os << std::setw(STRLEN) << i + i;
 
 		    string A = os.str();
@@ -202,7 +202,7 @@ namespace misFITS_Test {
 		    vector<string> A5;
 		    vector<string> A6;
 
-		    for ( int i = 0 ; i < BUFLEN ; i += STRLEN ) {
+		    for ( std::size_t i = 0 ; i < BUFLEN ; i += STRLEN ) {
 			A5.push_back( A.substr( i , STRLEN ) );
 			A6.push_back( A5.back() );
 		    }
@@ -220,7 +220,7 @@ namespace misFITS_Test {
 	    Cols::iterator col  = columns.begin();
 	    Cols::iterator end  = columns.end();
 
-	    long offset = 1;
+	    int offset = 1;
 	    for( ; col < end ; ++col ) {
 		(*col)->insert( fpp, offset );
 		offset += (*col)->nbytes;

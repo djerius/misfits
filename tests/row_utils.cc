@@ -188,7 +188,7 @@ test_fiducial( misFITS::Row &row ) {
 	SCOPED_TRACE( row.idx() - 1 );
 
 	// row.idx() returns next row to be read
-	std::size_t zidx = row.idx() - 2;
+	std::size_t zidx = static_cast<std::size_t>(row.idx()) - 2;
 
     	EXPECT_EQ( fid.i1.data[zidx], I1 );
     	EXPECT_EQ( fid.i1.data[zidx], storage.a.I1 );

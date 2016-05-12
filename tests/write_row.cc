@@ -81,7 +81,7 @@ TEST_F( WriteTest, Create ) {
 	    .add( "EV1", ColumnType::Float, 10    )
 	    .add( "D1", ColumnType::Double   )
 	    .add( "DV1", ColumnType::Double, 10   )
-	    .add( "X1", ColumnType::Bit	    , Fiducial::Data::nbits )
+	    .add( "X1", ColumnType::Bit	    , static_cast<LONGLONG>(Fiducial::Data::nbits) )
 	    .add( "A1", ColumnType::String  , 60 )
 	    .add( "A2", ColumnType::String  , Extent( 12, 5 ) )
 	    .add( "A3", ColumnType::String  , Extent( 12, 5 ) )

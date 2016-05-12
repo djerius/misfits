@@ -216,7 +216,7 @@ TEST_F( FiducialTableROFptr, CopyHDU ) {
     row.add( "i1", &i1 );
 
     while ( row.read() )
-	EXPECT_EQ( fid.i1.data[ row.idx() - 2 ], i1 );
+	EXPECT_EQ( fid.i1.data[ static_cast<std::size_t>(row.idx()) - 2 ], i1 );
 
 }
 

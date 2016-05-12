@@ -34,9 +34,9 @@ namespace misFITS_Test {
 
       struct Data {
 
-	  static const int nrows;
-	  static const int nbits;
-	  static int nbytes;
+	  static const std::size_t nrows;
+	  static const std::size_t nbits;
+	  static std::size_t nbytes;
 
 	  Column<TSHORT , short>		i1;
 	  Column<TSHORT , std::vector<short> >  iv1;
