@@ -8,7 +8,7 @@ AT_CLEANUP
 
 AT_SETUP([BitSet])
 
-AT_CHECK(bitset,,[ignore])
+AT_CHECK(test_bitset,,[ignore])
 
 AT_CLEANUP
 

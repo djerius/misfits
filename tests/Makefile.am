@@ -207,14 +207,14 @@ check_PROGRAMS		+= %D%/extent
 
 ##############################
 
-check_PROGRAMS		+= %D%/bitset
+check_PROGRAMS		+= %D%/test_bitset
 
-%C%_bitset_SOURCES	=			\
-			%D%/bitset.cc
+%C%_test_bitset_SOURCES	=			\
+			%D%/test_bitset.cc
 
-%C%_bitset_LDADD	= $(LDADD_%C%_TESTS)
-%C%_bitset_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
-%C%_bitset_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
+%C%_test_bitset_LDADD		= $(LDADD_%C%_TESTS)
+%C%_test_bitset_CPPFLAGS	= $(CPPFLAGS_%C%_TESTS)
+%C%_test_bitset_CXXFLAGS	= $(CXXFLAGS_%C%_TESTS)
 
 ##############################
 
