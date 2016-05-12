@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/core/scoped_enum.hpp>
 
 #include "fiducial.hpp"
 
@@ -38,20 +39,26 @@ namespace misFITS_Test {
 	  static const std::size_t nbits;
 	  static std::size_t nbytes;
 
-	  Column<TSHORT , short>		i1;
-	  Column<TSHORT , std::vector<short> >  iv1;
+	  typedef short  I_TYPE;
+	  typedef int    J_TYPE;
+	  typedef float  E_TYPE;
+	  typedef double D_TYPE;
+	  typedef bool   L_TYPE;
 
-	  Column<TINT   , int>			j1;
-	  Column<TINT   , std::vector<int> >    jv1;
+	  Column<TSHORT , I_TYPE>		i1;
+	  Column<TSHORT , std::vector<I_TYPE> >  iv1;
 
-	  Column<TFLOAT , float>		e1;
-	  Column<TFLOAT , std::vector<float> >	ev1;
+	  Column<TINT   , J_TYPE>			j1;
+	  Column<TINT   , std::vector<J_TYPE> >    jv1;
 
-	  Column<TDOUBLE, double>		d1;
-	  Column<TDOUBLE, std::vector<double> > dv1;
+	  Column<TFLOAT , E_TYPE>		e1;
+	  Column<TFLOAT , std::vector<E_TYPE> >	ev1;
 
-	  Column<TLOGICAL, bool>		l1;
-	  Column<TLOGICAL, std::vector<bool> >  lv1;
+	  Column<TDOUBLE, D_TYPE>		d1;
+	  Column<TDOUBLE, std::vector<D_TYPE> > dv1;
+
+	  Column<TLOGICAL, L_TYPE>		l1;
+	  Column<TLOGICAL, std::vector<L_TYPE> >  lv1;
 
 
 	  // we're writing bits as a string of bytes

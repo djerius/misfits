@@ -71,23 +71,23 @@ TEST_F( WriteTest, Create ) {
 	using namespace misFITS;
 
 	ttable
-	    .add( "I1", ColumnType::Short     )
+	    .add( "I1",  ColumnType::Short     )
 	    .add( "IV1", ColumnType::Short, 10 )
-	    .add( "J1", ColumnType::Long )
+	    .add( "J1",  ColumnType::Long )
 	    .add( "JV1", ColumnType::Long, 10 )
-	    .add( "L1", ColumnType::Logical )
+	    .add( "L1",  ColumnType::Logical )
 	    .add( "LV1", ColumnType::Logical, 10 )
-	    .add( "E1", ColumnType::Float    )
+	    .add( "E1",  ColumnType::Float    )
 	    .add( "EV1", ColumnType::Float, 10    )
-	    .add( "D1", ColumnType::Double   )
+	    .add( "D1",  ColumnType::Double   )
 	    .add( "DV1", ColumnType::Double, 10   )
-	    .add( "X1", ColumnType::Bit	    , static_cast<LONGLONG>(Fiducial::Data::nbits) )
-	    .add( "A1", ColumnType::String  , 60 )
-	    .add( "A2", ColumnType::String  , Extent( 12, 5 ) )
-	    .add( "A3", ColumnType::String  , Extent( 12, 5 ) )
-	    .add( "A4", ColumnType::String  , 60 )
-	    .add( "A5", ColumnType::String  , Extent( 12, 5 ) )
-	    .add( "A6", ColumnType::String  , Extent( 12, 5 ) )
+	    .add( "X1",  ColumnType::Bit	    , static_cast<LONGLONG>(Fiducial::Data::nbits) )
+	    .add( "A1",  ColumnType::String  , 60 )
+	    .add( "A2",  ColumnType::String  , Extent( 12, 5 ) )
+	    .add( "A3",  ColumnType::String  , Extent( 12, 5 ) )
+	    .add( "A4",  ColumnType::String  , 60 )
+	    .add( "A5",  ColumnType::String  , Extent( 12, 5 ) )
+	    .add( "A6",  ColumnType::String  , Extent( 12, 5 ) )
 	    ;
 
     }
@@ -95,20 +95,20 @@ TEST_F( WriteTest, Create ) {
     misFITS::TablePtr otable( ttable.copy( output, TableCopy::Header ) );
 
     struct Row {
-	int I1;
-	std::vector<short> IV1;
+	Fiducial::Data::I_TYPE I1;
+	std::vector<Fiducial::Data::I_TYPE> IV1;
 
-	short J1;
-	std::vector<int> JV1;
+	Fiducial::Data::J_TYPE J1;
+	std::vector<Fiducial::Data::J_TYPE> JV1;
 
-	bool L1;
-	std::vector<bool> LV1;
+	Fiducial::Data::L_TYPE L1;
+	std::vector<Fiducial::Data::L_TYPE> LV1;
 
-	float E1;
-	std::vector<float> EV1;
+	Fiducial::Data::E_TYPE E1;
+	std::vector<Fiducial::Data::E_TYPE> EV1;
 
-	double D1;
-	std::vector<double> DV1;
+	Fiducial::Data::D_TYPE D1;
+	std::vector<Fiducial::Data::D_TYPE> DV1;
 
 	misFITS::BitSet X1;
 	string A1;
