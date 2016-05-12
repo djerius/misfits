@@ -71,8 +71,8 @@ namespace misFITS {
 	Extent::iterator a_end = remove( a.begin(), a.end(), 1 );
 	Extent::iterator b_end = remove( b.begin(), b.end(), 1 );
 
-	a.resize( a_end - a.begin() );
-	b.resize( b_end - b.begin() );
+	a.resize( static_cast<ExtentType::size_type>(a_end - a.begin()) );
+	b.resize( static_cast<ExtentType::size_type>(b_end - b.begin()) );
 
 	return static_cast<ExtentType>(a) == static_cast<ExtentType>(b);
     }

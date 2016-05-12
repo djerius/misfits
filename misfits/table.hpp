@@ -30,6 +30,7 @@
 #include <misfits/fits.hpp>
 #include <misfits/hdu.hpp>
 #include <misfits/extent.hpp>
+
 #include <misfits/columninfo.hpp>
 
 namespace misFITS {
@@ -57,11 +58,13 @@ namespace misFITS {
 
     public:
 
+	typedef TableColumnsType Columns;
+
 	Table( const std::string&, int extver = 1 );
 	Table( WeakFilePtr file, int hdu_num = 0 );
 	Table( WeakFilePtr file, const std::string& extname, int extver = 1 );
 
-	const ColumnInfo& colinfo( int colnum );
+	const ColumnInfo& colinfo( Columns::size_type colnum );
 	const ColumnInfo& colinfo( const std::string& name );
 
 	// copy table to other file
@@ -73,20 +76,20 @@ namespace misFITS {
 		    ColumnType typecode,
 		    const std::string& tunit = "",
 		    const Extent& extent = Extent(1),
-		    int colnum = 0);
+		    Columns::size_type colnum = 0);
 
 	Table& add( const std::string& ttype,
 		    ColumnType typecode,
 		    const Extent& extent,
-		    int colnum = 0) {
+		    Columns::size_type colnum = 0) {
 
 	    return add( ttype, typecode, "", extent, colnum );
 	}
 
-	void resize( int colnum, const Extent& extent );
+	void resize( Columns::size_type colnum, const Extent& extent );
 	void resize( const std::string& name, const Extent& extent );
 
-	int num_columns() const;
+	Columns::size_type num_columns() const;
 	LONGLONG num_rows() const;
 
 	void flush ( const FlushMode& mode = FlushMode::File ) const {
@@ -98,7 +101,7 @@ namespace misFITS {
 	    std::cerr << "misFITS::Table::exists_column is deprecated; use misFITS::Table::has_column\n";
 	    return has_column( templt );
 	};
-	void delete_column( int colnum );
+	void delete_column( Columns::size_type );
 	void delete_column( const std::string& name );
 
 	void copy_column( Table& dest, const std::string& name,
@@ -110,15 +113,15 @@ namespace misFITS {
 	misFITS::Row row();
 
 	template< typename T>
-	void read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
+	void read_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
 	template< typename T>
-	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const T* data ) const;
+	void write_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const T* data ) const;
 
 	// in rare cases (i.e. TLOGICAL), can't uniquely map CFITSIO storage type to required datatype
 	template< BOOST_SCOPED_ENUM_NATIVE(ColumnType) T>
-	void read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, NativeType<SC_BYTE>::storage_type* data ) const;
+	void read_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, NativeType<SC_BYTE>::storage_type* data ) const;
 	template< BOOST_SCOPED_ENUM_NATIVE(ColumnType) T>
-	void write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const NativeType<SC_BYTE>::storage_type* data ) const;
+	void write_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const NativeType<SC_BYTE>::storage_type* data ) const;
 
     protected:
 
@@ -127,7 +130,7 @@ namespace misFITS {
 	Table& operator= (const Table&);
 	void refresh ();
 	LONGLONG row_idx_;
-	std::vector<ColumnInfo> columns;
+	Columns columns;
 
     };
 

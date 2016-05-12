@@ -171,7 +171,7 @@ test_fiducial( misFITS::Row &row ) {
 	      );
     	;
 
-    for ( int ia = 0 ; ia < 6 ; ++ia ) {
+    for ( std::size_t ia = 0 ; ia < 6 ; ++ia ) {
 
 	ostringstream name;
 	name << "A" << ia+1;
@@ -188,7 +188,7 @@ test_fiducial( misFITS::Row &row ) {
 	SCOPED_TRACE( row.idx() - 1 );
 
 	// row.idx() returns next row to be read
-	LONGLONG zidx = row.idx() - 2;
+	std::size_t zidx = row.idx() - 2;
 
     	EXPECT_EQ( fid.i1.data[zidx], I1 );
     	EXPECT_EQ( fid.i1.data[zidx], storage.a.I1 );

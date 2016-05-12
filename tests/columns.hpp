@@ -49,21 +49,21 @@ namespace misFITS_Test {
 
   struct ColInfo {
 
-    char tdim[80];
-    char ttype[80];
-    char tunit[80];
-    char typechar[80];
-    char tdisp[80];
-    LONGLONG repeat;
-    double scale;
-    double zero;
-    LONGLONG nulval;
+      char tdim[80];
+      char ttype[80];
+      char tunit[80];
+      char typechar[80];
+      char tdisp[80];
+      LONGLONG repeat;
+      double scale;
+      double zero;
+      LONGLONG nulval;
 
-    int typecode;
-    LONGLONG width;
+      int typecode;
+      LONGLONG width;
 
-    LONGLONG naxes[10];
-    int naxis;
+      LONGLONG naxes[10];
+      int naxis;
 
     ColInfo( const TestFitsPtr& fp, int colnum );
     void dump();

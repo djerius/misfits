@@ -150,7 +150,7 @@ TEST_F( WriteTest, Create ) {
 	;
 
 
-    for( int row = 0 ; row < fid.nrows ; ++row ) {
+    for( size_t row = 0 ; row < fid.nrows ; ++row ) {
 
 	data.I1 = fid.i1.data[row];
 	data.IV1 =  fid.iv1.data[row];

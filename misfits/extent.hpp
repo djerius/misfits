@@ -53,7 +53,7 @@ namespace misFITS {
 		LONGLONG e9 = 1 );
 
 	LONGLONG nelem() const;
-	int naxes() const { return static_cast<int>(size()) ; }
+	ExtentType::size_type naxes() const { return size() ; }
 
     };
 

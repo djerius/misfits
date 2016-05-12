@@ -43,7 +43,7 @@ namespace misFITS_Test {
 
 	template< typename T >
 	std::vector<T>
-	fill( int start, typename std::vector<T>::size_type nelem ) {
+	fill( std::size_t start, typename std::vector<T>::size_type nelem ) {
 
 	    std::vector<T> v;
 	    v.resize(nelem);
@@ -111,7 +111,7 @@ namespace misFITS_Test {
 		Cols::iterator col  = columns.begin();
 		Cols::iterator end  = columns.end();
 
-		for( int col_num = 1 ; col < end ; ++col, ++col_num )
+		for( size_t col_num = 1 ; col < end ; ++col, ++col_num )
 		    (*col)->colnum = col_num;
 	    }
 
@@ -125,7 +125,7 @@ namespace misFITS_Test {
 	    };
 
 
-	    for ( int i = 1 ; i <= nrows ; i++ ) {
+	    for ( std::size_t i = 1 ; i <= nrows ; i++ ) {
 
 		d1.push_back( 1.0 / i );
 		dv1.push_back( fill<double>(i + 1, 10 ) );

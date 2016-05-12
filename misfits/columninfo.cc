@@ -48,7 +48,8 @@ namespace misFITS {
 	    throw Exception::Assert( "only Binary Tables are supported" );
 
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_bcolparmsll( file.fptr(), colnum,
+	    ( fits_get_bcolparmsll( file.fptr(),
+				    static_cast<int>( colnum ),
 				    ttype_t, tunit_t,
 				    NULL, // typechar
 				    NULL, // repeat
@@ -69,7 +70,7 @@ namespace misFITS {
 #if SIZEOF_LONG == SIZEOF_LONGLONG
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_coltypell( file.fptr(),
-				  colnum,
+				  static_cast<int>( colnum ),
 				  &typecode,
 				  &repeat,
 				  reinterpret_cast<LONGLONG*>(&width),
@@ -81,7 +82,7 @@ namespace misFITS {
 	LONGLONG twidth;
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_coltypell( file.fptr(),
-				  colnum,
+				  static_cast<int>( colnum ),
 				  &typecode,
 				  &repeat,
 				  &twidth,
@@ -94,7 +95,7 @@ namespace misFITS {
 
 	int naxis;
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_read_tdimll( file.fptr(), colnum, 0, &naxis, NULL, &status )
+	    ( fits_read_tdimll( file.fptr(), static_cast<int>( colnum ), 0, &naxis, NULL, &status )
 	      );
 
 	// handle CFITSIO idiosyncracies with 'A' columns. see tests/cfitsio.cc
@@ -108,10 +109,10 @@ namespace misFITS {
 	}
 	else {
 
-	    extent.resize(naxis);
+	    extent.resize( static_cast<ExtentType::size_type>( naxis) );
 	    misFITS_CHECK_CFITSIO_EXPR
 		( fits_read_tdimll( file.fptr(),
-				    colnum,
+				    static_cast<int>( colnum ),
 				    naxis,
 				    &naxis,
 				    &extent[0],
@@ -136,19 +137,23 @@ namespace misFITS {
 
 
 
-    ColumnInfo::ColumnInfo( const File& file, const std::string& ttype, LONGLONG offset ) : offset( offset ) {
+    ColumnInfo::ColumnInfo( const File& file, const std::string& ttype, LONGLONG offset_ ) : offset( offset_ ) {
 	misFITS_CHECK_CFITSIO_EXPR
-	    ( fits_get_colnum( file.fptr(), 0, const_cast<char*>(ttype.c_str()), &colnum, &status )
+	    ( 
+	     int colnum_;
+	     fits_get_colnum( file.fptr(), 0, const_cast<char*>(ttype.c_str()), &colnum_, &status );
+	     if ( ! status )
+		 colnum = static_cast<TableColumnsType::size_type>( colnum_ );
 	      );
 	init( file );
     }
 
-    ColumnInfo::ColumnInfo( const File& file, int colnum, LONGLONG offset ) : offset( offset ), colnum( colnum ) {
+    ColumnInfo::ColumnInfo( const File& file, TableColumnsType::size_type colnum_, LONGLONG offset_ ) : offset( offset_ ), colnum( colnum_ ) {
 	init( file );
     }
 
     ColumnInfo::ColumnInfo( const std::string& type, ColumnType column_type_, const std::string& unit,
-			    const Extent& extent_, int colnum_ ) :
+			    const Extent& extent_, TableColumnsType::size_type colnum_ ) :
 	ttype( type ), tunit( unit), column_type( column_type_), extent( extent_ ), colnum( colnum_ ) {
 
 	long width;
@@ -216,7 +221,7 @@ namespace misFITS {
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_insert_col(file.fptr(),
-			     colnum,
+			     static_cast<int>( colnum ),
 			     const_cast<char*>(ttype.c_str()),
 			     const_cast<char*>(tform_str.c_str()),
 			     &status)
@@ -225,8 +230,8 @@ namespace misFITS {
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_write_tdimll( file.fptr(),
-				colnum,
-				extent.naxes(),
+				static_cast<int>( colnum ),
+				static_cast<int>( extent.naxes() ),
 				const_cast<LONGLONG*>(&(extent[0])),
 				&status )
 	     );

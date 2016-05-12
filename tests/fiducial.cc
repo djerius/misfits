@@ -23,13 +23,15 @@ namespace misFITS_Test {
 
 		const ColumnT& str = data[row-1];
 
-		if ( static_cast<LONGLONG>( str.size() ) != nbytes )
+		if ( str.size() != nbytes )
 		    throw misFITS::Exception::Assert( "string not equal to column width" );
 
 		misFITS_CHECK_CFITSIO_EXPR
 		    (
 		     fits_write_tblbytes( fp.get(),
-					  row, offset, nbytes,
+					  static_cast<LONGLONG>( row ),
+					  offset,
+					  static_cast<LONGLONG>( nbytes ),
 					  reinterpret_cast<unsigned char*>(const_cast<char*>(str.data())),
 					  &status )
 		 );
@@ -70,20 +72,21 @@ namespace misFITS_Test {
 
 		LONGLONG toffset = offset;
 
-		LONGLONG tnbytes = nbytes / vs.size();
+		std::size_t tnbytes = nbytes / vs.size();
 
 
 		vector<ColumnT>::const_iterator str = vs.begin();
 		vector<ColumnT>::const_iterator end  = vs.end();
 		for ( ; str < end ; ++str, toffset += tnbytes ) {
 
-		    if ( static_cast<LONGLONG>( str->size() ) != tnbytes )
+		    if ( str->size() != tnbytes )
 			throw misFITS::Exception::Assert( "sub string not equal to string width" );
 
 		    misFITS_CHECK_CFITSIO_EXPR
 			(
 			 fits_write_tblbytes( fp.get(), static_cast<LONGLONG>(row),
-					      toffset, tnbytes,
+					      toffset,
+					      static_cast<LONGLONG>(tnbytes),
 					      reinterpret_cast<unsigned char*>(const_cast<char*>(str->data())),
 					      &status )
 			 );
@@ -124,7 +127,12 @@ namespace misFITS_Test {
 
 		misFITS_CHECK_CFITSIO_EXPR
 		    (
-		     fits_write_col( fp.get(), TLOGICAL, colnum, static_cast<LONGLONG>(row), 1, nelem, &buffer[0], &status );
+		     fits_write_col( fp.get(), TLOGICAL,
+				     static_cast<int>(colnum),
+				     static_cast<LONGLONG>(row),
+				     1,
+				     static_cast<LONGLONG>(nelem),
+				     &buffer[0], &status );
 		     );
 
 	    }
@@ -142,15 +150,20 @@ namespace misFITS_Test {
 
 		const std::vector<bool>& drow = Parent::data[row-1];
 
-		if ( static_cast<LONGLONG>( drow.size() ) != Parent::nelem )
+		if ( drow.size() != Parent::nelem )
 		    throw misFITS::Exception::Assert( "data for vector cell has incorrect length" );
 
-		for ( int idx = 0 ; idx < nelem ; idx++ )
+		for ( size_t idx = 0 ; idx < nelem ; idx++ )
 		    buffer[idx] = drow[idx];
 
 		misFITS_CHECK_CFITSIO_EXPR
 		    (
-		     fits_write_col( fp.get(), TLOGICAL, Parent::colnum, static_cast<LONGLONG>(row), 1, Parent::nelem, &buffer[0], &status )
+		     fits_write_col( fp.get(), TLOGICAL, 
+				     static_cast<int>(Parent::colnum),
+				     static_cast<LONGLONG>(row),
+				     1,
+				     static_cast<LONGLONG>(Parent::nelem),
+				     &buffer[0], &status )
 		     );
 
 		}
@@ -165,16 +178,18 @@ namespace misFITS_Test {
 
 	    offset = offset_;
 
+	    int colnum_;
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_get_num_cols( fpp.get() , &colnum, &status )
+		 fits_get_num_cols( fpp.get() , &colnum_, &status )
 		 );
 
-	    colnum++;
+	    colnum = static_cast<std::size_t>(colnum_) + 1;
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_insert_col( fpp.get(), colnum,
+		 fits_insert_col( fpp.get(), 
+				  static_cast<int>(colnum),
 				  const_cast<char*>( ttype.c_str() ),
 				  const_cast<char*>( tform.c_str() ),
 				  &status )
@@ -183,31 +198,20 @@ namespace misFITS_Test {
 
 	    // stolen from misFITS::ColumnInfo::init
 
-	    LONGLONG width;
+	    size_t width;
 
-#if SIZEOF_LONG == SIZEOF_LONGLONG
+	    LONGLONG width_;
+	    LONGLONG repeat_;
 	    misFITS_CHECK_CFITSIO_EXPR
 		( fits_get_coltypell( fpp.get(),
-				      colnum,
+				      static_cast<int>(colnum),
 				      &column_type,
-				      &repeat,
-				      reinterpret_cast<LONGLONG*>(&width),
+				      &repeat_,
+				      &width_,
 				      &status )
 		  );
-#else
-	    // fits_get_coltypell is anomolous in requiring a LONGLONG
-	    // width. c.f. CFITSIO internals and other routines with a width parameter
-	    LONGLONG twidth;
-	    misFITS_CHECK_CFITSIO_EXPR
-		( fits_get_coltypell( fpp.get(),
-				      colnum,
-				      &column_type,
-				      &repeat,
-				      &twidth,
-				      &status )
-		  );
-	    width = twidth;
-#endif // LONGLONG FUDGE
+	    repeat = static_cast<size_t>( repeat_ );
+	    width = static_cast<size_t>(width_);
 
 	    if ( TSTRING == column_type )
 		width = 1;

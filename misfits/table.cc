@@ -77,11 +77,11 @@ namespace misFITS {
 
 	HDU::refresh();
 
-	int ncols = num_columns();
+	Columns::size_type ncols = num_columns();
 	columns.clear();
 
 	LONGLONG offset = 1;
-	for ( int colnum = 1 ; colnum <= ncols ; colnum++ ) {
+	for ( Columns::size_type colnum = 1 ; colnum <= ncols ; colnum++ ) {
 	    columns.push_back( ColumnInfo( *file_.get(), colnum, offset ) );
 	    offset += columns[colnum-1].nbytes;
 	}
@@ -105,7 +105,7 @@ namespace misFITS {
     }
 
     const ColumnInfo&
-    Table::colinfo( int colnum ) {
+    Table::colinfo(  Columns::size_type colnum ) {
 	return columns.at(colnum - 1);
     }
 
@@ -118,7 +118,7 @@ namespace misFITS {
 	misFITS_CHECK_CFITSIO_EXPR
 	    ( fits_get_colnum( file_->fptr(), 0, const_cast<char*>(colname.c_str()), &colnum, &status )
 	      );
-	return columns.at(colnum - 1);
+	return columns.at( static_cast<Columns::size_type>( colnum ) - 1);
     }
 
     Table&
@@ -143,7 +143,7 @@ namespace misFITS {
 		ColumnType column_type,
 		const std::string& tunit,
 		const Extent& extent,
-		int colnum ) {
+		Columns::size_type colnum ) {
 
 	resetHDU chdu( *this );
 
@@ -158,7 +158,7 @@ namespace misFITS {
     }
 
     void
-    Table::resize( int colnum, const Extent& extent ) {
+    Table::resize( Columns::size_type colnum, const Extent& extent ) {
 
 	resetHDU chdu( *this );
 
@@ -170,7 +170,8 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_modify_vector_len( file_->fptr(), colnum, extent.nelem(), &status )
+	     fits_modify_vector_len( file_->fptr(), static_cast<int>( colnum ),
+				     extent.nelem(), &status )
 	     );
 
 	// CFITSIO fixes up everything but TDIM
@@ -193,13 +194,13 @@ namespace misFITS {
     }
 
     void
-    Table::delete_column( int colnum ) {
+    Table::delete_column( Columns::size_type colnum ) {
 
 	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_delete_col( file_->fptr(), colnum, &status )
+	     fits_delete_col( file_->fptr(), static_cast<int>( colnum ), &status )
 	     );
 
 	refresh();
@@ -212,11 +213,11 @@ namespace misFITS {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_delete_col( file_->fptr(), colinfo(name).colnum, &status )
+	     fits_delete_col( file_->fptr(), static_cast<int>( colinfo(name).colnum ), &status )
 	     );
     }
 
-    int
+    Table::Columns::size_type
     Table::num_columns( ) const {
 	int num_cols;
 
@@ -226,7 +227,7 @@ namespace misFITS {
 	    ( fits_get_num_cols( file_->fptr(), &num_cols, &status )
 	      );
 
-	return num_cols;
+	return static_cast<Columns::size_type>( num_cols );
     }
 
     // copy a column to another table
@@ -303,7 +304,7 @@ namespace misFITS {
 	    std::vector<const char*> dest_ttype_ptr;
 	    std::vector<const char*> dest_tform_ptr;
 
-	    for( int idx = 0 ; idx < dest_ttype.size() ; ++idx ) {
+	    for( std::vector<string>::size_type idx = 0 ; idx < dest_ttype.size() ; ++idx ) {
 		dest_ttype_ptr.push_back( dest_ttype[idx].c_str() );
 		dest_tform_ptr.push_back( dest_tform[idx].c_str() );
 	    }
@@ -342,8 +343,8 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		( fits_copy_col( file_->fptr(), dest.file_->fptr(),
-				 src_ci[idx].colnum,
-				 dest.colinfo( src_ci[idx].ttype).colnum,
+				 static_cast<int>( src_ci[idx].colnum ),
+				 static_cast<int>( dest.colinfo( src_ci[idx].ttype).colnum ),
 				 0,
 			     &status )
 	      );
@@ -354,13 +355,13 @@ namespace misFITS {
 
     //-----------------------------------------
     template<typename T>
-    void Table::read_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const {
+    void Table::read_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const {
 
     	misFITS_CHECK_CFITSIO_EXPR
     	    (
     	     fits_read_col( file_->fptr(),
     			    StorageCode<T>::type,
-    			    colnum,
+    			    static_cast<int>( colnum ),
     			    firstrow, firstelem,
     			    nelem,
     			    NULL,
@@ -370,20 +371,20 @@ namespace misFITS {
     }
 
 #define READ_COL(r,d,T) \
-    template void Table::read_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
+    template void Table::read_col<T>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
 
     misFITS_INSTANTIATE_OVER_STORAGE_TYPES(READ_COL)
 
     //-----------------------------------------
 
     template<typename T>
-    void Table::write_col( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const {
+    void Table::write_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_write_col( file_->fptr(),
 			     StorageCode<T>::type,
-			     colnum,
+			     static_cast<int>( colnum ),
 			     firstrow, firstelem,
 			     nelem,
 			     const_cast<T*>(data), &status)
@@ -392,20 +393,20 @@ namespace misFITS {
     }
 
 #define WRITE_COL(r,d,T) \
-    template void Table::write_col<T>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const;
+    template void Table::write_col<T>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const T* data ) const;
 
     misFITS_INSTANTIATE_OVER_STORAGE_TYPES(WRITE_COL)
 
     //-----------------------------------------
 
     template<>
-    void Table::read_col<ColumnType::Logical>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, NativeType<SC_BYTE>::storage_type* data ) const {
+    void Table::read_col<ColumnType::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, NativeType<SC_BYTE>::storage_type* data ) const {
 
     	misFITS_CHECK_CFITSIO_EXPR
     	    (
     	     fits_read_col( file_->fptr(),
     			    static_cast<int>(ColumnType::Logical),
-    			    colnum,
+    			    static_cast<int>( colnum ),
     			    firstrow, firstelem,
     			    nelem,
     			    NULL,
@@ -415,13 +416,13 @@ namespace misFITS {
     }
 
     template<>
-    void Table::write_col<ColumnType::Logical>( int colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const NativeType<SC_BYTE>::storage_type* data ) const {
+    void Table::write_col<ColumnType::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const NativeType<SC_BYTE>::storage_type* data ) const {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_write_col( file_->fptr(),
 			     static_cast<int>(ColumnType::Logical),
-			     colnum,
+			     static_cast<int>( colnum ),
 			     firstrow, firstelem,
 			     nelem,
 			     const_cast<NativeType<SC_BYTE>::storage_type*>(data), &status)

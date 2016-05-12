@@ -40,11 +40,11 @@ namespace misFITS_Test {
 	    std::string tform;
 	    std::string tdim;
 	    std::string tunit;
-	    mutable int colnum;
-	    mutable LONGLONG nbytes;
+	    mutable std::size_t colnum;
+	    mutable std::size_t nbytes;
 	    mutable int offset;
-	    mutable LONGLONG repeat;
-	    mutable LONGLONG nelem;
+	    mutable std::size_t repeat;
+	    mutable std::size_t nelem;
 
 	    ColumnBase(
 		       int storage_type_,
@@ -105,7 +105,11 @@ namespace misFITS_Test {
 	    void write ( TestFitsPtr& fpp ) const {
 
 		misFITS_CHECK_CFITSIO_EXPR
-		    ( fits_write_col( fpp.get(), storage_type,  Parent::colnum, 1, 1, static_cast<LONGLONG>(Parent::data.size()), const_cast<T*>(&Parent::data[0]), &status )
+		    ( fits_write_col( fpp.get(), storage_type,
+				      static_cast<int>(Parent::colnum),
+				      1, 1,
+				      static_cast<LONGLONG>(Parent::data.size()),
+				      const_cast<T*>(&Parent::data[0]), &status )
 		      );
 
 	    }
@@ -129,15 +133,20 @@ namespace misFITS_Test {
 
 	    void write( TestFitsPtr& fpp ) const {
 
-		for (typename Parent::data_size_type row = 1 ; row <= static_cast<LONGLONG>(Parent::data.size()) ; ++row ) {
+		for (typename Parent::data_size_type row = 1 ; row <= Parent::data.size() ; ++row ) {
 		    const std::vector<T>& drow = Parent::data[row-1];
 
-		    if ( static_cast<LONGLONG>( drow.size() ) != Parent::nelem )
+		    if ( drow.size() != Parent::nelem )
 			throw misFITS::Exception::Assert( "data for vector cell has incorrect length" );
 
 		    misFITS_CHECK_CFITSIO_EXPR
 			(
-			 fits_write_col( fpp.get(), storage_type, Parent::colnum, static_cast<LONGLONG>(row), 1, Parent::nelem, const_cast<T*>(&drow[0]), &status )
+			 fits_write_col( fpp.get(), storage_type,
+					 static_cast<int>(Parent::colnum),
+					 static_cast<LONGLONG>(row),
+					 1,
+					 static_cast<LONGLONG>(Parent::nelem),
+					 const_cast<T*>(&drow[0]), &status )
 			 );
 
 		}

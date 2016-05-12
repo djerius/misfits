@@ -48,7 +48,7 @@ namespace misFITS {
 	Column<BitSet>::Column( const ColumnInfo& info, BitSet* base ) :
 	    base_( base ),
 	    colnum_( info.colnum ),
-	    nbits_( info.nelem() )
+	    nbits_( static_cast<BitSet::size_type>( info.nelem() ) )
 	{
 
 	    if ( ColumnType::Bit != info.column_type )
@@ -66,7 +66,8 @@ namespace misFITS {
 	void
 	Column<BitSet>::read( const Table& table, LONGLONG firstrow ) {
 
-	    table.read_col( colnum_, firstrow, 1, buffer.size(), reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
+	    table.read_col( colnum_, firstrow, 1, static_cast<LONGLONG>( buffer.size() ),
+			    reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 
 	    base_->resize( max_bits_ );
 	    boost::from_block_range(bitset_input_iterator( buffer.begin() ),
@@ -81,7 +82,8 @@ namespace misFITS {
 
 	    boost::to_block_range(*base_, bitset_output_iterator( buffer.begin()) );
 
-	    table.write_col( colnum_, firstrow, 1, nbytes_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
+	    table.write_col( colnum_, firstrow, 1, static_cast<LONGLONG>( nbytes_ ),
+			     reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 	}
 
 
@@ -93,15 +95,16 @@ namespace misFITS {
 
 	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
 
-		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 
-		for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
+		for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		    base_[idx] = buffer[idx];
 	    }
 
 	    else  {
 
-		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
+		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
+						     reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
 
 	    }
 
@@ -112,15 +115,16 @@ namespace misFITS {
 
 	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
 
-		for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
+		for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		    buffer[idx] = base_[idx];
 
-		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 	    }
 
 	    else {
 
-		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
+		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
+						      reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
 
 	    }
 
@@ -134,9 +138,9 @@ namespace misFITS {
 	void
 	Column< std::vector<bool> >::read( const Table& table, LONGLONG firstrow ) {
 
-	    table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+	    table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 
-	    for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
+	    for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		(*base_)[idx] = buffer[idx];
 
 	}
@@ -144,10 +148,10 @@ namespace misFITS {
 	void
 	Column< std::vector<bool> >::write( const Table& table, LONGLONG firstrow ) {
 
-	    for ( LONGLONG idx = 0 ; idx < nelem_ ; idx++ )
+	    for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		buffer[idx] = (*base_)[idx];
 
-	    table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, nelem_, &buffer[0] );
+	    table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 
 	}
 
@@ -171,12 +175,13 @@ namespace misFITS {
 	Column< std::vector<byte_t> >::Column( const ColumnInfo& info, std::vector<byte_t>* base ) :
 	    base_( base ),
 	    colnum_( info.colnum ),
-	    nelem_( info.nelem() ) {
+	    nelem_( static_cast<Base::size_type>( info.nelem() ) ) {
 
 	    // if reading bits, nelem_ is the number of 8 bit bytes
 	    if ( ColumnType::Bit == info.column_type ) {
+		Base::size_type nbits = nelem_;
 		nelem_ /= 8;
-		if ( nelem_ * 8 < info.nelem() ) ++nelem_;
+		if ( nelem_ * 8 < nbits ) ++nelem_;
 	    }
 
 	    base_->resize( nelem_ );
@@ -189,9 +194,9 @@ namespace misFITS {
 	Column<std::string>::Column( const ColumnInfo& info, std::string* base ) :
 	    base_( base ),
 	    colnum_( info.colnum ),
-	    nelem_( info.extent.nelem() ),
+	    nelem_( static_cast<Base::size_type>( info.extent.nelem() ) ),
 	    offset( info.offset ),
-	    nbytes( info.nbytes )
+	    nbytes( static_cast<Base::size_type>( info.nbytes ) )
 	{
 
 	    if ( ColumnType::String != info.column_type )
@@ -210,7 +215,8 @@ namespace misFITS {
 	    // associated with strings in CFITSIO, so, use a very low level routine
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_read_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
+		 fits_read_tblbytes( table.file_->fptr(), firstrow, offset,
+				     static_cast<LONGLONG>( nbytes ),
 				     reinterpret_cast<unsigned char*>(&buffer[0]),
 				     &status )
 		 );
@@ -229,7 +235,8 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_write_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
+		 fits_write_tblbytes( table.file_->fptr(), firstrow, offset,
+				      static_cast<LONGLONG>(nbytes),
 				      reinterpret_cast<unsigned char*>(&buffer[0]), &status )
 		 );
 	}
@@ -239,11 +246,11 @@ namespace misFITS {
 
 	Column< std::vector<std::string> >::Column( const ColumnInfo& info, std::vector<std::string>* base ) :
 	    base_( base ),
+	    nelem_( static_cast<Base::size_type>( info.extent.nelem() ) ),
 	    colnum_( info.colnum ),
-	    nelem_( info.extent.nelem() ),
 	    offset( info.offset ),
-	    nbytes( info.nbytes ),
-	    width( info.extent[0] ) {
+	    nbytes( static_cast<Buffer::size_type>( info.nbytes ) ),
+	    width( static_cast<Buffer::size_type>(info.extent[0] ) ) {
 
 	    if ( ColumnType::String != info.column_type )
 		throw Exception::Assert( "a vector<std::string> destination can only be used with a FITS 'A' column type" );
@@ -259,15 +266,16 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_read_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
+		 fits_read_tblbytes( table.file_->fptr(), firstrow, offset,
+				     static_cast<LONGLONG>( nbytes ),
 				     reinterpret_cast<unsigned char*>(&buffer[0]),
 				     &status )
 		 );
 
 	    char* start = &buffer[0];
 
-	    std::vector<std::string>::iterator str = base_->begin();
-	    std::vector<std::string>::iterator end = base_->end();
+	    Base::iterator str = base_->begin();
+	    Base::iterator end = base_->end();
 	    for ( ; str < end ; ++str ) {
 		str->assign( start, width );
 		start += width;
@@ -282,7 +290,7 @@ namespace misFITS {
 
 		// CFITSIO has the second behavior.  This code follows the first behavior.
 
-		std::string::size_type nchar = str->find_first_of( '\0' );
+		Buffer::size_type nchar = str->find_first_of( '\0' );
 		if ( nchar != std::string::npos )
 		    str->resize( nchar );
 	    }
@@ -296,10 +304,10 @@ namespace misFITS {
 
 	    char* start = &buffer[0];
 
-	    std::vector<std::string>::iterator str = base_->begin();
-	    std::vector<std::string>::iterator end = base_->end();
+	    Base::iterator str = base_->begin();
+	    Base::iterator end = base_->end();
 	    for ( ; str < end ; ++str, start += width ) {
-		LONGLONG maxc = static_cast<LONGLONG>( str->length() );
+		std::string::size_type maxc = str->length();
 		if ( width > maxc ) {
 		    str->copy( start, maxc );
 		    start[maxc] = '\0';
@@ -311,7 +319,8 @@ namespace misFITS {
 
 	    misFITS_CHECK_CFITSIO_EXPR
 		(
-		 fits_write_tblbytes( table.file_->fptr(), firstrow, offset, nbytes,
+		 fits_write_tblbytes( table.file_->fptr(), firstrow, offset,
+				      static_cast<LONGLONG>( nbytes ),
 				      reinterpret_cast<unsigned char*>(&buffer[0]), &status )
 		 );
 

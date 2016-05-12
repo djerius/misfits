@@ -58,10 +58,13 @@ namespace misFITS {
 	template< typename T >
 	class Column : public ColumnBase {
 
+	    typedef T Base;
+
 	public:
-	    Column( const ColumnInfo& info, T* base ) : base_( base ),
-						  colnum_( info.colnum ),
-						  nelem_( info.nelem() ) {}
+	    Column( const ColumnInfo& info, T* base )
+		: base_( base ),
+		  colnum_( info.colnum ),
+		  nelem_( info.nelem() ) {}
 	    virtual ~Column() { };
 
 	    virtual void read( const Table& table, LONGLONG firstrow ) {
@@ -72,36 +75,45 @@ namespace misFITS {
 	    }
 
 	protected:
-	    T* base_;
-	    int colnum_;
+	    Base* base_;
+	    Table::Columns::size_type colnum_;
 	    LONGLONG nelem_;
 	};
 
 	template< typename T>
 	class Column< std::vector<T> > : public ColumnBase {
 
+	    typedef std::vector<T> Base;
+
 	public:
-	    Column( const ColumnInfo& info, std::vector<T>* base ) : base_( base ),
-							       colnum_( info.colnum ),
-							       nelem_( info.nelem() ) {
+	    Column( const ColumnInfo& info, std::vector<T>* base )
+		: base_( base ),
+		  colnum_( info.colnum ),
+		  nelem_( static_cast<typename Base::size_type>( info.nelem() ) ) {
+
 		base_->resize( nelem_ );
 	    }
 
 	    void read( const Table& table, LONGLONG firstrow ) {
-		table.read_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
+		table.read_col<T>( colnum_, firstrow, 1,
+				   static_cast<LONGLONG>(nelem_), &(*base_)[0] );
 	    }
 	    void write( const Table& table, LONGLONG firstrow ) {
-		table.write_col<T>( colnum_, firstrow, 1, nelem_, &(*base_)[0] );
+		table.write_col<T>( colnum_, firstrow, 1,
+				    static_cast<LONGLONG>(nelem_), &(*base_)[0] );
 	    }
 
 	private:
-	    std::vector<T>* base_;
-	    int colnum_;
-	    LONGLONG nelem_;
+	    Base* base_;
+	    Table::Columns::size_type colnum_;
+	    typename Base::size_type nelem_;
 	};
 
 	template<>
 	class Column< BitSet > : public ColumnBase {
+
+	    typedef BitSet Base;
+	    typedef std::vector<BitSet::block_type> Buffer;
 
 	public:
 
@@ -113,26 +125,29 @@ namespace misFITS {
 
 
 	private:
-	    BitSet* base_;
-	    int colnum_;
-	    LONGLONG nbits_;
-	    BitSet::size_type max_bits_;
+	    Base* base_;
+	    Table::Columns::size_type colnum_;
+	    Base::size_type nbits_;
+	    Base::size_type max_bits_;
 
 	    // number of bytes required to store the bits. cached for
 	    // speed
-	    BitSet::size_type nbytes_;
+	    Buffer::size_type nbytes_;
 
-	    std::vector<BitSet::block_type> buffer;
+	    Buffer buffer;
 	};
 
 	template<>
 	class Column< bool > : public ColumnBase {
 
+	    typedef bool Base;
+	    typedef std::vector<NativeType<SC_BYTE>::storage_type> Buffer;
+
 	public:
 	    Column( const ColumnInfo& info, bool* base ) :
 		base_( base ),
 		colnum_( info.colnum ),
-		nelem_( info.nelem() ) {
+		nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
 
 		if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) )
 		    buffer.resize( nelem_ );
@@ -143,19 +158,23 @@ namespace misFITS {
 	    virtual void write( const Table& table, LONGLONG firstrow );
 
 	protected:
-	    bool* base_;
-	    int colnum_;
-	    LONGLONG nelem_;
-	    std::vector<NativeType<SC_BYTE>::storage_type> buffer;
+	    Base* base_;
+	    Table::Columns::size_type colnum_;
+	    Buffer buffer;
+	    Buffer::size_type nelem_;
 	};
 
 	template<>
 	class Column< std::vector<bool> > : public ColumnBase {
 
+	    typedef std::vector<bool> Base;
+	    typedef std::vector<NativeType<SC_BYTE>::storage_type> Buffer;
+
 	public:
-	    Column( const ColumnInfo& info, std::vector<bool>* base ) : base_( base ),
-									colnum_( info.colnum ),
-									nelem_( info.nelem() ) {
+	    Column( const ColumnInfo& info, std::vector<bool>* base )
+		: base_( base ),
+		  colnum_( info.colnum ),
+		  nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
 		base->resize( nelem_ );
 		buffer.resize( nelem_ );
 	    }
@@ -164,15 +183,18 @@ namespace misFITS {
 	    void write( const Table& table, LONGLONG firstrow );
 
 	private:
-	    std::vector<bool>* base_;
-	    int colnum_;
-	    LONGLONG nelem_;
-	    std::vector<NativeType<SC_BYTE>::storage_type> buffer;
+	    Base* base_;
+	    Table::Columns::size_type colnum_;
+	    Buffer buffer;
+	    Buffer::size_type nelem_;
 	};
 
 
 	template<>
 	class Column<std::string>: public ColumnBase {
+
+	    typedef std::string Base;
+	    typedef std::vector<char> Buffer;
 
 	public:
 
@@ -188,18 +210,21 @@ namespace misFITS {
 	    // buffer.  in C++11, consecutive characters in
 	    // std::string are defined to be contiguous, and we can
 	    // read directly into the string. see stackoverflow.com/questions/25169915
-	    std::vector<char> buffer;
+	    Buffer buffer;
 
-	    std::string* base_;
-	    int colnum_;
-	    LONGLONG nelem_;
+	    Base* base_;
+	    Table::Columns::size_type colnum_;
+	    Base::size_type nelem_;
 	    LONGLONG offset;
-	    LONGLONG nbytes;
+	    Buffer::size_type nbytes;
 
 	};
 
 	template<>
 	class Column< std::vector<std::string> >: public ColumnBase {
+
+	    typedef std::vector<std::string> Base;
+	    typedef std::vector<char> Buffer;
 
 	public:
 
@@ -211,19 +236,19 @@ namespace misFITS {
 
 
 	private:
-	    std::vector<std::string>* base_;
+	    Base* base_;
+	    Base::size_type nelem_;
 
 	    // for compatibility with C++ < 11, use intermediate
 	    // buffer.  in C++11, consecutive characters in
 	    // std::string are defined to be contiguous, and we can
 	    // read directly into the string. see stackoverflow.com/questions/25169915
 
-	    std::vector<char> buffer;
-	    int colnum_;
-	    LONGLONG nelem_;
+	    Buffer buffer;
+	    Table::Columns::size_type colnum_;
 	    LONGLONG offset;
-	    LONGLONG nbytes;
-	    LONGLONG width;
+	    Buffer::size_type nbytes;
+	    Buffer::size_type width;
 
 	};
 
@@ -261,7 +286,7 @@ namespace misFITS {
 	    write();
 	}
 
-	const ColumnInfo& colinfo( int colnum ) { return table_->colinfo( colnum ); }
+	const ColumnInfo& colinfo( Table::Columns::size_type colnum ) { return table_->colinfo( colnum ); }
 	const ColumnInfo& colinfo( const std::string& name ) { return table_->colinfo( name ); }
 
 	template< class T >

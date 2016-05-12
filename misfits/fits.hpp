@@ -27,6 +27,7 @@
 #include <string>
 #include <iostream>
 #include <utility>
+#include <vector>
 
 #include <misfits/config.hpp>
 
@@ -49,6 +50,9 @@ namespace misFITS {
     typedef weak_ptr<Table> WeakTablePtr;
     typedef SharedTablePtr TablePtr;
 
+    // there must be a beter way to do this
+    class ColumnInfo;
+    typedef std::vector<ColumnInfo> TableColumnsType;
 
     template< class T >
     class Shared : public enable_shared_from_this<T> {

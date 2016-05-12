@@ -58,7 +58,7 @@ namespace misFITS_Test {
     vector<char*> form_t;
     vector<char*> unit_t;
 
-    for( std::vector< std::string>::size_type col = 0 ; col < ttype.size() ; ++col ) {
+    for( std::size_t col = 0 ; col < ttype.size() ; ++col ) {
       type_t.push_back( const_cast<char*>( ttype[col].c_str() ) );
       form_t.push_back( const_cast<char*>( tform[col].c_str() ) );
       unit_t.push_back( const_cast<char*>( tunit[col].c_str() ) );
@@ -75,12 +75,12 @@ namespace misFITS_Test {
 			&status )
        );
 
-    for ( int col = 0 ; col < static_cast<int>( ttype.size() ) ; ++ col ) {
+    for ( std::size_t col = 0 ; col < ttype.size() ; ++ col ) {
       if ( ! tdim[col].empty() )
 	misFITS_CHECK_CFITSIO_EXPR
 	  (
 	   char keyname[8];
-	   sprintf( keyname, "TDIM%d", col+1 );
+	   sprintf( keyname, "TDIM%d", static_cast<int>(col)+1 );
 	   fits_write_key( fp, TSTRING, keyname, const_cast<char*>(tdim[col].c_str()), NULL, &status );
 	   );
     }

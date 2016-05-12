@@ -48,15 +48,16 @@ namespace misFITS {
 	Extent extent;
 
 	// this may be the only unique id for the column
-	int colnum;
+	TableColumnsType::size_type colnum;
 
 	ColumnInfo( const std::string& name, ColumnType column_type,
-		    const std::string& unit, const Extent& extent, int colnum = 0);
+		    const std::string& unit, const Extent& extent,
+		    TableColumnsType::size_type = 0);
 
 	// initialize from the CHDU in a fits file. requires byte offset into table storage for each column to handle
 	// string ('A') columns.
 	ColumnInfo( const misFITS::File& file, const std::string& name, LONGLONG offset );
-	ColumnInfo( const misFITS::File& file, int colnum, LONGLONG offset );
+	ColumnInfo( const misFITS::File& file, TableColumnsType::size_type, LONGLONG offset );
 
 	void insert( const misFITS::File& file );
 
