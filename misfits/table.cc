@@ -60,7 +60,7 @@ namespace misFITS {
 
 	hdu_num_ = file_->hdu_num();
 
-	write_key( Keyword<int>( "EXTVER", extver ) );
+	set_keyword( Keyword<int>( "EXTVER", extver ) );
 
 	refresh();
     }

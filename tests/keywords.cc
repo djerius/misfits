@@ -35,20 +35,20 @@ TEST_F( FiducialTableROFptr, read ) {
 
     misFITS::Table table( file );
 
-    EXPECT_EQ( "stuff", table.read_key<std::string>( "EXTNAME" ).value );
-    EXPECT_EQ( 1, table.read_key<int>( "EXTVER" ).value );
+    EXPECT_EQ( "stuff", table.get_keyword<std::string>( "EXTNAME" ).value );
+    EXPECT_EQ( 1, table.get_keyword<int>( "EXTVER" ).value );
 
-    EXPECT_DOUBLE_EQ( 3.14159, table.read_key<double>( "PIE" ).value );
-    EXPECT_DOUBLE_EQ( 3.14159, table.read_key<double>( "PIESTR" ).value );
+    EXPECT_DOUBLE_EQ( 3.14159, table.get_keyword<double>( "PIE" ).value );
+    EXPECT_DOUBLE_EQ( 3.14159, table.get_keyword<double>( "PIESTR" ).value );
 
-    EXPECT_FLOAT_EQ( 3.14159f, table.read_key<float>( "PIE" ).value );
-    EXPECT_FLOAT_EQ( 3.14159f, table.read_key<float>( "PIESTR" ).value );
+    EXPECT_FLOAT_EQ( 3.14159f, table.get_keyword<float>( "PIE" ).value );
+    EXPECT_FLOAT_EQ( 3.14159f, table.get_keyword<float>( "PIESTR" ).value );
 
-    EXPECT_EQ( 3, table.read_key<int>( "PIE" ).value );
-    EXPECT_EQ( 3, table.read_key<int>( "PIESTR" ).value );
+    EXPECT_EQ( 3, table.get_keyword<int>( "PIE" ).value );
+    EXPECT_EQ( 3, table.get_keyword<int>( "PIESTR" ).value );
 
-    EXPECT_EQ( "3.14159", table.read_key<std::string>( "PIE" ).value );
-    EXPECT_EQ( "3.14159", table.read_key<std::string>( "PIESTR" ).value );
+    EXPECT_EQ( "3.14159", table.get_keyword<std::string>( "PIE" ).value );
+    EXPECT_EQ( "3.14159", table.get_keyword<std::string>( "PIESTR" ).value );
 
 }
 
@@ -57,13 +57,37 @@ TEST( Keywords, write ) {
 
     misFITS::Table table( "MYEXTENT" );
 
-    EXPECT_EQ( "MYEXTENT", table.read_key<std::string>( "EXTNAME" ).value );
-    EXPECT_EQ( 1, table.read_key<int>( "EXTVER" ).value );
+    EXPECT_EQ( "MYEXTENT", table.get_keyword<std::string>( "EXTNAME" ).value );
+    EXPECT_EQ( 1, table.get_keyword<int>( "EXTVER" ).value );
 
-    table.write_key( misFITS::Keyword<double>( "PIE", 3.14159 ) );
-    EXPECT_DOUBLE_EQ( 3.14159, table.read_key<double>( "PIE" ).value );
+    table.set_keyword( misFITS::Keyword<double>( "PIE", 3.14159 ) );
+    EXPECT_DOUBLE_EQ( 3.14159, table.get_keyword<double>( "PIE" ).value );
 
-    table.update_key( misFITS::Keyword<std::string>( "PIE", "Apple" ) );
-    EXPECT_EQ( "Apple", table.read_key<std::string>( "PIE" ).value );
+    table.set_keyword( misFITS::Keyword<std::string>( "PIE", "Apple" ) );
+    EXPECT_EQ( "Apple", table.get_keyword<std::string>( "PIE" ).value );
+
+    std::string value(1000, 'X' );
+    table.set_keyword( misFITS::Keyword<std::string>( "LONG", value ) );
+    EXPECT_EQ( value, table.get_keyword<std::string>( "LONG" ).value );
 
 }
+
+TEST_F( FiducialTableRWFptr, deleteKeyword ) {
+
+    misFITS::Table table( file );
+
+    ASSERT_TRUE( table.has_keyword( "PIE" ) );
+
+    EXPECT_DOUBLE_EQ( 3.14159, table.get_keyword<double>( "PIE" ).value );
+    ASSERT_NO_THROW( table.delete_keyword( "PIE" ) );
+    EXPECT_FALSE( table.has_keyword( "PIE" ) );
+
+}
+
+
+// TODO:
+
+// check that comments are correctly written
+
+// check that things are actually written to the file (not just read
+// write from a temporary memory one)

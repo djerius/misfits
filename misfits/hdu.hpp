@@ -37,25 +37,25 @@ namespace misFITS {
 
 	friend class File;
 	friend class resetHDU;
+	friend const Keyword<std::string> KeywordIterator::current();
 
     public:
 
 	std::pair<int,int> get_hdrpos( );
 
-	Keyword<std::string> read_keyword( const std::string& keyname,
-					   const std::string& default_value = "") const;
-
-	Keyword<std::string> read_keyn( int keynum, const std::string& default_value = "" ) const;
+	template<typename T>
+	Keyword<T> get_keyword( const std::string& keyname,
+				 const T& default_value = StorageCode<T>::default_value() ) const;
 
 	template<typename T>
-	Keyword<T> read_key( const std::string& keyname,
-			     const T& default_value = StorageCode<T>::default_value() ) const;
+	void set_keyword( const Keyword<T>& kw) const;
 
-	template<typename T>
-	void write_key( const Keyword<T>& kw) const;
+	void delete_keyword( const std::string& keyname ) const;
+	bool has_keyword( const std::string& keyname ) const;
 
-	template<typename T>
-	void update_key( const Keyword<T>& kw) const;
+	void add_history(  const std::string& history ) const;
+	void add_comment(  const std::string& comment ) const;
+
 
 	void dump_keywords( );
 
@@ -79,6 +79,10 @@ namespace misFITS {
 
 	void set_as_chdu() const;
 
+    private:
+	Keyword<std::string> read_keyn( int keynum, const std::string& default_value = "" ) const;
+
+
     protected:
 	own_or_observe::ptr<File> file_;
 	std::string extname_;
@@ -87,6 +91,7 @@ namespace misFITS {
 
 
     };
+
 
 }
 

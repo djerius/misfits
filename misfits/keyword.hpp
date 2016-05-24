@@ -26,6 +26,8 @@ namespace misFITS {
 
     class KeywordIterator : public std::iterator <std::forward_iterator_tag, Keyword<std::string>, void >{
 
+	friend class HDU;
+
     private:
 	HDUPtr hdup_;
 	int keynum_;

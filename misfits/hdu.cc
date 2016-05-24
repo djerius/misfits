@@ -26,8 +26,6 @@
 #include <boost/preprocessor/seq/elem.hpp>
 
 #include <fitsio.h>
-// includes final \0
-#define FITSCARDLEN 81
 
 #include <misfits/hdu.hpp>
 
@@ -50,6 +48,37 @@ namespace misFITS {
 	return std::make_pair( keysexist, keynum );
 
     }
+
+    // this is the least computationally burdensome thing I could come
+    // up with.
+    bool HDU::has_keyword( const std::string& keyname ) const {
+
+	char card[FLEN_CARD];
+
+	int status = 0;
+
+	fits_read_card( file_->fptr(), keyname.c_str(), card, &status );
+
+	switch ( status ) {
+
+	case 0 :
+	    return true;
+
+	case VALUE_UNDEFINED:
+	    return true;
+
+	case KEY_NO_EXIST:
+	    return false;
+
+
+	default:
+	    throw Exception::CFITSIO( status );
+
+	}
+
+    }
+
+
 
     //-----------------------------------------
 
@@ -82,37 +111,22 @@ namespace misFITS {
 				default_value, comment, status );	\
     } while (0)
 
-    Keyword<std::string>
-    HDU::read_keyword( const std::string& keyname, const std::string& default_value ) const {
-
-	resetHDU chdu( *this );
-
-	char value[FITSCARDLEN] = { '\0' };
-	char comment[FITSCARDLEN] = { '\0' };
-
-	RETURN_KEYWORD
-	    ( std::string,
-	      fits_read_keyword( file_->fptr(), keyname.c_str(),
-				 value, comment, &status )
-	      );
-    }
-
     //-----------------------------------------
 
     Keyword<std::string>
     HDU::read_keyn( int keynum, const std::string& default_value ) const {
 
-	resetHDU chdu( *this );
+       resetHDU chdu( *this );
 
-	char keyname[FITSCARDLEN] = { '\0' };
-	char   value[FITSCARDLEN] = { '\0' };
-	char comment[FITSCARDLEN] = { '\0' };
+       char keyname[FLEN_KEYWORD+1] = { '\0' };
+       char   value[FLEN_VALUE+1]   = { '\0' };
+       char comment[FLEN_COMMENT+1] = { '\0' };
 
-	RETURN_KEYWORD
-	    ( std::string,
-	      fits_read_keyn( file_->fptr(), keynum,
-			      keyname, value, comment, &status )
-	      );
+       RETURN_KEYWORD
+           ( std::string,
+             fits_read_keyn( file_->fptr(), keynum,
+                             keyname, value, comment, &status )
+             );
 
     }
 
@@ -120,75 +134,116 @@ namespace misFITS {
 
     template<>
     Keyword<std::string>
-    HDU::read_key( const std::string& keyname, const std::string& default_value ) const {
+    HDU::get_keyword( const std::string& keyname, const std::string& default_value ) const {
 
-	resetHDU chdu( *this );
+    	resetHDU chdu( *this );
 
-	char   value[FITSCARDLEN] = { '\0' };
-	char comment[FITSCARDLEN] = { '\0' };
+    	std::string value;
+    	char comment[FLEN_COMMENT+1] = { '\0' };
 
-	RETURN_KEYWORD
-	    ( std::string,
-	      fits_read_key( file_->fptr(), SC_STRING,
-			     keyname.c_str(),
-			     &value, comment, &status )
-	      );
+    	int status = 0;
+    	int length;
+
+	fits_get_key_strlen( file_->fptr(), keyname.c_str(), &length, &status );
+
+    	if ( status ) {
+
+    	    if (    status != VALUE_UNDEFINED
+    		 && status != KEY_NO_EXIST )
+    	    throw Exception::CFITSIO (status );
+
+    	    return make_keyword<std::string>( keyname, value,
+    					      default_value, comment, status );
+    	}
+
+
+    	std::vector<char> v_value( length );
+
+    	RETURN_KEYWORD
+    	    ( std::string,
+    	      fits_read_string_key( file_->fptr(),
+				    keyname.c_str(),
+				    1, length,
+				    &v_value[0],
+				    NULL,
+				    comment,
+				    &status );
+    	      value.assign( &v_value[0], length );
+    	      );
 
     }
 
     template<typename T>
-    Keyword<T> HDU::read_key( const std::string& keyname, const T& default_value ) const {
+    Keyword<T> HDU::get_keyword( const std::string& keyname, const T& default_value ) const {
 
-	resetHDU chdu( *this );
+    	resetHDU chdu( *this );
 
-	T value = default_value;
-	char comment[FITSCARDLEN] = { '\0' };
+    	T value = default_value;
+    	char comment[FLEN_COMMENT+1] = { '\0' };
 
-	RETURN_KEYWORD
-	    ( T,
-	      fits_read_key( file_->fptr(),
-			     StorageCode<T>::type,
-			     keyname.c_str(),
-			     &value,
-			     comment,
-			     &status )
-	      );
+    	RETURN_KEYWORD
+    	    ( T,
+    	      fits_read_key( file_->fptr(),
+    			     StorageCode<T>::type,
+    			     keyname.c_str(),
+    			     &value,
+    			     comment,
+    			     &status )
+    	      );
     }
 
 
-#define READ_KEY(r,d,T) \
-    template Keyword<T> HDU::read_key<T>( const std::string& keyname, const T& default_value ) const;
+#define GET_KEYWORD(r,d,T) \
+    template Keyword<T> HDU::get_keyword<T>( const std::string& keyname, const T& default_value ) const;
 
 
-    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(READ_KEY)
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(GET_KEYWORD)
 
     //-----------------------------------------
 
     template<>
-    void HDU::write_key<std::string>( const Keyword<std::string>& kw ) const {
+    void HDU::set_keyword<std::string>( const Keyword<std::string>& kw ) const {
 
 	resetHDU chdu( *this );
 
-	misFITS_CHECK_CFITSIO_EXPR
-	    (
-	     fits_write_key( file_->fptr(),
-			     StorageCode<std::string>::type,
-			     kw.keyname.c_str(),
-			     const_cast<char *>(kw.value.c_str()),
-			     kw.comment.c_str(),
-			     &status
-			     )
-	     );
+	if ( kw.value.size() > FLEN_VALUE ) {
+
+	    misFITS_CHECK_CFITSIO_EXPR
+		(
+		 fits_write_key_longwarn( file_->fptr(), &status );
+		 fits_update_key_longstr( file_->fptr(),
+					 kw.keyname.c_str(),
+					 const_cast<char*>( kw.value.c_str() ),
+					 kw.comment.c_str(),
+					 &status );
+		 );
+
+	}
+
+	else {
+
+	    misFITS_CHECK_CFITSIO_EXPR
+		(
+		 fits_update_key_str( file_->fptr(),
+				      kw.keyname.c_str(),
+				      const_cast<char *>(kw.value.c_str()),
+				      kw.comment.c_str(),
+				      &status
+				      );
+		 );
+
+	}
+
     }
 
     template<typename T>
-    void HDU::write_key( const Keyword<T>& kw ) const {
+    void HDU::set_keyword( const Keyword<T>& kw ) const {
 
 	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_write_key( file_->fptr(),
+	     fits_update_key( file_->fptr(),
 			     StorageCode<T>::type,
 			     kw.keyname.c_str(),
 			     const_cast<T*>(&kw.value),
@@ -200,55 +255,51 @@ namespace misFITS {
     }
 
 
-#define WRITE_KEY(r,d,T) \
-    template void HDU::write_key<T>( const Keyword<T>& kw ) const;
+#define SET_KEYWORD(r,d,T) \
+    template void HDU::set_keyword<T>( const Keyword<T>& kw ) const;
 
 
-    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(WRITE_KEY)
+    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(SET_KEYWORD)
 
     //-----------------------------------------
 
-    template<>
-    void HDU::update_key<std::string>( const Keyword<std::string>& kw ) const {
+    void HDU::delete_keyword( const std::string& keyname ) const {
 
-	resetHDU chdu( *this );
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_update_key( file_->fptr(),
-			      StorageCode<std::string>::type,
-			      kw.keyname.c_str(),
-			      const_cast<char *>(kw.value.c_str()),
-			      kw.comment.c_str(),
-			      &status
-			     )
+	     fits_delete_key( file_->fptr(), keyname.c_str(), &status );
 	     );
 
     }
 
+    //-----------------------------------------
 
-    template<typename T>
-    void HDU::update_key( const Keyword<T>& kw ) const {
+    void HDU::add_history( const std::string& history ) const {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
-	     fits_update_key( file_->fptr(),
-			      StorageCode<T>::type,
-			      kw.keyname.c_str(),
-			      const_cast<T*>(&kw.value),
-			      kw.comment.c_str(),
-			      &status
-			     )
+	     fits_write_history( file_->fptr(),
+				 const_cast<char*>( history.c_str() ),
+				 &status
+				 )
 	     );
 
     }
 
+    void HDU::add_comment( const std::string& comment ) const {
 
-#define UPDATE_KEY(r,d,T) \
-    template void HDU::update_key<T>( const Keyword<T>& kw ) const;
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_comment( file_->fptr(),
+				 const_cast<char*>( comment.c_str() ),
+				 &status
+				 )
+	     );
 
-    misFITS_INSTANTIATE_OVER_STORAGE_TYPES(UPDATE_KEY)
+    }
 
+    //-----------------------------------------
 
     HDU::HDU( WeakFilePtr& file, int hdu_num ) : hdu_num_( hdu_num ) {
 
@@ -306,8 +357,8 @@ namespace misFITS {
 
 	resetHDU chdu( *this );
 
-	extname_ = read_key<std::string>( "EXTNAME", "" ).value;
-	extver_  = read_key<int>( "EXTVER", 1 ).value;
+	extname_ = get_keyword<std::string>( "EXTNAME", "" ).value;
+	extver_  = get_keyword<int>( "EXTVER", 1 ).value;
     }
 
     void HDU::set_as_chdu () const {
