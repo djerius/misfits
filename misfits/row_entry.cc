@@ -92,6 +92,15 @@ namespace misFITS {
 
 	//-----------------------------------------
 
+	Column<bool>::Column( const ColumnInfo& info, bool* base ) :
+		base_( base ),
+		colnum_( info.colnum ),
+		nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
+
+		if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) )
+		    buffer.resize( nelem_ );
+	    }
+
 	void
 	Column<bool>::read( const Table& table, LONGLONG firstrow ) {
 
@@ -136,6 +145,14 @@ namespace misFITS {
 	//-----------------------------------------
 
 	// std::vector<bool> is a specialized monster that's not a vector of bools.
+
+	Column< std::vector<bool> >::Column( const ColumnInfo& info, std::vector<bool>* base )
+		: base_( base ),
+		  colnum_( info.colnum ),
+		  nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
+		base->resize( nelem_ );
+		buffer.resize( nelem_ );
+	    }
 
 	void
 	Column< std::vector<bool> >::read( const Table& table, LONGLONG firstrow ) {

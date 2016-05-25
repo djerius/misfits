@@ -78,12 +78,13 @@ namespace misFITS {
 	class Column< std::vector<T> > : public ColumnBase {
 
 	    typedef std::vector<T> Base;
+	    typedef typename Base::size_type size_type;
 
 	public:
 	    Column( const ColumnInfo& info, std::vector<T>* base )
 		: base_( base ),
 		  colnum_( info.colnum ),
-		  nelem_( static_cast<typename Base::size_type>( info.nelem() ) ) {
+		  nelem_( static_cast<size_type>( info.nelem() ) ) {
 
 		base_->resize( nelem_ );
 	    }
@@ -138,14 +139,7 @@ namespace misFITS {
 	    typedef std::vector<NativeType<SC_BYTE>::storage_type> Buffer;
 
 	public:
-	    Column( const ColumnInfo& info, bool* base ) :
-		base_( base ),
-		colnum_( info.colnum ),
-		nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
-
-		if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) )
-		    buffer.resize( nelem_ );
-	    }
+	    Column( const ColumnInfo& info, bool* base );
 	    virtual ~Column() { };
 
 	    virtual void read( const Table& table, LONGLONG firstrow );
@@ -165,14 +159,7 @@ namespace misFITS {
 	    typedef std::vector<NativeType<SC_BYTE>::storage_type> Buffer;
 
 	public:
-	    Column( const ColumnInfo& info, std::vector<bool>* base )
-		: base_( base ),
-		  colnum_( info.colnum ),
-		  nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
-		base->resize( nelem_ );
-		buffer.resize( nelem_ );
-	    }
-
+	    Column( const ColumnInfo& info, std::vector<bool>* base );
 	    void read( const Table& table, LONGLONG firstrow );
 	    void write( const Table& table, LONGLONG firstrow );
 
