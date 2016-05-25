@@ -354,6 +354,34 @@ namespace misFITS {
     }
 
     //-----------------------------------------
+
+    void
+    Table::read_bytes( LONGLONG firstrow, LONGLONG offset, LONGLONG nbytes, unsigned char* data ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_read_tblbytes( file_->fptr(), firstrow, offset,
+				 nbytes,
+				 data,
+				 &status )
+	     );
+    }
+
+    void
+    Table::write_bytes( LONGLONG firstrow, LONGLONG offset, LONGLONG nbytes, unsigned char* data ) const {
+
+	misFITS_CHECK_CFITSIO_EXPR
+	    (
+	     fits_write_tblbytes( file_->fptr(), firstrow, offset,
+				  nbytes,
+				  data,
+				  &status )
+	     );
+    }
+
+
+    //-----------------------------------------
+
     template<typename T>
     void Table::read_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, T* data ) const {
 

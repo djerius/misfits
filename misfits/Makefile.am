@@ -23,6 +23,8 @@ lib_LTLIBRARIES += %D%/libmisfits.la
 			%D%/memblock.hpp	\
 			%D%/row.cc		\
 			%D%/row.hpp		\
+			%D%/row_entry.cc	\
+			%D%/row_entry.hpp	\
 			%D%/table.cc		\
 			%D%/table.hpp		\
 			%D%/types.cc		\

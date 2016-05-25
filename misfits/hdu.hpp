@@ -36,7 +36,6 @@ namespace misFITS {
     class HDU : public Shared<HDU> {
 
 	friend class File;
-	template<typename T> friend class Entry::Column;
 	friend class resetHDU;
 
     public:

@@ -30,7 +30,6 @@ namespace misFITS {
 
     namespace Entry {
 
-	class ColumnBase;
 	class MemBlock {
 
 	public:
@@ -43,7 +42,7 @@ namespace misFITS {
 
 		EntryBase ( const std::string& name, ptrdiff_t offset ) : name ( name ), offset( offset ) {}
 		virtual ~EntryBase() {}
-		virtual shared_ptr<misFITS::Entry::ColumnBase> column( const ColumnInfo& info, void* base ) const = 0;
+		virtual shared_ptr<misFITS::RowEntry::ColumnBase> column( const ColumnInfo& info, void* base ) const = 0;
 		virtual shared_ptr<EntryBase> clone() const = 0;
 
 	    };
@@ -62,11 +61,11 @@ namespace misFITS {
 		    return make_shared<Entry>( name, offset );
 		}
 
-		shared_ptr<misFITS::Entry::ColumnBase> column( const ColumnInfo& info, void* base ) const {
+		shared_ptr<misFITS::RowEntry::ColumnBase> column( const ColumnInfo& info, void* base ) const {
 
 		    EntryType* ptr= reinterpret_cast<EntryType*>( reinterpret_cast<unsigned char*>(base) + EntryBase::offset );
 
-		    return make_shared< misFITS::Entry::Column<EntryType> >( info, ptr  );
+		    return make_shared< misFITS::RowEntry::Column<EntryType> >( info, ptr  );
 
 		}
 

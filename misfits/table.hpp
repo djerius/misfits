@@ -37,6 +37,11 @@ namespace misFITS {
 
     class Row;
 
+    namespace RowEntry {
+	template<typename T> class Column;
+
+    }
+
     BOOST_SCOPED_ENUM_DECLARE_BEGIN( TableCopy )
     {
 	HDU, Header
@@ -55,6 +60,9 @@ namespace misFITS {
     };
 
     class Table : public HDU {
+
+	template<typename T> friend class RowEntry::Column;
+
 
     public:
 
@@ -112,6 +120,9 @@ namespace misFITS {
 
 	misFITS::Row row();
 
+
+    private:
+
 	template< typename T>
 	void read_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, T* data ) const;
 	template< typename T>
@@ -122,6 +133,9 @@ namespace misFITS {
 	void read_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, NativeType<SC_BYTE>::storage_type* data ) const;
 	template< BOOST_SCOPED_ENUM_NATIVE(ColumnType) T>
 	void write_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const NativeType<SC_BYTE>::storage_type* data ) const;
+
+	void read_bytes( LONGLONG firstrow, LONGLONG offset, LONGLONG nbytes, unsigned char* data ) const;
+	void write_bytes( LONGLONG firstrow, LONGLONG offset, LONGLONG nbytes, unsigned char* data ) const;
 
     protected:
 
