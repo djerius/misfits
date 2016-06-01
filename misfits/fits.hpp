@@ -260,9 +260,9 @@ namespace misFITS {
 	void close ();
 	FilePtr reopen( );
 
-	HDU_Type move_by( int nmove ) const;
+	void move_by( int nmove ) const;
 
-	HDU_Type move_to( int hdu_num ) const;
+	void move_to( int hdu_num ) const;
 	void move_to( const std::string&extname, int extver = 1, HDU_Type hdu_type = HDU_Type::Any ) const;
 
 	int num_hdus() const;

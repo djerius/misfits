@@ -268,18 +268,20 @@ namespace misFITS {
     }
 
 
-    HDU_Type
+    void
     File::move_by( int nmove ) const {
 	int hdu_type;
 	misFITS_CHECK_CFITSIO_EXPR( fits_movrel_hdu( fptr(), nmove, &hdu_type, &status ) );
-	return static_cast<HDU_Type>(hdu_type);
     }
 
-    HDU_Type
-    File::move_to( int hdu_num ) const {
+    void
+    File::move_to( int hdu_num_req ) const {
+
+	if ( hdu_num() == hdu_num_req )
+	    return ;
+
 	int hdu_type;
-	misFITS_CHECK_CFITSIO_EXPR( fits_movabs_hdu( fptr(), hdu_num, &hdu_type, &status ) );
-	return static_cast<HDU_Type>(hdu_type);
+	misFITS_CHECK_CFITSIO_EXPR( fits_movabs_hdu( fptr(), hdu_num_req, &hdu_type, &status ) );
     }
 
     void
