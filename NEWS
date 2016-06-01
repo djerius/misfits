@@ -1,3 +1,12 @@
+0.0.12	2016-06-01T16:58:59-0400
+
+  [API CHANGE]
+   * move_by and move_to no longer return an HDU_Type; they return void
+
+  [ENHANCEMENT]
+  * move_to only calls CFITSIO move routine when required
+  * new routine HDU::set_as_chdu makes the HDU the current one.
+
 0.0.11	2016-05-12T18:36:15-0400
 
   [BUILD]
