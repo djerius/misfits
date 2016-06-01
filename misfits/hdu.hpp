@@ -78,6 +78,8 @@ namespace misFITS {
 	int hdu_num() const { return hdu_num_; }
 	int extver() const { return extver_; }
 
+	void set_as_chdu() const;
+
     protected:
 	own_or_observe::ptr<File> file_;
 	std::string extname_;

@@ -310,6 +310,10 @@ namespace misFITS {
 	extver_  = read_key<int>( "EXTVER", 1 ).value;
     }
 
+    void HDU::set_as_chdu () const {
+	file_->move_to( hdu_num_ );
+    }
+
     struct keyword_output {
 
 	std::ostream& os;
