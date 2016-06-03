@@ -72,7 +72,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	misFITS::TablePtr table = row.table();
 
 	ASSERT_EQ( hdu1, table->hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table->extname() );
 	ASSERT_EQ( 1, table->extver() );
@@ -85,7 +84,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	misFITS::TablePtr table = row.table();
 
 	ASSERT_EQ( hdu1, table->hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table->extname() );
 	ASSERT_EQ( 1, table->extver() );
@@ -97,7 +95,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	misFITS::TablePtr table = row.table();
 
 	ASSERT_EQ( hdu2, table->hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table->extname() );
 	ASSERT_EQ( 2, table->extver() );
@@ -109,7 +106,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	misFITS::TablePtr table = row.table();
 
 	ASSERT_EQ( hdu2, table->hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table->extname() );
 	ASSERT_EQ( 2, table->extver() );

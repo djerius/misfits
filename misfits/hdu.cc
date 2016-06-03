@@ -38,7 +38,7 @@ namespace misFITS {
     std::pair<int,int>
     HDU::get_hdrpos()  {
 
-	resetHDU chdu( *this );
+	set_as_chdu();
 
 	int keysexist, keynum;
 	misFITS_CHECK_CFITSIO_EXPR
@@ -116,7 +116,7 @@ namespace misFITS {
     Keyword<std::string>
     HDU::read_keyn( int keynum, const std::string& default_value ) const {
 
-       resetHDU chdu( *this );
+	set_as_chdu();
 
        char keyname[FLEN_KEYWORD+1] = { '\0' };
        char   value[FLEN_VALUE+1]   = { '\0' };
@@ -136,7 +136,7 @@ namespace misFITS {
     Keyword<std::string>
     HDU::get_keyword( const std::string& keyname, const std::string& default_value ) const {
 
-    	resetHDU chdu( *this );
+	set_as_chdu();
 
     	std::string value;
     	char comment[FLEN_COMMENT+1] = { '\0' };
@@ -176,7 +176,7 @@ namespace misFITS {
     template<typename T>
     Keyword<T> HDU::get_keyword( const std::string& keyname, const T& default_value ) const {
 
-    	resetHDU chdu( *this );
+	set_as_chdu();
 
     	T value = default_value;
     	char comment[FLEN_COMMENT+1] = { '\0' };
@@ -204,7 +204,7 @@ namespace misFITS {
     template<>
     void HDU::set_keyword<std::string>( const Keyword<std::string>& kw ) const {
 
-	resetHDU chdu( *this );
+	set_as_chdu();
 
 	if ( kw.value.size() > FLEN_VALUE ) {
 
@@ -239,7 +239,7 @@ namespace misFITS {
     template<typename T>
     void HDU::set_keyword( const Keyword<T>& kw ) const {
 
-	resetHDU chdu( *this );
+	set_as_chdu();
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -265,6 +265,7 @@ namespace misFITS {
 
     void HDU::delete_keyword( const std::string& keyname ) const {
 
+	set_as_chdu();
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -277,6 +278,8 @@ namespace misFITS {
 
     void HDU::add_history( const std::string& history ) const {
 
+	set_as_chdu();
+
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_write_history( file_->fptr(),
@@ -288,6 +291,8 @@ namespace misFITS {
     }
 
     void HDU::add_comment( const std::string& comment ) const {
+
+	set_as_chdu();
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
@@ -324,7 +329,6 @@ namespace misFITS {
 	file_.set<own_or_observe::observed>( file );
 
 	{
-	    resetHDU chdu( file_ );
 	    file_->move_to( extname, extver );
 	    hdu_num_ = file_->hdu_num();
 	}
@@ -337,7 +341,6 @@ namespace misFITS {
 	file_.set<own_or_observe::observed>( file );
 
 	{
-	    resetHDU chdu( file_ );
 	    file_->move_to( extname, extver );
 	    hdu_num_ = file_->hdu_num();
 	}
@@ -355,7 +358,7 @@ namespace misFITS {
 
     void HDU::refresh() {
 
-	resetHDU chdu( *this );
+	set_as_chdu();
 
 	extname_ = get_keyword<std::string>( "EXTNAME", "" ).value;
 	extver_  = get_keyword<int>( "EXTVER", 1 ).value;

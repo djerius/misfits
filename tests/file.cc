@@ -165,9 +165,6 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
     {
 	TypeParam tp = this->create( hdu1 );
 
-	// make sure file is back at its original hdu
-	ASSERT_EQ( 1, file->hdu_num() );
-
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname() );
 	ASSERT_EQ( hdu1, tp->hdu_num() );
@@ -177,9 +174,6 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
     // now try with the second table
     {
 	TypeParam tp = this->create( hdu2 );
-
-	// make sure file is back at its original hdu
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname() );
@@ -191,9 +185,6 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
     {
 	TypeParam tp = this->create( "stuff", 1 );
 
-	// make sure file is back at its original hdu
-	ASSERT_EQ( 1, file->hdu_num() );
-
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname() );
 	ASSERT_EQ( hdu1, tp->hdu_num() );
@@ -202,9 +193,6 @@ TYPED_TEST( HDUTableCreateTest, ReturnTable ) {
     // now try with the second table
     {
 	TypeParam tp = this->create( "stuff", 2 );
-
-	// make sure file is back at its original hdu
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	// make sure we picked up the correct table
 	ASSERT_EQ( "stuff", tp->extname() );

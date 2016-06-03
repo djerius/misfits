@@ -72,7 +72,7 @@ namespace misFITS {
     bool
     Row::read(){
 
-	resetHDU chdu( table_ );
+	table_->set_as_chdu();
 
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to read" );
@@ -93,7 +93,7 @@ namespace misFITS {
     void
     Row::write() {
 
-	resetHDU chdu( table_ );
+	table_->set_as_chdu();
 
 	if ( ! entries.size() )
 	    throw Exception::Assert( "row object was not assigned any columns to write" );

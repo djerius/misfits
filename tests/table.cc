@@ -71,7 +71,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	file->move_to( 1 );
 	misFITS::Table table( file, "stuff" );
 	ASSERT_EQ( hdu1, table.hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table.extname() );
 	ASSERT_EQ( 1, table.extver() );
@@ -82,7 +81,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	file->move_to( 1 );
 	misFITS::Table table( file, "stuff", 1 );
 	ASSERT_EQ( hdu1, table.hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table.extname() );
 	ASSERT_EQ( 1, table.extver() );
@@ -92,7 +90,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	file->move_to( 1 );
 	misFITS::Table table( file, "stuff", 2 );
 	ASSERT_EQ( hdu2, table.hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table.extname() );
 	ASSERT_EQ( 2, table.extver() );
@@ -102,7 +99,6 @@ TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 	file->move_to( 1 );
 	misFITS::Table table( file, hdu2 );
 	ASSERT_EQ( hdu2, table.hdu_num() );
-	ASSERT_EQ( 1, file->hdu_num() );
 
 	ASSERT_EQ( "stuff", table.extname() );
 	ASSERT_EQ( 2, table.extver() );
@@ -125,9 +121,6 @@ TEST_F( FiducialTableROFptr, MetaData ) {
 
     ASSERT_EQ( data.columns.size(), table.num_columns() );
     ASSERT_EQ( data.nrows, table.num_rows() );
-
-    // and make sure file is still where we left it.
-    ASSERT_EQ( 1, file->hdu_num() );
 
     Fiducial::Data::Cols::const_iterator col( data.columns.begin() );
     Fiducial::Data::Cols::const_iterator end( data.columns.end() );
