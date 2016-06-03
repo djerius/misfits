@@ -49,6 +49,8 @@ namespace misFITS {
 	    virtual ~ColumnBase() {}
 	};
 
+	//-----------------------------------------
+
 	template< typename T >
 	class Column : public ColumnBase {
 
@@ -73,6 +75,8 @@ namespace misFITS {
 	    Table::Columns::size_type colnum_;
 	    LONGLONG nelem_;
 	};
+
+	//-----------------------------------------
 
 	template< typename T>
 	class Column< std::vector<T> > : public ColumnBase {
@@ -104,10 +108,13 @@ namespace misFITS {
 	    typename Base::size_type nelem_;
 	};
 
+	//-----------------------------------------
+
 	template<>
 	class Column< BitSet > : public ColumnBase {
 
 	    typedef BitSet Base;
+	    typedef Base::size_type size_type;
 	    typedef std::vector<BitSet::block_type> Buffer;
 
 	public:
@@ -122,8 +129,8 @@ namespace misFITS {
 	private:
 	    Base* base_;
 	    Table::Columns::size_type colnum_;
-	    Base::size_type nbits_;
-	    Base::size_type max_bits_;
+	    size_type nbits_;
+	    size_type max_bits_;
 
 	    // number of bytes required to store the bits. cached for
 	    // speed
@@ -131,6 +138,8 @@ namespace misFITS {
 
 	    Buffer buffer;
 	};
+
+	//-----------------------------------------
 
 	template<>
 	class Column< bool > : public ColumnBase {
@@ -152,6 +161,8 @@ namespace misFITS {
 	    Buffer::size_type nelem_;
 	};
 
+	//-----------------------------------------
+
 	template<>
 	class Column< std::vector<bool> > : public ColumnBase {
 
@@ -170,6 +181,8 @@ namespace misFITS {
 	    Buffer::size_type nelem_;
 	};
 
+
+	//-----------------------------------------
 
 	template<>
 	class Column<std::string>: public ColumnBase {
@@ -200,6 +213,8 @@ namespace misFITS {
 	    Buffer::size_type nbytes;
 
 	};
+
+	//-----------------------------------------
 
 	template<>
 	class Column< std::vector<std::string> >: public ColumnBase {
@@ -232,6 +247,9 @@ namespace misFITS {
 	    Buffer::size_type width;
 
 	};
+
+
+	//-----------------------------------------
 
 
 	template<> Column<byte_t>::Column( const ColumnInfo& info, byte_t* base );
