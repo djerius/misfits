@@ -1,2 +1,12 @@
 * Table::copy_columns should be templatized on the container holding the column names
 
+* if Row is passed a column to fill/empty, it should be able to
+   autoincrement the pointer to the data, so that something like this
+
+   vector<int> data;
+   row.add( "column", data );
+
+   while( ! done )
+     row->write()
+
+   will iterate through data.

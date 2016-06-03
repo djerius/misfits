@@ -1,3 +1,26 @@
+0.0.13	2016-06-03T15:17:26-0400
+
+  [API CHANGE]
+
+    * The keyword interface has changed:
+
+      * single set of public getters and setters,
+        HDU::get_keyword/HDU::set_keyword instead of
+        HDU::read_keyword/HDU::read_key/HDU::write_key/HDU::update_key.
+
+      * string keywords now implicitly handle HEASARC long string
+        convention strings
+
+      * new method HDU::has_keyword().
+
+      * new methods HDU::add_history(), HDU::add_comment()
+
+  [BUG FIX]
+
+    * Performing repeated operations on an HDU (e.g. row.read() )
+      which wasn't the CHDU for the underlying FilePtr object
+      destroyed performance.
+
 0.0.12	2016-06-01T16:58:59-0400
 
   [API CHANGE]
