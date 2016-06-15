@@ -55,6 +55,8 @@ namespace misFITS {
 	LONGLONG nelem() const;
 	ExtentType::size_type naxes() const { return size() ; }
 
+	Extent squeeze() const;
+
     };
 
     bool operator == ( const Extent& a0, const Extent& b0 );

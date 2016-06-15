@@ -175,12 +175,29 @@ namespace misFITS {
 	     );
 
 	// CFITSIO fixes up everything but TDIM
-	misFITS_CHECK_CFITSIO_EXPR
-	    (
-	     ostringstream tdim;
-	     tdim << "TDIM" << colnum ;
-	     fits_modify_key_str( file_->fptr(), tdim.str().c_str(), to_string( extent ).c_str() , "&", &status );
-	     );
+	ostringstream tdim_key_str;
+	tdim_key_str << "TDIM" << colnum ;
+	string tdim_key = tdim_key_str.str();
+
+	// if there's only a single dimension, don't write out a TDIM
+	// keyword, as CIAO can't handle that for bitstrings (and it's
+	// redundant, anyway)
+	if ( extent.squeeze().naxes() == 1 ) {
+
+	    if ( has_keyword( tdim_key ) )
+		delete_keyword( tdim_key );
+
+	}
+
+	else {
+
+	    Keyword<std::string> tdim( tdim_key, to_string( extent ) );
+
+	    if ( has_keyword( tdim_key ) )
+		tdim.comment = get_keyword<std::string>( tdim_key ).comment;
+
+	    set_keyword( tdim );
+	}
 
 	refresh();
     }

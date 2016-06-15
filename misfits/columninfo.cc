@@ -227,14 +227,18 @@ namespace misFITS {
 			     &status)
 	     );
 
-	misFITS_CHECK_CFITSIO_EXPR
-	    (
-	     fits_write_tdimll( file.fptr(),
-				static_cast<int>( colnum ),
-				static_cast<int>( extent.naxes() ),
-				const_cast<LONGLONG*>(&(extent[0])),
-				&status )
-	     );
+	// if there's only a single dimension, don't write out a TDIM
+	// keyword, as CIAO can't handle that for bitstrings (and it's
+	// redundant, anyway)
+	if ( extent.squeeze().naxes() > 1 )
+	    misFITS_CHECK_CFITSIO_EXPR
+		(
+		 fits_write_tdimll( file.fptr(),
+				    static_cast<int>( colnum ),
+				    static_cast<int>( extent.naxes() ),
+				    const_cast<LONGLONG*>(&(extent[0])),
+				    &status )
+		 );
 
     }
 }

@@ -62,19 +62,20 @@ namespace misFITS {
 				);
     }
 
-    bool operator == ( const Extent& a0,
-		       const Extent& b0 ) {
+    Extent
+    Extent::squeeze() const {
 
-	Extent a( a0 );
-	Extent b( b0 );
+	Extent sqz( *this );
+	Extent::iterator end = remove( sqz.begin(), sqz.end(), 1 );
+	sqz.erase( end, sqz.end() );
+	return sqz;
+    }
 
-	Extent::iterator a_end = remove( a.begin(), a.end(), 1 );
-	Extent::iterator b_end = remove( b.begin(), b.end(), 1 );
 
-	a.resize( static_cast<ExtentType::size_type>(a_end - a.begin()) );
-	b.resize( static_cast<ExtentType::size_type>(b_end - b.begin()) );
+    bool operator == ( const Extent& a,
+		       const Extent& b ) {
 
-	return static_cast<ExtentType>(a) == static_cast<ExtentType>(b);
+	return static_cast<ExtentType>( a.squeeze() ) == static_cast<ExtentType>( b.squeeze() );
     }
 
     bool operator != ( const Extent& a0, const Extent& b0 ) {

@@ -224,6 +224,10 @@ TEST( TableTest, ResizeColumn ) {
 
     table.add( "col1", ColumnType::Double, "", 1, 1 );
 
+    // single dimension cells have no TDIM keywords
+    // to ensure CIAO don't barf
+    ASSERT_FALSE( table.has_keyword( "TDIM1" ) );
+
     Extent ex0 = table.colinfo( 1 ).extent;
 
     table.resize( "col1", Extent( 3, 2 ) );
