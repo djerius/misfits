@@ -1,3 +1,13 @@
+0.0.14	2016-06-15T16:35:51-0400
+
+  [COMPATIBILITY KLUDGE]
+
+    * the CIAO software suite (http://cxc.harvard.edu/ciao/) as of
+      version 4.8 can't handle binary tables with bitfields which have
+      a TDIM keyword.  As a work around, don't output TDIM keywords
+      for any columns with 1D cells (it's redundant with TFORM, in any
+      case).
+
 0.0.13	2016-06-03T15:17:26-0400
 
   [API CHANGE]
