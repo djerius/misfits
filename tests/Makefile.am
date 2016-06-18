@@ -8,7 +8,10 @@ AUTOTEST_PATH           += :$(abs_builddir)/%D%
 
 TEST_FITS_FILENAME      = file.fits
 
-LDADD_%C% 		= $(MISFITS_LIBS) $(LDADD)  %D%/libtest_utils.la $(LDADD_GTEST)
+LDADD_%C% 		=			\
+			$(MISFITS_LIBS)		\
+			$(LDADD)		\
+			$(LDADD_GTEST)
 
 CPPFLAGS_%C%		=						\
 			-I %D%						\
@@ -59,8 +62,9 @@ noinst_LTLIBRARIES	+= %D%/libtest_utils.la
 ##############################
 
 LDADD_%C%_TESTS		=					\
-			$(LDADD_%C%)				\
-			$(top_builddir)/misfits/libmisfits.la
+			%D%/libtest_utils.la			\
+			$(top_builddir)/misfits/libmisfits.la	\
+			$(LDADD_%C%)
 
 CPPFLAGS_%C%_TESTS	=			\
 			$(CPPFLAGS_%C%)		\
