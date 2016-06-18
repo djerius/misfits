@@ -30,7 +30,8 @@ m4_include(prog_help.ac)
 #---------------------------------------------------------
 # Checks for typedefs, structures, and compiler characteristics.
 
-BOOST_REQUIRE(1.46)
+# require boost.Core
+BOOST_REQUIRE(1.56)
 BOOST_FILESYSTEM
 # shouldn't this be done for me?
 BOOST_FILESYSTEM_LIBS="$BOOST_FILESYSTEM_LIBS $BOOST_SYSTEM_LIBS"
