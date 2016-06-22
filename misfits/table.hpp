@@ -72,8 +72,8 @@ namespace misFITS {
 	Table( WeakFilePtr file, int hdu_num = 0 );
 	Table( WeakFilePtr file, const std::string& extname, int extver = 1 );
 
-	const ColumnInfo& colinfo( Columns::size_type colnum );
-	const ColumnInfo& colinfo( const std::string& name );
+	const ColumnInfo& colinfo( Columns::size_type colnum ) const;
+	const ColumnInfo& colinfo( const std::string& name ) const;
 
 	// copy table to other file
 	TablePtr copy( FilePtr& file, const TableCopy& what, int morekeys = 0 ) const;
@@ -113,7 +113,7 @@ namespace misFITS {
 	void delete_column( const std::string& name );
 
 	void copy_column( Table& dest, const std::string& name,
-			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) );
+			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) ) const;
 
 	void copy_columns( Table& dest, const std::vector< std::string >& name,
 			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) );

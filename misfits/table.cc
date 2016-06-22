@@ -105,12 +105,12 @@ namespace misFITS {
     }
 
     const ColumnInfo&
-    Table::colinfo(  Columns::size_type colnum ) {
+    Table::colinfo(  Columns::size_type colnum ) const {
 	return columns.at(colnum - 1);
     }
 
     const ColumnInfo&
-    Table::colinfo( const string& colname ) {
+    Table::colinfo( const string& colname ) const {
 	int colnum;
 
 	set_as_chdu();
@@ -249,7 +249,7 @@ namespace misFITS {
 
     // copy a column to another table
     void
-    Table::copy_column( Table& dest, const std::string& name, ColumnCopy::Flag how ) {
+    Table::copy_column( Table& dest, const std::string& name, ColumnCopy::Flag how ) const {
 
 	vector<std::string> names;
 	names.push_back( name );
@@ -260,7 +260,7 @@ namespace misFITS {
 
     // copy columns to another table
     void
-    Table::copy_columns( Table& dest, const std::vector<std::string>& names, ColumnCopy::Flag how ) {
+    Table::copy_columns( Table& dest, const std::vector<std::string>& names, ColumnCopy::Flag how ) const {
 
 	// do nothing if nothing is to be done. later logic assumes
 	// names is not empty
