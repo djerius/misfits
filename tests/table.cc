@@ -481,3 +481,28 @@ TEST( TableTest, CopyColumnExtendIfEmpty ) {
 
 }
 
+TEST( TableTest, CopyAllColumns ) {
+
+    misFITS::Table table0( "MyEXTENT" );
+
+    table0.add( "col1", ColumnType::Double );
+    table0.add( "col2", ColumnType::Double );
+    table0.add( "col3", ColumnType::Double );
+
+    misFITS::Table table1( "MyEXTENT" );
+    table1.add( "col1", ColumnType::Long );
+    table1.add( "col2", ColumnType::Double );
+
+    table0.copy_columns( table1, static_cast<misFITS::ColumnCopy::Flag>(misFITS::ColumnCopy::OverWrite | misFITS::ColumnCopy::ExtendTableIfEmpty) );
+
+    ColumnInfo ci = table1.colinfo( "col1" );
+    ASSERT_EQ( 1, ci.colnum );
+    ci = table1.colinfo( "col2" );
+    ASSERT_EQ( 2, ci.colnum );
+    ci = table1.colinfo( "col3" );
+    ASSERT_EQ( 3, ci.colnum );
+
+
+
+}
+

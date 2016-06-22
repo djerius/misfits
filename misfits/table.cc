@@ -258,6 +258,19 @@ namespace misFITS {
     }
 
 
+    // copy all columns to another table
+    void
+    Table::copy_columns( Table& dest, ColumnCopy::Flag how ) const {
+
+	vector<std::string> names;
+
+	for ( size_t idx = 1 ; idx <= num_columns() ; ++ idx )
+	    names.push_back( colinfo(idx).ttype );
+
+	copy_columns( dest, names, how );
+    }
+
+
     // copy columns to another table
     void
     Table::copy_columns( Table& dest, const std::vector<std::string>& names, ColumnCopy::Flag how ) const {

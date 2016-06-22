@@ -116,7 +116,9 @@ namespace misFITS {
 			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) ) const;
 
 	void copy_columns( Table& dest, const std::vector< std::string >& name,
-			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) );
+			  ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) ) const;
+
+	void copy_columns( Table& dest, ColumnCopy::Flag how = static_cast<ColumnCopy::Flag>(ColumnCopy::NoDuplicates | ColumnCopy::ExtendTable) ) const;
 
 	misFITS::Row row();
 
