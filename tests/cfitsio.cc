@@ -26,6 +26,8 @@
 
 #include <fitsio.h>
 
+#include "misfits/fits_p.hpp"
+
 #include "util.hpp"
 #include "columns.hpp"
 

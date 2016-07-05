@@ -95,14 +95,6 @@ namespace misFITS {
 
 namespace misFITS {
 
-#define misFITS_CHECK_CFITSIO_EXPR( expr )	\
-    do {					\
-	int status = 0;				\
-	expr;					\
-	if ( status )				\
-	    throw misFITS::Exception::CFITSIO (status );	\
-    } while (0)
-
 
     // forward declarations for befriending
     namespace Entry {

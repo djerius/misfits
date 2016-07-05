@@ -22,6 +22,7 @@
 #include <string>
 #include <sstream>
 
+#include "misfits/fits_p.hpp"
 #include "columns.hpp"
 
 using namespace std;

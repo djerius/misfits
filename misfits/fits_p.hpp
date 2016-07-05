@@ -3,6 +3,15 @@
 
 #include <boost/preprocessor/seq.hpp>
 
+#define misFITS_CHECK_CFITSIO_EXPR( expr )			\
+    do {							\
+	int status = 0;						\
+	expr;							\
+	if ( status )						\
+	    throw misFITS::Exception::CFITSIO (status );	\
+    } while (0)
+
+
 #include "table.hpp"
 
 #define misFITS_STORAGE_TYPES (double)(float)(int)(unsigned int)(long)(unsigned long)(short)(unsigned short)(char)(unsigned char)(LONGLONG)

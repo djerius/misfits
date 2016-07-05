@@ -28,6 +28,7 @@ using namespace std;
 #include <fitsio.h>
 
 #include "misfits/fits.hpp"
+#include "misfits/fits_p.hpp"
 #include "misfits/table.hpp"
 
 namespace misFITS {

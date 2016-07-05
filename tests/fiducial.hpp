@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <misfits/fits.hpp>
+#include <misfits/fits_p.hpp>
 #include "util.hpp"
 
 namespace misFITS_Test {
