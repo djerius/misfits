@@ -1,0 +1,6 @@
+# required for built in documentation
+AC_CHECK_PROG(POD2TEXT,pod2text,yes)
+test -z "$POD2TEXT" && AC_MSG_WARN( "pod2text required only if regenerating documentation" )
+
+AC_CHECK_PROG(TEXT2USAGE,text2usage,yes)
+test -z "$TEXT2USAGE" && AC_MSG_WARN( "text2usage required only if regenerating documentation" )
