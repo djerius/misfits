@@ -64,10 +64,6 @@ namespace misFITS {
 
 	}
 
-	ID::type Impl<ID::Bit>::id() { return ID::Bit; }
-
-	char Impl<ID::Bit>::code() { return 'X'; }
-
 	template <> char Impl<ID::Byte>::code() 	 { return 'B'; }
 	template <> char Impl<ID::String>::code() 	 { return 'A'; }
 	template <> char Impl<ID::Short>::code() 	 { return 'I'; }

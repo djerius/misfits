@@ -235,8 +235,8 @@ namespace misFITS {
 	public:
 	    typedef ID::NativeType<ID::Bit>::storage_type atomic_type;
 	    typedef atomic_type vector_type;
-	    ID::type id();
-	    char code();
+	    ID::type id() { return ID::Bit; }
+	    char code()   { return 'X'; }
 	};
 
 	template <> class Impl< ID::Logical > : public Spec {
