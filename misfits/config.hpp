@@ -121,6 +121,118 @@
 #endif
 
 
+#ifdef HAVE_STD__INT16_T
+
+#include <cstdint>
+
+    namespace misFITS {
+
+	using std::int16_t;
+
+    }
+
+#elif HAVE_BOOST__INT16_T
+
+    #include <boost/cstdint.hpp>
+
+    namespace misFITS {
+
+	using boost::int16_t;
+
+    }
+
+#endif
+
+#ifdef HAVE_STD__UINT16_T
+
+#include <cstdint>
+
+    namespace misFITS {
+
+	using std::uint16_t;
+
+    }
+
+#elif HAVE_BOOST__UINT16_T
+
+    #include <boost/cstdint.hpp>
+
+    namespace misFITS {
+
+	using boost::uint16_t;
+
+    }
+
+#endif
+
+#ifdef HAVE_STD__INT32_T
+
+#include <cstdint>
+
+    namespace misFITS {
+
+	using std::int32_t;
+
+    }
+
+#elif HAVE_BOOST__INT32_T
+
+    #include <boost/cstdint.hpp>
+
+    namespace misFITS {
+
+	using boost::int32_t;
+
+    }
+
+#endif
+
+#ifdef HAVE_STD__UINT32_T
+
+#include <cstdint>
+
+    namespace misFITS {
+
+	using std::uint32_t;
+
+    }
+
+#elif HAVE_BOOST__UINT32_T
+
+    #include <boost/cstdint.hpp>
+
+    namespace misFITS {
+
+	using boost::uint32_t;
+
+    }
+
+#endif
+
+
+#ifdef HAVE_STD__INT64_T
+
+#include <cstdint>
+
+    namespace misFITS {
+
+	using std::int64_t;
+
+    }
+
+#elif HAVE_BOOST__INT64_T
+
+    #include <boost/cstdint.hpp>
+
+    namespace misFITS {
+
+	using boost::int64_t;
+
+    }
+
+#endif
+
+
 #endif  // ! misFITS_misCONFIG_H
 
 

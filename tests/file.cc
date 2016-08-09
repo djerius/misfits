@@ -28,7 +28,7 @@
 #include "fiducial_data.hpp"
 
 using namespace misFITS_Test;
-using misFITS::ColumnType;
+using namespace misFITS::ColumnType;
 using namespace misFITS;
 
 TEST_F( FiducialTableRWFptr, CopyALL ) {

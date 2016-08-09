@@ -19,32 +19,102 @@
 //
 // -->8-->8-->8-->8--
 
+#include <misfits/fits.hpp>
+#include "misfits/fits_p.hpp"
 #include <misfits/types.hpp>
 
+#include <climits>
 
 namespace misFITS {
 
-    static ColumnCode::Map
-    create_columncode() {
+    namespace ColumnType {
 
-	ColumnCode::Map t;
-	t[ColumnType::Bit] 	     = "X";
-	t[ColumnType::Byte]          = "B";
-	t[ColumnType::Logical]       = "L";
-	t[ColumnType::String]        = "A";
-	t[ColumnType::Short]         = "I";
-	t[ColumnType::Int32bit]      = "J";
-	t[ColumnType::Long]          = "J";
-	t[ColumnType::LongLong]      = "K";
-	t[ColumnType::Float]         = "E";
-	t[ColumnType::Double]        = "D";
-	t[ColumnType::Complex]       = "C";
-	t[ColumnType::DoubleComplex] = "M";
-	t[ColumnType::UnsignedShort] = "U";
-	t[ColumnType::UnsignedLong]  = "V";
-	return t;
+	ID::type Impl<ID::Bit>::id() { return ID::Bit; }
+
+	char Impl<ID::Bit>::code() { return 'X'; }
+
+	template <> char Impl<ID::Byte>::code() 	 { return 'B'; }
+	template <> char Impl<ID::Logical>::code() 	 { return 'L'; }
+	template <> char Impl<ID::String>::code() 	 { return 'A'; }
+	template <> char Impl<ID::Short>::code() 	 { return 'I'; }
+	template <> char Impl<ID::Long>::code() 	 { return 'J'; }
+	template <> char Impl<ID::LongLong>::code() 	 { return 'K'; }
+	template <> char Impl<ID::Float>::code() 	 { return 'E'; }
+	template <> char Impl<ID::Double>::code() 	 { return 'D'; }
+	template <> char Impl<ID::UShort>::code() 	 { return 'U'; }
+	template <> char Impl<ID::ULong>::code()  	 { return 'V'; }
+
+	// no support for complex as of yet
+	// template <> char Impl<ID::Complex>::code() 	 { return 'C'; }
+	// template <> char Impl<ID::DoubleComplex>::code() { return 'M'; }
+
+	SpecPtr
+	spec_from_id( ID::type id ) {
+
+	    switch (  id ) {
+
+	    case ID::Bit:
+		return make_shared< Impl<ID::Bit> >();
+		break;
+
+
+	    case ID::Byte:
+		return make_shared< Impl<ID::Byte> >();
+		break;
+
+	    case ID::Logical:
+		return make_shared< Impl<ID::Logical> >();
+		break;
+
+	    case ID::String:
+		return make_shared< Impl<ID::String> >();
+		break;
+
+	    case ID::Short:
+		return make_shared< Impl<ID::Short> >();
+		break;
+
+	    case ID::Long:
+		return make_shared< Impl<ID::Long> >();
+		break;
+
+	    case ID::LongLong:
+		return make_shared< Impl<ID::LongLong> >();
+		break;
+
+	    case ID::Float:
+		return make_shared< Impl<ID::Float> >();
+		break;
+
+	    case ID::Double:
+		return make_shared< Impl<ID::Double> >();
+		break;
+
+	    // no support for complex as of yet
+	    // case ID::Complex:
+	    // 	return make_shared< Impl<ID::Complex> >();
+	    // 	break;
+
+	    // case ID::DoubleComplex:
+	    // 	return make_shared< Impl<ID::DoubleComplex> >();
+	    // 	break;
+
+	    case ID::UShort:
+		return make_shared< Impl<ID::UShort> >();
+		break;
+
+	    case ID::ULong:
+		return make_shared< Impl<ID::ULong> >();
+		break;
+
+	    default:
+		throw Exception::Assert( "unknown type id" );
+
+	    };
+
+	}
+
     }
 
-    ColumnCode::Map ColumnCode::code = create_columncode();
 
 }

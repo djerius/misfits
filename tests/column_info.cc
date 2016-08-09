@@ -24,8 +24,9 @@
 #include "misfits/columninfo.hpp"
 #include "misfits/extent.hpp"
 
+using namespace misFITS::ColumnType;
+
 typedef misFITS::ColumnInfo ColumnInfo;
-typedef misFITS::ColumnType ColumnType;
 typedef misFITS::Extent     Extent;
 
 
@@ -35,29 +36,29 @@ TEST( ColumnInfo, Compare ) {
     Extent e2( 1, 2 );
 
     {
-	ColumnInfo c1( "c1",  ColumnType::Long, "", e1 );
-	ColumnInfo c2( "c2",  ColumnType::Long, "", e1 );
+	ColumnInfo c1( "c1",  ID::Long, "", e1 );
+	ColumnInfo c2( "c2",  ID::Long, "", e1 );
 
 	EXPECT_TRUE( c1 == c2 ) << "same type, same extent";
     }
 
     {
-	ColumnInfo c1( "c1",  ColumnType::Long, "", e1 );
-	ColumnInfo c2( "c2",  ColumnType::Long, "", e2 );
+	ColumnInfo c1( "c1",  ID::Long, "", e1 );
+	ColumnInfo c2( "c2",  ID::Long, "", e2 );
 
 	EXPECT_FALSE( c1 == c2 ) << "same type, different extent";
     }
 
     {
-	ColumnInfo c1( "c1",  ColumnType::Short, "", e1 );
-	ColumnInfo c2( "c2",  ColumnType::Long, "", e1 );
+	ColumnInfo c1( "c1",  ID::Short, "", e1 );
+	ColumnInfo c2( "c2",  ID::Long, "", e1 );
 
 	EXPECT_FALSE( c1 == c2 ) << "different type, same extent";
     }
 
     {
-	ColumnInfo c1( "c1",  ColumnType::Short, "", e1 );
-	ColumnInfo c2( "c2",  ColumnType::Long, "", e2 );
+	ColumnInfo c1( "c1",  ID::Short, "", e1 );
+	ColumnInfo c2( "c2",  ID::Long, "", e2 );
 
 	EXPECT_FALSE( c1 == c2 ) << "different type, different extent";
     }

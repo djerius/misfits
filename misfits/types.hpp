@@ -32,6 +32,9 @@
 
 #include <fitsio.h>
 
+#include <misfits/config.hpp>
+#include <misfits/bitset.hpp>
+
 namespace misFITS {
 
     enum StorageType {
@@ -131,6 +134,12 @@ namespace misFITS {
 	static const StorageType type = SC_STRING;
     };
 
+
+    // These are the types that CFITSIO maps to its enums when using
+    // the generic datatype read/write routines.  misFITS should
+    // really be using the type specific I/O routines and avoid the
+    // dispatch tables, but that's for another release.
+
     template <StorageType T> struct NativeType;
 
     template <> struct NativeType<SC_DOUBLE>  { typedef double 	       	storage_type; };
@@ -145,37 +154,92 @@ namespace misFITS {
     template <> struct NativeType<SC_LOGICAL> { typedef bool  		storage_type; };
 
 
-    // these must be listed such that the last entry for a valid
-    // CFITSIO enum is the largest
+
+    namespace ColumnType {
+
+	namespace ID {
+
+	    typedef int type;
+
+	   // these must be listed such that the last entry for a valid
+	   // CFITSIO enum is the largest
+	    enum {
+		Bit 	      = TBIT,
+		Byte          = TBYTE,
+		Logical       = TLOGICAL,
+		String        = TSTRING,
+		Short         = TSHORT,
+		Long          = TINT32BIT,
+		Int32bit      = TINT32BIT,
+		LongLong      = TLONGLONG,
+		Float         = TFLOAT,
+		Double        = TDOUBLE,
+		Complex       = TCOMPLEX,
+		DoubleComplex = TDBLCOMPLEX,
+		UShort,
+		ULong
+	    };
+
+	    template <type T> struct NativeType 	    { };
+	    template <> struct NativeType<Bit> 	   	    { typedef BitSet  	  		storage_type; };
+	    template <> struct NativeType<Byte> 	    { typedef uint8_t  	  		storage_type; };
+	    template <> struct NativeType<Logical> 	    { typedef bool  	  		storage_type; };
+	    template <> struct NativeType<String> 	    { typedef std::string  		storage_type; };
+	    template <> struct NativeType<Short>   	    { typedef int16_t 	  		storage_type; };
+
+	    template <> struct NativeType<Long>    	    { typedef int32_t 	  		storage_type; };
+	    // the following is the same as Long
+	    // template <> struct NativeType<Int32bit>      { typedef int32_t      		storage_type; };
+
+	    template <> struct NativeType<LongLong>    	    { typedef int64_t   	  	storage_type; };
+	    template <> struct NativeType<Float>   	    { typedef float 	  		storage_type; };
+	    template <> struct NativeType<Double>   	    { typedef double 	  		storage_type; };
+	    template <> struct NativeType<UShort>   	    { typedef uint16_t 	  		storage_type; };
+	    template <> struct NativeType<ULong>   	    { typedef uint32_t 	  		storage_type; };
 
 
-    BOOST_SCOPED_ENUM_DECLARE_BEGIN( ColumnType )
-    {
-	    Bit 	  = TBIT,
-	    Byte          = TBYTE,
-	    Logical       = TLOGICAL,
-	    String        = TSTRING,
-	    Short         = TSHORT,
-	    Long          = TINT32BIT,
-	    Int32bit      = TINT32BIT,
-	    LongLong      = TLONGLONG,
-	    Float         = TFLOAT,
-	    Double        = TDOUBLE,
-	    Complex       = TCOMPLEX,
-	    DoubleComplex = TDBLCOMPLEX,
-	    UnsignedShort,
-	    UnsignedLong
-    }
-    BOOST_SCOPED_ENUM_DECLARE_END( ColumnType)
+	    // we don't  support complex types yet
+	    // template <> struct NativeType<Complex>       { typedef std::complex<float> 	storage_type; };
+	    // template <> struct NativeType<DoubleComplex> { typedef std::complex<double> 	storage_type; };
 
-    class ColumnCode {
+	}
 
-    public:
-	typedef std::map<ColumnType,const char*> Map;
-	static Map code;
+	class Spec {
+
+	public:
+	    virtual ID::type id() = 0;
+	    virtual char code() = 0;
+
+	protected:
+	    friend shared_ptr<Spec> spec_from_id( ID::type id);
+	    Spec() {};
+	};
+
+
+	template <ID::type T> class Impl : public Spec {
+
+	public:
+	    typedef typename ID::NativeType<T>::storage_type  atomic_type;
+	    typedef std::vector<atomic_type> vector_type;
+	    ID::type id() { return T; }
+	    char code();
+	};
+
+	template <> class Impl< ID::Bit > : public Spec {
+
+	public:
+	    typedef ID::NativeType<ID::Bit>::storage_type atomic_type;
+	    typedef atomic_type vector_type;
+	    ID::type id();
+	    char code();
+	};
+
+
+	typedef shared_ptr<Spec> SpecPtr;
+
+	SpecPtr spec_from_id( ID::type id );
 
     };
-
 
     struct FileCopy {
 	enum Flag

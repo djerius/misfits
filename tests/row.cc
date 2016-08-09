@@ -31,7 +31,6 @@ namespace Mode = misFITS::Mode;
 #include "fiducial_data.hpp"
 
 using namespace misFITS_Test;
-using misFITS::ColumnType;
 
 TEST_F( FiducialTableRWFptr, CreateFromFPtr ) {
 

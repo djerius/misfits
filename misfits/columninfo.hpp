@@ -36,7 +36,7 @@ namespace misFITS {
 	// FITS column information
 	std::string ttype;
 	std::string tunit;
-	ColumnType  column_type;
+	ColumnType::SpecPtr  column_type;
 
 	// offset of first byte from start of row. for use in directly
 	// accessing raw data.  This is *not* initialized in the constructor for
@@ -50,7 +50,7 @@ namespace misFITS {
 	// this may be the only unique id for the column
 	TableColumnsType::size_type colnum;
 
-	ColumnInfo( const std::string& name, ColumnType column_type,
+	ColumnInfo( const std::string& name, ColumnType::ID::type column_type,
 		    const std::string& unit, const Extent& extent,
 		    TableColumnsType::size_type = 0);
 

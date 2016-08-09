@@ -73,7 +73,7 @@ TEST( BitSet,  misFITSOddBitSetSize ) {
 			misFITS::Row w_row( table );
 
 			table.add( STATUS_COLUMN,
-				   misFITS::ColumnType::Bit,
+				   misFITS::ColumnType::ID::Bit,
 				   STATUS_BIT + 1 );
 
 			w_row.add( STATUS_COLUMN, &alt_status );

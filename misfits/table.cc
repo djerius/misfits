@@ -140,7 +140,7 @@ namespace misFITS {
 
     Table&
     Table::add( const std::string& ttype,
-		ColumnType column_type,
+		ColumnType::ID::type column_type,
 		const std::string& tunit,
 		const Extent& extent,
 		Columns::size_type colnum ) {
@@ -458,12 +458,12 @@ namespace misFITS {
     //-----------------------------------------
 
     template<>
-    void Table::read_col<ColumnType::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, NativeType<SC_BYTE>::storage_type* data ) const {
+    void Table::read_col<ColumnType::ID::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, NativeType<SC_BYTE>::storage_type* data ) const {
 
     	misFITS_CHECK_CFITSIO_EXPR
     	    (
     	     fits_read_col( file_->fptr(),
-    			    static_cast<int>(ColumnType::Logical),
+    			    static_cast<int>(ColumnType::ID::Logical),
     			    static_cast<int>( colnum ),
     			    firstrow, firstelem,
     			    nelem,
@@ -474,12 +474,12 @@ namespace misFITS {
     }
 
     template<>
-    void Table::write_col<ColumnType::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const NativeType<SC_BYTE>::storage_type* data ) const {
+    void Table::write_col<ColumnType::ID::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const NativeType<SC_BYTE>::storage_type* data ) const {
 
 	misFITS_CHECK_CFITSIO_EXPR
 	    (
 	     fits_write_col( file_->fptr(),
-			     static_cast<int>(ColumnType::Logical),
+			     static_cast<int>(ColumnType::ID::Logical),
 			     static_cast<int>( colnum ),
 			     firstrow, firstelem,
 			     nelem,

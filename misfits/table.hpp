@@ -81,13 +81,13 @@ namespace misFITS {
 	Table& add( const ColumnInfo& );
 
 	Table& add( const std::string& ttype,
-		    ColumnType typecode,
+		    ColumnType::ID::type typecode,
 		    const std::string& tunit = "",
 		    const Extent& extent = Extent(1),
 		    Columns::size_type colnum = 0);
 
 	Table& add( const std::string& ttype,
-		    ColumnType typecode,
+		    ColumnType::ID::type typecode,
 		    const Extent& extent,
 		    Columns::size_type colnum = 0) {
 
@@ -131,9 +131,10 @@ namespace misFITS {
 	void write_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const T* data ) const;
 
 	// in rare cases (i.e. TLOGICAL), can't uniquely map CFITSIO storage type to required datatype
-	template< BOOST_SCOPED_ENUM_NATIVE(ColumnType) T>
+	template< ColumnType::ID::type T>
 	void read_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, NativeType<SC_BYTE>::storage_type* data ) const;
-	template< BOOST_SCOPED_ENUM_NATIVE(ColumnType) T>
+
+	template< ColumnType::ID::type T>
 	void write_col( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem_, const NativeType<SC_BYTE>::storage_type* data ) const;
 
 	void read_bytes( LONGLONG firstrow, LONGLONG offset, LONGLONG nbytes, unsigned char* data ) const;

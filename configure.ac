@@ -55,6 +55,89 @@ STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $UINT8_T"
 
 
 AC_CHECK_TYPES(
+    [int16_t],
+    [INT16_T=-DHAVE_STD__INT16_T],
+    [
+     BOOST_FIND_HEADER(
+	 [boost/cstdint.hpp],
+	 [AC_MSG_ERROR([Cannot find support for int16_t (either from compiler or Boost); cannot continue])],
+	 [INT16_T=-DHAVE_BOOST__INT16_T
+	  USE_BOOST_STDCXX=1
+	 ]
+     )
+    ],
+    [[#include <cstdint>]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $INT16_T"
+
+AC_CHECK_TYPES(
+    [uint16_t],
+    [UINT16_T=-DHAVE_STD__UINT16_T],
+    [
+     BOOST_FIND_HEADER(
+	 [boost/cstdint.hpp],
+	 [AC_MSG_ERROR([Cannot find support for uint16_t (either from compiler or Boost); cannot continue])],
+	 [UINT16_T=-DHAVE_BOOST__UINT16_T
+	  USE_BOOST_STDCXX=1
+	 ]
+     )
+    ],
+    [[#include <cstdint>]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $UINT16_T"
+
+
+AC_CHECK_TYPES(
+    [int32_t],
+    [INT32_T=-DHAVE_STD__INT32_T],
+    [
+     BOOST_FIND_HEADER(
+	 [boost/cstdint.hpp],
+	 [AC_MSG_ERROR([Cannot find support for int32_t (either from compiler or Boost); cannot continue])],
+	 [INT32_T=-DHAVE_BOOST__INT32_T
+	  USE_BOOST_STDCXX=1
+	 ]
+     )
+    ],
+    [[#include <cstdint>]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $INT32_T"
+
+AC_CHECK_TYPES(
+    [uint32_t],
+    [UINT32_T=-DHAVE_STD__UINT32_T],
+    [
+     BOOST_FIND_HEADER(
+	 [boost/cstdint.hpp],
+	 [AC_MSG_ERROR([Cannot find support for uint32_t (either from compiler or Boost); cannot continue])],
+	 [UINT32_T=-DHAVE_BOOST__UINT32_T
+	  USE_BOOST_STDCXX=1
+	 ]
+     )
+    ],
+    [[#include <cstdint>]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $UINT32_T"
+
+
+AC_CHECK_TYPES(
+    [int64_t],
+    [INT64_T=-DHAVE_STD__INT64_T],
+    [
+     BOOST_FIND_HEADER(
+	 [boost/cstdint.hpp],
+	 [AC_MSG_ERROR([Cannot find support for int64_t (either from compiler or Boost); cannot continue])],
+	 [INT64_T=-DHAVE_BOOST__INT64_T
+	  USE_BOOST_STDCXX=1
+	 ]
+     )
+    ],
+    [[#include <cstdint>]],
+)
+STDCXX_CPPFLAGS="$STDCXX_CPPFLAGS $INT64_T"
+
+
+AC_CHECK_TYPES(
    [std__shared_ptr],
    [SHARED_PTR=-DHAVE_STD__SHARED_PTR],
    [

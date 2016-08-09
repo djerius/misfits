@@ -31,7 +31,7 @@ namespace Mode = misFITS::Mode;
 #include "fiducial_data.hpp"
 
 using namespace misFITS_Test;
-using misFITS::ColumnType;
+using namespace misFITS::ColumnType;
 using misFITS::Extent;
 using misFITS::ColumnInfo;
 using misFITS::Keyword;
@@ -143,9 +143,9 @@ TEST( TableTest, CopyHeader ) {
 
     EXPECT_EQ( 0, table.num_columns() );
 
-    table.add( "col2", ColumnType::Double, "", 1 );
-    table.add( "col1", ColumnType::Double, "", 1, 1 );
-    table.add( "col3", ColumnType::Double, "", 1, 0 );
+    table.add( "col2", ID::Double, "", 1 );
+    table.add( "col1", ID::Double, "", 1, 1 );
+    table.add( "col3", ID::Double, "", 1, 0 );
 
     EXPECT_EQ( 3, table.num_columns() );
     EXPECT_EQ( "col1", table.colinfo(1).ttype );
@@ -171,7 +171,7 @@ TEST( TableTest, CopyHeader ) {
     EXPECT_EQ( "col3a", table2.colinfo(3).ttype );
     EXPECT_EQ( "col3", table2.colinfo(4).ttype );
 
-    table2.add( "col4", ColumnType::Double, "", 1, 0 );
+    table2.add( "col4", ID::Double, "", 1, 0 );
 
     EXPECT_EQ( 4, table.num_columns() );
     EXPECT_EQ( 5, table2.num_columns() );
@@ -222,7 +222,7 @@ TEST( TableTest, ResizeColumn ) {
 
     EXPECT_EQ( 0, table.num_columns() );
 
-    table.add( "col1", ColumnType::Double, "", 1, 1 );
+    table.add( "col1", ID::Double, "", 1, 1 );
 
     // single dimension cells have no TDIM keywords
     // to ensure CIAO don't barf
@@ -252,7 +252,7 @@ TEST( TableTest, DISABLED_TableObjectSynchronization ) {
 
     misFITS::Table table1( table0.file() );
 
-    table0.add( "col1", ColumnType::Double );
+    table0.add( "col1", ID::Double );
 
     ASSERT_EQ( 1, table0.num_columns() );
     ASSERT_EQ( 1, table1.num_columns() );
@@ -270,8 +270,8 @@ TEST( TableTest, CopyColumnNoDuplicates ) {
 
     misFITS::Table table1( "MyEXTENT" );
 
-    table0.add( "col1", ColumnType::Double );
-    table1.add( "col1", ColumnType::Double );
+    table0.add( "col1", ID::Double );
+    table1.add( "col1", ID::Double );
 
     ASSERT_THROW( { table0.copy_column( table1, "col1" ); }, misFITS::Exception::Assert );
 
@@ -281,7 +281,7 @@ TEST( TableTest, CopyColumnNoColumns ) {
 
     double col1;
     misFITS::Table table0( "MyEXTENT" );
-    table0.add( "col1", ColumnType::Double );
+    table0.add( "col1", ID::Double );
     misFITS::Row r0( table0 );
     r0.add( "col1", &col1 );
     col1 = 2;
@@ -301,7 +301,7 @@ TEST( TableTest, CopyColumnOverWrite ) {
 
     misFITS::Table table0( "MyEXTENT" );
 
-    table0.add( "col1", ColumnType::Double );
+    table0.add( "col1", ID::Double );
 
     misFITS::Row r0( table0 );
     double col1 = 33.5;
@@ -310,8 +310,8 @@ TEST( TableTest, CopyColumnOverWrite ) {
     table0.flush();
 
     misFITS::Table table1( "MyEXTENT" );
-    table1.add( "col1", ColumnType::Long );
-    table1.add( "col2", ColumnType::Double );
+    table1.add( "col1", ID::Long );
+    table1.add( "col2", ID::Double );
     misFITS::Row r1( table1 );
     r1.add( "col1", &col1 );
 
@@ -333,7 +333,7 @@ TEST( TableTest, CopyColumnReplace ) {
 
     misFITS::Table table0( "MyEXTENT" );
 
-    table0.add( "col1", ColumnType::Double );
+    table0.add( "col1", ID::Double );
 
     misFITS::Row r0( table0 );
     double col1 = 33.5;
@@ -342,8 +342,8 @@ TEST( TableTest, CopyColumnReplace ) {
     table0.flush();
 
     misFITS::Table table1( "MyEXTENT" );
-    table1.add( "col1", ColumnType::Long );
-    table1.add( "col2", ColumnType::Double );
+    table1.add( "col1", ID::Long );
+    table1.add( "col2", ID::Double );
     misFITS::Row r1( table1 );
     r1.add( "col1", &col1 );
 
@@ -369,7 +369,7 @@ TEST( TableTest, CopyColumnExtend ) {
 
     misFITS::Table table0( "MyEXTENT" );
 
-    table0.add( "col1", ColumnType::Double );
+    table0.add( "col1", ID::Double );
 
     // source table has two rows
     misFITS::Row r0( table0 );
@@ -381,8 +381,8 @@ TEST( TableTest, CopyColumnExtend ) {
     table0.flush();
 
     misFITS::Table table1( "MyEXTENT" );
-    table1.add( "col1", ColumnType::Long );
-    table1.add( "col2", ColumnType::Double );
+    table1.add( "col1", ID::Long );
+    table1.add( "col2", ID::Double );
 
     // destination table has one row
     misFITS::Row r1( table1 );
@@ -416,7 +416,7 @@ TEST( TableTest, CopyColumnExtendIfEmpty ) {
 
     misFITS::Table table0( "MyEXTENT" );
 
-    table0.add( "col1", ColumnType::Double );
+    table0.add( "col1", ID::Double );
 
     // source table has two rows
     misFITS::Row r0( table0 );
@@ -429,8 +429,8 @@ TEST( TableTest, CopyColumnExtendIfEmpty ) {
 
     {
 	misFITS::Table table1( "MyEXTENT" );
-	table1.add( "col1", ColumnType::Long );
-	table1.add( "col2", ColumnType::Double );
+	table1.add( "col1", ID::Long );
+	table1.add( "col2", ID::Double );
 
 	// destination table has one row
 	misFITS::Row r1( table1 );
@@ -455,8 +455,8 @@ TEST( TableTest, CopyColumnExtendIfEmpty ) {
 
     {
 	misFITS::Table table1( "MyEXTENT" );
-	table1.add( "col1", ColumnType::Long );
-	table1.add( "col2", ColumnType::Double );
+	table1.add( "col1", ID::Long );
+	table1.add( "col2", ID::Double );
 
 	// destination table has no rows
 	misFITS::Row r1( table1 );
@@ -485,13 +485,13 @@ TEST( TableTest, CopyAllColumns ) {
 
     misFITS::Table table0( "MyEXTENT" );
 
-    table0.add( "col1", ColumnType::Double );
-    table0.add( "col2", ColumnType::Double );
-    table0.add( "col3", ColumnType::Double );
+    table0.add( "col1", ID::Double );
+    table0.add( "col2", ID::Double );
+    table0.add( "col3", ID::Double );
 
     misFITS::Table table1( "MyEXTENT" );
-    table1.add( "col1", ColumnType::Long );
-    table1.add( "col2", ColumnType::Double );
+    table1.add( "col1", ID::Long );
+    table1.add( "col2", ID::Double );
 
     table0.copy_columns( table1, static_cast<misFITS::ColumnCopy::Flag>(misFITS::ColumnCopy::OverWrite | misFITS::ColumnCopy::ExtendTableIfEmpty) );
 

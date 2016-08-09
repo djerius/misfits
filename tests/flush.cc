@@ -27,6 +27,8 @@
 
 using namespace misFITS;
 
+using namespace misFITS::ColumnType;
+
 // See the FlushTest in cfitsio.cc for the tests which support this
 // means of detecting if the flush method is mapping correctly to the
 // CFITSIO flush routines.
@@ -34,7 +36,7 @@ TEST( FlushTest, FlushAwayRay ) {
 
     misFITS::Table table( "MyEXTENT" );
 
-    table.add( "col1", ColumnType::Double );
+    table.add( "col1", ID::Double );
 
     misFITS::Row row( table );
     double col1 = 33.5;

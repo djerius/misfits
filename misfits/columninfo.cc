@@ -35,7 +35,7 @@ namespace misFITS {
 
     bool ColumnInfo::operator == (const ColumnInfo& col ) const {
 	return
-	    col.column_type  == column_type &&
+	    col.column_type->id()  == column_type->id() &&
 	    col.extent       == extent;
     }
 
@@ -92,7 +92,7 @@ namespace misFITS {
 	width = twidth;
 #endif // LONGLONG FUDGE
 
-	column_type = static_cast<ColumnType>(typecode);
+	column_type = ColumnType::spec_from_id(typecode);
 
 	int naxis;
 	misFITS_CHECK_CFITSIO_EXPR
@@ -100,7 +100,7 @@ namespace misFITS {
 	      );
 
 	// handle CFITSIO idiosyncracies with 'A' columns. see tests/cfitsio.cc
-	if ( ColumnType::String == column_type && naxis == 1 ) {
+	if ( ColumnType::ID::String == column_type->id() && naxis == 1 ) {
 
 	    extent.resize(2);
 	    extent[0] = width;
@@ -127,12 +127,12 @@ namespace misFITS {
 	// the column width for TBIT is reported as 1 (byte), which is
 	// not useful in calculating the true number of bytes in the
 	// column
-	if ( ColumnType::Bit == column_type ) {
+	if ( ColumnType::ID::Bit == column_type->id() ) {
 	    nbytes = nelem_ / 8;
 	    if ( nbytes * 8  < nelem_ ) nbytes += 1;
 	}
 	else {
-	    nbytes = nelem_ * ( ColumnType::String == column_type ? 1 : width );
+	    nbytes = nelem_ * ( ColumnType::ID::String == column_type->id() ? 1 : width );
 	}
     }
 
@@ -153,9 +153,9 @@ namespace misFITS {
 	init( file );
     }
 
-    ColumnInfo::ColumnInfo( const std::string& type, ColumnType column_type_, const std::string& unit,
+    ColumnInfo::ColumnInfo( const std::string& type, ColumnType::ID::type column_type_, const std::string& unit,
 			    const Extent& extent_, TableColumnsType::size_type colnum_ ) :
-	ttype( type ), tunit( unit), column_type( column_type_), extent( extent_ ), colnum( colnum_ ) {
+	ttype( type ), tunit( unit), column_type( ColumnType::spec_from_id( column_type_ ) ), extent( extent_ ), colnum( colnum_ ) {
 
 	long width;
 
@@ -165,7 +165,7 @@ namespace misFITS {
 	// of the storage type
 	{
 	    char tform_t[2];
-	    tform_t[0] = ColumnCode::code[column_type][0];
+	    tform_t[0] = column_type->code();
 	    tform_t[1] = '\0';
 
 	    misFITS_CHECK_CFITSIO_EXPR
@@ -175,9 +175,9 @@ namespace misFITS {
 
 	LONGLONG nelem = extent.nelem();
 
-	switch( boost::native_value(column_type) ) {
+	switch( column_type->id() ) {
 
-	case ColumnType::Bit:
+	case ColumnType::ID::Bit:
 	    // Bit fields are special.  The repeat count is the number
 	    // of bits, not the number of bytes used to encode
 	    // the bits.
@@ -185,7 +185,7 @@ namespace misFITS {
 	    if ( nbytes * 8  < nelem ) nbytes += 1;
 	    break;
 
-	case ColumnType::String:
+	case ColumnType::ID::String:
 	    // strings are special.  FITS treats them as
 	    // multi-dimensionalcharacter arrays, where TDIM[0] is
 	    // the base number of characters in each "string".
@@ -205,7 +205,7 @@ namespace misFITS {
 	if ( extent.nelem() > 1 )
 	    tform << extent.nelem();
 
-	tform << ColumnCode::code[column_type];
+	tform << column_type->code();
 
 	return tform.str();
     }

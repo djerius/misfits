@@ -53,7 +53,7 @@ namespace misFITS {
 	    nbits_( static_cast<BitSet::size_type>( info.nelem() ) )
 	{
 
-	    if ( ColumnType::Bit != info.column_type )
+	    if ( ColumnType::ID::Bit != info.column_type->id() )
 		throw( Exception::Assert( "can't use an misFITS::BitSet object with a non bit FITS column" ) );
 
 	    base_->resize( nbits_ );
@@ -106,7 +106,7 @@ namespace misFITS {
 
 	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
 
-		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
+		table.read_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 
 		for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		    base_[idx] = buffer[idx];
@@ -114,7 +114,7 @@ namespace misFITS {
 
 	    else  {
 
-		table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
+		table.read_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
 						     reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
 
 	    }
@@ -129,12 +129,12 @@ namespace misFITS {
 		for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		    buffer[idx] = base_[idx];
 
-		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
+		table.write_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 	    }
 
 	    else {
 
-		table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
+		table.write_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
 						      reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
 
 	    }
@@ -157,7 +157,7 @@ namespace misFITS {
 	void
 	Column< std::vector<bool> >::read( const Table& table, LONGLONG firstrow ) {
 
-	    table.read_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
+	    table.read_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 
 	    for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		(*base_)[idx] = buffer[idx];
@@ -170,7 +170,7 @@ namespace misFITS {
 	    for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
 		buffer[idx] = (*base_)[idx];
 
-	    table.write_col<ColumnType::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
+	    table.write_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
 
 	}
 
@@ -184,7 +184,7 @@ namespace misFITS {
 	    nelem_( info.nelem() ) {
 
 	    // if reading bits, nelem_ is the number of 8 bit bytes
-	    if ( ColumnType::Bit == info.column_type ) {
+	    if ( ColumnType::ID::Bit == info.column_type->id() ) {
 		nelem_ /= 8;
 		if ( nelem_ * 8 < info.nelem() ) ++nelem_;
 	    }
@@ -197,7 +197,7 @@ namespace misFITS {
 	    nelem_( static_cast<Base::size_type>( info.nelem() ) ) {
 
 	    // if reading bits, nelem_ is the number of 8 bit bytes
-	    if ( ColumnType::Bit == info.column_type ) {
+	    if ( ColumnType::ID::Bit == info.column_type->id() ) {
 		Base::size_type nbits = nelem_;
 		nelem_ /= 8;
 		if ( nelem_ * 8 < nbits ) ++nelem_;
@@ -218,7 +218,7 @@ namespace misFITS {
 	    nbytes( static_cast<Base::size_type>( info.nbytes ) )
 	{
 
-	    if ( ColumnType::String != info.column_type )
+	    if ( ColumnType::ID::String != info.column_type->id() )
 		throw Exception::Assert( "a std::string destination can only be used with a FITS 'A' column type" );
 
 	    buffer.resize( nbytes );
@@ -269,7 +269,7 @@ namespace misFITS {
 	    nbytes( static_cast<Buffer::size_type>( info.nbytes ) ),
 	    width( static_cast<Buffer::size_type>(info.extent[0] ) ) {
 
-	    if ( ColumnType::String != info.column_type )
+	    if ( ColumnType::ID::String != info.column_type->id() )
 		throw Exception::Assert( "a vector<std::string> destination can only be used with a FITS 'A' column type" );
 
 	    buffer.resize( nbytes );
