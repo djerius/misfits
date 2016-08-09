@@ -157,45 +157,7 @@ namespace misFITS {
 			    const Extent& extent_, TableColumnsType::size_type colnum_ ) :
 	ttype( type ), tunit( unit), column_type( ColumnType::spec_from_id( column_type_ ) ), extent( extent_ ), colnum( colnum_ ) {
 
-	long width;
-
-	// width depends upon field type; this seems to be the only
-	// means to get it from CFITSIO. note that for strings, width
-	// will be the number of charactes in a string, not the width
-	// of the storage type
-	{
-	    char tform_t[2];
-	    tform_t[0] = column_type->code();
-	    tform_t[1] = '\0';
-
-	    misFITS_CHECK_CFITSIO_EXPR
-		( fits_binary_tformll( tform_t, NULL, NULL, &width, &status )
-		  );
-	}
-
-	LONGLONG nelem = extent.nelem();
-
-	switch( column_type->id() ) {
-
-	case ColumnType::ID::Bit:
-	    // Bit fields are special.  The repeat count is the number
-	    // of bits, not the number of bytes used to encode
-	    // the bits.
-	    nbytes = nelem / 8;
-	    if ( nbytes * 8  < nelem ) nbytes += 1;
-	    break;
-
-	case ColumnType::ID::String:
-	    // strings are special.  FITS treats them as
-	    // multi-dimensionalcharacter arrays, where TDIM[0] is
-	    // the base number of characters in each "string".
-	    nbytes = nelem;
-	    break;
-
-	default:
-	    nbytes = nelem * width;
-	}
-
+	nbytes = column_type->width( extent.nelem() );
     }
 
     std::string

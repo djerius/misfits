@@ -29,6 +29,43 @@ namespace misFITS {
 
     namespace ColumnType {
 
+    // width depends upon field type; this seems to be the only
+    // means to get it from CFITSIO. note that for strings, width
+    // will be the number of charactes in a string, not the width
+    // of the storage type
+	size_t Spec::width( size_t repeat ) {
+
+	    if ( ColumnType::ID::Bit == id() ) {
+
+    	    // Bit fields are special.  The repeat count is the number
+    	    // of bits; figure out number of the chars.
+
+    	    size_t width = repeat / CHAR_BIT;
+    	    if ( width * CHAR_BIT  < repeat ) width += 1;
+
+    	    return width;
+
+    	}
+    	else {
+
+    	    char tform_t[2];
+
+    	    tform_t[0] = code();
+    	    tform_t[1] = '\0';
+
+    	    long width;
+
+    	    misFITS_CHECK_CFITSIO_EXPR
+    		( fits_binary_tformll( tform_t, NULL, NULL, &width, &status )
+    		  );
+
+    	    return width * repeat;
+    	}
+
+    }
+
+
+
 	ID::type Impl<ID::Bit>::id() { return ID::Bit; }
 
 	char Impl<ID::Bit>::code() { return 'X'; }

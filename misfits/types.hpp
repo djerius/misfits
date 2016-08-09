@@ -210,6 +210,10 @@ namespace misFITS {
 	    virtual ID::type id() = 0;
 	    virtual char code() = 0;
 
+	    // return the width in chars of a column with the given
+	    // type and extent
+	    size_t width( size_t repeat );
+
 	protected:
 	    friend shared_ptr<Spec> spec_from_id( ID::type id);
 	    Spec() {};
