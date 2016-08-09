@@ -29,6 +29,7 @@
 #include <map>
 
 #include <boost/core/scoped_enum.hpp>
+#include <boost/container/vector.hpp>
 
 #include <fitsio.h>
 
@@ -238,6 +239,14 @@ namespace misFITS {
 	    char code();
 	};
 
+	template <> class Impl< ID::Logical > : public Spec {
+
+	public:
+	    typedef ID::NativeType<ID::Logical>::storage_type atomic_type;
+	    typedef boost::container::vector<atomic_type> vector_type;
+	    ID::type id() { return ID::Logical; }
+	    char code() { return 'L'; }
+	};
 
 	typedef shared_ptr<Spec> SpecPtr;
 
