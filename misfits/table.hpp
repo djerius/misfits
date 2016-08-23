@@ -30,17 +30,15 @@
 #include <misfits/fits.hpp>
 #include <misfits/hdu.hpp>
 #include <misfits/extent.hpp>
+#include <misfits/types.hpp>
 
 #include <misfits/columninfo.hpp>
+
+#include <misfits/row_entry_fwd.hpp>
 
 namespace misFITS {
 
     class Row;
-
-    namespace RowEntry {
-	template<typename T> class Column;
-
-    }
 
     BOOST_SCOPED_ENUM_DECLARE_BEGIN( TableCopy )
     {
@@ -60,6 +58,10 @@ namespace misFITS {
     };
 
     class Table : public HDU {
+
+	template<typename T, typename VT> friend class RowEntry::ColumnVector;
+	template<typename T, typename VT> friend class RowEntry::BoolColumnVector;
+	template<typename VT> friend class RowEntry::StringColumnVector;
 
 	template<typename T> friend class RowEntry::Column;
 

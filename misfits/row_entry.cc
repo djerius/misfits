@@ -48,21 +48,18 @@ namespace misFITS {
 	// XXXXX000.
 
 	Column<BitSet>::Column( const ColumnInfo& info, BitSet* base ) :
-	    base_( base ),
-	    colnum_( info.colnum ),
-	    nbits_( static_cast<BitSet::size_type>( info.nelem() ) )
+	    ColumnBase( info), base_( base )
 	{
 
 	    if ( ColumnType::ID::Bit != info.column_type->id() )
 		throw( Exception::Assert( "can't use an misFITS::BitSet object with a non bit FITS column" ) );
 
-	    base_->resize( nbits_ );
+	    base_->resize( nelem_ );
 
+	    natomic_ = base_->num_blocks();
+	    max_bits_ = natomic_ * BitSet::bits_per_block;
 
-	    nbytes_ = base_->num_blocks();
-	    max_bits_ = nbytes_ * BitSet::bits_per_block;
-
-	    buffer.resize( nbytes_ );
+	    buffer.resize( natomic_ );
 	}
 
 	void
@@ -75,7 +72,7 @@ namespace misFITS {
 	    boost::from_block_range(bitset_input_iterator( buffer.begin() ),
 	    			    bitset_input_iterator( buffer.end() ),
 	    			    *base_ );
-	    base_->resize( nbits_ );
+	    base_->resize( nelem_ );
 
 	}
 
@@ -84,7 +81,7 @@ namespace misFITS {
 
 	    boost::to_block_range(*base_, bitset_output_iterator( buffer.begin()) );
 
-	    table.write_col( colnum_, firstrow, 1, static_cast<LONGLONG>( nbytes_ ),
+	    table.write_col( colnum_, firstrow, 1, static_cast<LONGLONG>( natomic_ ),
 			     reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 	}
 
@@ -92,118 +89,41 @@ namespace misFITS {
 
 	//-----------------------------------------
 
-	Column<bool>::Column( const ColumnInfo& info, bool* base ) :
-		base_( base ),
-		colnum_( info.colnum ),
-		nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
+	Column<bool>::Column( const ColumnInfo& info, bool* base )
+	    : ColumnBase( info ), base_( base ) {
 
-		if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) )
-		    buffer.resize( nelem_ );
-	    }
+		buffer.resize( natomic_ );
+	}
 
 	void
 	Column<bool>::read( const Table& table, LONGLONG firstrow ) {
 
-	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
+	    table.read_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( natomic_ ), &buffer[0] );
 
-		table.read_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
-
-		for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
-		    base_[idx] = buffer[idx];
-	    }
-
-	    else  {
-
-		table.read_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
-						     reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
-
-	    }
-
+	    for ( Buffer::size_type idx = 0 ; idx < natomic_ ; idx++ )
+		base_[idx] = buffer[idx];
 	}
 
 	void
 	Column<bool>::write( const Table& table, LONGLONG firstrow ) {
 
-	    if ( sizeof(bool) != sizeof( NativeType<SC_BYTE>::storage_type ) ) {
+	    for ( Buffer::size_type idx = 0 ; idx < natomic_ ; idx++ )
+		buffer[idx] = base_[idx];
 
-		for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
-		    buffer[idx] = base_[idx];
-
-		table.write_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
-	    }
-
-	    else {
-
-		table.write_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ),
-						      reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(base_) );
-
-	    }
-
-
-	}
-
-	//-----------------------------------------
-
-	// std::vector<bool> is a specialized monster that's not a vector of bools.
-
-	Column< std::vector<bool> >::Column( const ColumnInfo& info, std::vector<bool>* base )
-		: base_( base ),
-		  colnum_( info.colnum ),
-		  nelem_( static_cast<Buffer::size_type>( info.nelem() ) ) {
-		base->resize( nelem_ );
-		buffer.resize( nelem_ );
-	    }
-
-	void
-	Column< std::vector<bool> >::read( const Table& table, LONGLONG firstrow ) {
-
-	    table.read_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
-
-	    for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
-		(*base_)[idx] = buffer[idx];
-
-	}
-
-	void
-	Column< std::vector<bool> >::write( const Table& table, LONGLONG firstrow ) {
-
-	    for ( Buffer::size_type idx = 0 ; idx < nelem_ ; idx++ )
-		buffer[idx] = (*base_)[idx];
-
-	    table.write_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( nelem_ ), &buffer[0] );
-
+	    table.write_col<ColumnType::ID::Logical>( colnum_, firstrow, 1, static_cast<LONGLONG>( natomic_ ), &buffer[0] );
 	}
 
 	//-----------------------------------------
 
 
 	template<>
-	Column<byte_t>::Column( const ColumnInfo& info, byte_t* base ) :
-	    base_( base ),
-	    colnum_( info.colnum ),
-	    nelem_( info.nelem() ) {
+	void ColumnInit<byte_t>::init() {
 
-	    // if reading bits, nelem_ is the number of 8 bit bytes
-	    if ( ColumnType::ID::Bit == info.column_type->id() ) {
-		nelem_ /= 8;
-		if ( nelem_ * 8 < info.nelem() ) ++nelem_;
+	    // if reading bits, nelem_ is the number of bits, must convert to bytes
+	    if ( ColumnType::ID::Bit == id_ ) {
+		natomic_ /= 8;
+		if ( natomic_ * 8 < nelem_ ) ++natomic_;
 	    }
-	}
-
-	template<>
-	Column< std::vector<byte_t> >::Column( const ColumnInfo& info, std::vector<byte_t>* base ) :
-	    base_( base ),
-	    colnum_( info.colnum ),
-	    nelem_( static_cast<Base::size_type>( info.nelem() ) ) {
-
-	    // if reading bits, nelem_ is the number of 8 bit bytes
-	    if ( ColumnType::ID::Bit == info.column_type->id() ) {
-		Base::size_type nbits = nelem_;
-		nelem_ /= 8;
-		if ( nelem_ * 8 < nbits ) ++nelem_;
-	    }
-
-	    base_->resize( nelem_ );
 	}
 
 
@@ -211,18 +131,18 @@ namespace misFITS {
 
 
 	Column<std::string>::Column( const ColumnInfo& info, std::string* base ) :
+	    ColumnBase( info ),
 	    base_( base ),
-	    colnum_( info.colnum ),
-	    nelem_( static_cast<Base::size_type>( info.extent.nelem() ) ),
-	    offset( info.offset ),
-	    nbytes( static_cast<Base::size_type>( info.nbytes ) )
+	    offset( info.offset )
 	{
 
 	    if ( ColumnType::ID::String != info.column_type->id() )
 		throw Exception::Assert( "a std::string destination can only be used with a FITS 'A' column type" );
 
-	    buffer.resize( nbytes );
-	    base_->resize( nbytes );
+	    natomic_ = info.nbytes;
+
+	    buffer.resize( natomic_ );
+	    base_->resize( natomic_ );
 	}
 
 
@@ -235,11 +155,11 @@ namespace misFITS {
 	    // associated with strings in CFITSIO, so, use a very low
 	    // level routine
 	    table.read_bytes( firstrow, offset,
-			      static_cast<LONGLONG>( nbytes ),
+			      static_cast<LONGLONG>( natomic_ ),
 			      reinterpret_cast<unsigned char*>(&buffer[0])
 			      );
 
-	    base_->assign(&buffer[0], nbytes );
+	    base_->assign(&buffer[0], natomic_ );
 	    // FITS standard allows null terminated strings
 	    std::string::size_type nchar = base_->find_first_of( '\0' );
 	    if ( nchar != std::string::npos )
@@ -249,11 +169,11 @@ namespace misFITS {
 	void
 	Column<std::string>::write( const Table& table, LONGLONG firstrow ) {
 
-	    buffer.assign( nbytes, ' ' );
-	    base_->copy( &buffer[0], nbytes );
+	    buffer.assign( natomic_, ' ' );
+	    base_->copy( &buffer[0], natomic_ );
 
 	    table.write_bytes( firstrow, offset,
-			       static_cast<LONGLONG>(nbytes),
+			       static_cast<LONGLONG>(natomic_),
 			       reinterpret_cast<unsigned char*>(&buffer[0])
 			       );
 	}
@@ -261,81 +181,6 @@ namespace misFITS {
 
 	//-----------------------------------------
 
-	Column< std::vector<std::string> >::Column( const ColumnInfo& info, std::vector<std::string>* base ) :
-	    base_( base ),
-	    nelem_( static_cast<Base::size_type>( info.extent.nelem() ) ),
-	    colnum_( info.colnum ),
-	    offset( info.offset ),
-	    nbytes( static_cast<Buffer::size_type>( info.nbytes ) ),
-	    width( static_cast<Buffer::size_type>(info.extent[0] ) ) {
-
-	    if ( ColumnType::ID::String != info.column_type->id() )
-		throw Exception::Assert( "a vector<std::string> destination can only be used with a FITS 'A' column type" );
-
-	    buffer.resize( nbytes );
-	    base_->resize( nelem_ / width );
-	    for_each( base_->begin(), base_->end(), bind2nd(mem_fun_ref( &std::string::reserve ), width ) );
-	}
-
-
-	void
-	Column< std::vector<std::string> >::read( const Table& table, LONGLONG firstrow ) {
-
-	    table.read_bytes( firstrow, offset,
-			      static_cast<LONGLONG>( nbytes ),
-			      reinterpret_cast<unsigned char*>(&buffer[0])
-			      );
-
-	    char* start = &buffer[0];
-
-	    Base::iterator str = base_->begin();
-	    Base::iterator end = base_->end();
-	    for ( ; str < end ; ++str ) {
-		str->assign( start, width );
-		start += width;
-
-		// FITS standard allows null terminated strings See 7.3.3.1 of the FITS
-		// paper at
-		// http://fits.gsfc.nasa.gov/standard30/fits_standard30aa.pdf
-		// however, what happens when the cell has a multi-dimensional
-		// character array?  May each array be null terminated, or does
-		// the data get truncated after the first NULL prior to dividing it into
-		// the separate arrays?
-
-		// CFITSIO has the second behavior.  This code follows the first behavior.
-
-		Buffer::size_type nchar = str->find_first_of( '\0' );
-		if ( nchar != std::string::npos )
-		    str->resize( nchar );
-	    }
-
-	}
-
-	void
-	Column< std::vector<std::string> >::write( const Table& table, LONGLONG firstrow ) {
-
-	    buffer.assign( nbytes, ' ' );
-
-	    char* start = &buffer[0];
-
-	    Base::iterator str = base_->begin();
-	    Base::iterator end = base_->end();
-	    for ( ; str < end ; ++str, start += width ) {
-		std::string::size_type maxc = str->length();
-		if ( width > maxc ) {
-		    str->copy( start, maxc );
-		    start[maxc] = '\0';
-		}
-		else {
-		    str->copy( start, width );
-		}
-	    }
-
-	    table.write_bytes( firstrow, offset,
-			       static_cast<LONGLONG>(nbytes),
-			       reinterpret_cast<unsigned char*>(&buffer[0])
-			       );
-	}
 
     }
 
