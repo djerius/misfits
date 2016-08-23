@@ -153,7 +153,8 @@ namespace misFITS {
 
     };
 
-
+    template<> void Table::read_col<ColumnType::ID::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, NativeType<SC_BYTE>::storage_type* data ) const;
+    template<> void Table::write_col<ColumnType::ID::Logical>( Columns::size_type colnum, LONGLONG firstrow, LONGLONG firstelem, LONGLONG nelem, const NativeType<SC_BYTE>::storage_type* data ) const;
 }
 
 
