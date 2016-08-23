@@ -45,20 +45,20 @@ namespace misFITS_Test {
 	  typedef double D_TYPE;
 	  typedef bool   L_TYPE;
 
-	  Column<TSHORT , I_TYPE>		i1;
-	  Column<TSHORT , std::vector<I_TYPE> >  iv1;
+	  Column<TSHORT , I_TYPE >	     	  i1;
+	  Column<TSHORT , std::vector<I_TYPE > > iv1;
 
-	  Column<TINT   , J_TYPE>			j1;
-	  Column<TINT   , std::vector<J_TYPE> >    jv1;
+	  Column<TINT   , J_TYPE >	     	  j1;
+	  Column<TINT   , std::vector<J_TYPE > > jv1;
 
-	  Column<TFLOAT , E_TYPE>		e1;
-	  Column<TFLOAT , std::vector<E_TYPE> >	ev1;
+	  Column<TFLOAT , E_TYPE >	    	  e1;
+	  Column<TFLOAT , std::vector<E_TYPE > > ev1;
 
-	  Column<TDOUBLE, D_TYPE>		d1;
-	  Column<TDOUBLE, std::vector<D_TYPE> > dv1;
+	  Column<TDOUBLE, D_TYPE >	    	  d1;
+	  Column<TDOUBLE, std::vector<D_TYPE > > dv1;
 
-	  Column<TLOGICAL, L_TYPE>		l1;
-	  Column<TLOGICAL, std::vector<L_TYPE> >  lv1;
+	  Column<TLOGICAL, L_TYPE > 	   	  l1;
+	  Column<TLOGICAL, std::vector<L_TYPE> > lv1;
 
 
 	  // we're writing bits as a string of bytes
