@@ -44,7 +44,8 @@ noinst_LTLIBRARIES	+= %D%/libtest_utils.la
 			%D%/util.hpp		\
 			%D%/util.cc		\
 			%D%/row_utils.hpp	\
-			%D%/row_utils.cc
+			%D%/row_utils.cc	\
+			%D%/vector_cmp.hpp
 
 ##############################
 
