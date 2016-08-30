@@ -42,5 +42,6 @@ nobase_include_HEADERS	+=			\
 			%D%/memblock.hpp	\
 			%D%/row.hpp		\
 			%D%/row_entry.hpp	\
+			%D%/row_entry_fwd.hpp	\
 			%D%/table.hpp		\
 			%D%/types.hpp
