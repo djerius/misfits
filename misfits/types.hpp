@@ -252,7 +252,7 @@ namespace misFITS {
 
 	SpecPtr spec_from_id( ID::type id );
 
-    };
+    }
 
     struct FileCopy {
 	enum Flag
