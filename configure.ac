@@ -4,7 +4,7 @@
 AC_PREREQ([2.57])
 
 #---------------------------------------------------------
-AC_INIT([misfits],[0.0.16],[opticsoft@head.cfa.harvard.edu],[misfits])
+AC_INIT([misfits],[0.0.17],[opticsoft@head.cfa.harvard.edu],[misfits])
 AC_CONFIG_SRCDIR([misfits/fits.cc])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])

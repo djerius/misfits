@@ -1,3 +1,9 @@
+0.0.17	2016-08-31T11:52:19-0400
+
+  [ENHANCEMENT]
+
+    * misFITS:BitSet can be used to read/write LOGICAL columns
+
 0.0.16	2016-08-09T11:34:37-0400
 
   [API CHANGE]
