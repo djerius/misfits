@@ -51,14 +51,26 @@ namespace misFITS {
 	    ColumnBase( info), base_( base )
 	{
 
-	    if ( ColumnType::ID::Bit != info.column_type->id() )
-		throw( Exception::Assert( "can't use an misFITS::BitSet object with a non bit FITS column" ) );
-
 	    base_->resize( nelem_ );
 
-	    natomic_ = base_->num_blocks();
-	    max_bits_ = natomic_ * BitSet::bits_per_block;
+	    switch( id_ ) {
 
+	    case ColumnType::ID::Bit:
+
+		natomic_ = base_->num_blocks();
+		break;
+
+	    case ColumnType::ID::Logical:
+
+		natomic_ = nelem_;
+		break;
+
+	    default:
+		throw( Exception::Assert( "can't only use a misFITS::BitSet object with BIT and LOGICAL FITS columns" ) );
+
+	    }
+
+	    max_bits_ = natomic_ * BitSet::bits_per_block;
 	    buffer.resize( natomic_ );
 	}
 
@@ -68,18 +80,55 @@ namespace misFITS {
 	    table.read_col( colnum_, firstrow, 1, static_cast<LONGLONG>( buffer.size() ),
 			    reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );
 
-	    base_->resize( max_bits_ );
-	    boost::from_block_range(bitset_input_iterator( buffer.begin() ),
-	    			    bitset_input_iterator( buffer.end() ),
-	    			    *base_ );
-	    base_->resize( nelem_ );
+
+	    switch ( id_ ) {
+
+	    case ColumnType::ID::Bit:
+
+		base_->resize( max_bits_ );
+		boost::from_block_range(bitset_input_iterator( buffer.begin() ),
+					bitset_input_iterator( buffer.end() ),
+					*base_ );
+		base_->resize( nelem_ );
+		break;
+
+	    case ColumnType::ID::Logical:
+
+		for ( Buffer::size_type idx = 0 ; idx < natomic_ ; idx++ )
+		    (*base_)[idx] = buffer[idx];
+		break;
+
+
+	    default:
+		throw( Exception::Assert( "internal error" ) );
+
+	    }
+
 
 	}
 
 	void
 	Column<BitSet>::write( const Table& table, LONGLONG firstrow ) {
 
-	    boost::to_block_range(*base_, bitset_output_iterator( buffer.begin()) );
+
+	    switch ( id_ ) {
+
+	    case ColumnType::ID::Bit:
+
+		boost::to_block_range(*base_, bitset_output_iterator( buffer.begin()) );
+		break;
+
+	    case ColumnType::ID::Logical:
+
+		for ( Buffer::size_type idx = 0 ; idx < natomic_ ; idx++ )
+		    buffer[idx] = (*base_)[idx] ;
+		break;
+
+
+	    default:
+		throw( Exception::Assert( "internal error" ) );
+
+	    }
 
 	    table.write_col( colnum_, firstrow, 1, static_cast<LONGLONG>( natomic_ ),
 			     reinterpret_cast<NativeType<SC_BYTE>::storage_type*>(&buffer[0]) );

@@ -14,6 +14,8 @@
 * CFITSIO can't convert between logical and bit fields, although this
    seems pretty straightforward.  Contact HEASARC and see if there's a
    reason this isn't implemented, and if it's not technical, if
-   they'll accept an implementation.  If not, implement it within misFITS.
+   they'll accept an implementation.  If not, implement it within
+   misFITS.
+     * implemented BitSet storage of logical columns
 
 * Transparent C++ Complex type support

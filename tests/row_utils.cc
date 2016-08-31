@@ -114,6 +114,7 @@ test_fiducial( misFITS::Row &row ) {
     bool L1;
     std::vector<bool> LV1_std;
     bst::vector<bool> LV1_bst;
+    misFITS::BitSet   LV1_bit;
 
     misFITS::BitSet X1_bitset;
 
@@ -156,6 +157,7 @@ test_fiducial( misFITS::Row &row ) {
 	.add( "L1", &L1 )
 	.add( "LV1", &LV1_std )
 	.add( "LV1", &LV1_bst )
+	.add( "LV1", &LV1_bit )
 
         .add( "E1", &E1 )
         .add( "EV1", &EV1_std )
@@ -253,6 +255,7 @@ test_fiducial( misFITS::Row &row ) {
     	EXPECT_EQ( fid.l1.data[zidx], L1 );
     	EXPECT_EQ( fid.lv1.data[zidx], LV1_std );
     	EXPECT_EQ( fid.lv1.data[zidx], LV1_bst );
+    	EXPECT_EQ( fid.lv1.data[zidx], LV1_bit );
 
     	EXPECT_FLOAT_EQ( fid.e1.data[zidx], E1 );
     	EXPECT_FLOAT_EQ( fid.e1.data[zidx], storage.b.E1 );
