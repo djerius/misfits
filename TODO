@@ -19,3 +19,9 @@
      * implemented BitSet storage of logical columns
 
 * Transparent C++ Complex type support
+
+* Column<Bool> specialization can be folded into BoolColumnVector
+   using a trait/policy/whatever template
+   The differences are:
+    * BoolColumnVector resizes base
+    * (*base_)[idx] vs. base_[idx]
