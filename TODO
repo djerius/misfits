@@ -25,3 +25,6 @@
    The differences are:
     * BoolColumnVector resizes base
     * (*base_)[idx] vs. base_[idx]
+
+* Add autoflush attribute to File. Will need to make all write
+   operatons obey it. Helps tremendously when debugging  complex code.
