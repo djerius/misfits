@@ -157,7 +157,7 @@ namespace misFITS {
     	}
 
 
-    	std::vector<char> v_value( length );
+    	std::vector<char> v_value( length+1 );
 
     	RETURN_KEYWORD
     	    ( std::string,
