@@ -1,3 +1,10 @@
+0.0.18	2017-08-24T17:07:32-0400
+
+  [BUG FIX]
+
+    * fix off-by-one string buffer error when reading FITS keywords
+      which led to memory corruption.
+
 0.0.17	2016-08-31T11:52:19-0400
 
   [ENHANCEMENT]
