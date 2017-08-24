@@ -1,6 +1,6 @@
 include create_am_macros.mk
 
-ACLOCAL_AMFLAGS		= -I m4
+ACLOCAL_AMFLAGS		= -I m4 --install
 AM_DEFAULT_SOURCE_EXT	= .cc
 
 EXTRA_DIST              += $(PACKAGE_NAME).pc.in
